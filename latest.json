@@ -2,5 +2,5 @@
   "version": "0.8.2.test1",
   "filename": "HaebangRoms_Setup_v0.8.2_Update_test.exe",
   "sftp_path": "/home/ftpuser/release",
-  "changelog": "초기 업데이트 테스트"
+  "changelog": " - 새로운 기능 추가\n   - 게임리스트 일방향 동기화 지원\n   - 프로그램 자동 업데이트 기능 추가\n   - 리눅스 동기화 OS 추가 : JELOS, KNULLI, StockOS(RG34xxSP)\n   - 리눅스 동기화 시 연결 옵션 사용자 입력 추가\n - 편의사항 개선\n   - 기존 시스템에 게임추가를 위한 [롬폴더 추가] [롬파일 추가] 버튼을 게임리스트 상단에 추가 \n   - 외부 기기 동기화 시(기존:게임 메타데이터 생성 및 롬파일 복사) [Cancel]버튼 추가하여 중간에 취소 기능.\n   - 현재 게임리스트에 설정된 경로에 해당 롬파일이 삭제된 경우 흐리게(밝은 회색) 표시되도록 함.\n - 기타 버그 수정"
 }
