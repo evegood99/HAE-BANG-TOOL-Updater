@@ -278,6 +278,33 @@
     text-decoration:none; user-select:all}
   .dm-mail:hover{text-decoration:underline}
 
+  /* ---------- 다운로드 보조 문구 ---------- */
+  .dl-sub{font-size:13px; color:var(--faint); margin:16px auto 0; max-width:620px; line-height:1.6}
+
+  /* ---------- 후원 전용 베타 다운로드 모달 ---------- */
+  .sp-field{display:flex; gap:9px; margin:4px 0 0}
+  .sp-input{flex:1; min-width:0; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:15px; letter-spacing:.12em; text-align:center; text-transform:uppercase;
+    padding:12px 14px; border-radius:11px; background:var(--bg2); color:var(--text);
+    border:1px solid var(--border2); outline:none; transition:.18s}
+  .sp-input:focus{border-color:var(--cyan); box-shadow:0 0 0 3px rgba(34,211,238,.14)}
+  .sp-input::placeholder{letter-spacing:.06em; text-transform:none; color:var(--faint)}
+  .sp-go{padding:12px 18px; white-space:nowrap}
+  .sp-go[disabled]{opacity:.5; cursor:not-allowed; transform:none}
+  .sp-msg{font-size:13px; margin:14px 0 0; line-height:1.55; min-height:18px}
+  .sp-msg.err{color:var(--rose)}
+  .sp-msg.ok{color:var(--emerald)}
+  .sp-msg.wait{color:var(--muted)}
+  .sp-files{margin:16px 0 0; border-top:1px solid var(--border); padding-top:14px}
+  .sp-file{display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:11px;
+    border:1px solid var(--border); background:var(--bg2); margin-bottom:9px; transition:.16s}
+  .sp-file:hover{border-color:var(--cyan); transform:translateY(-1px)}
+  .sp-file .nm{flex:1; min-width:0; font-size:13.5px; font-weight:600; overflow:hidden;
+    text-overflow:ellipsis; white-space:nowrap}
+  .sp-file .sz{font-size:12px; color:var(--faint); font-variant-numeric:tabular-nums; white-space:nowrap}
+  .sp-file .dl{font-size:12.5px; font-weight:800; color:var(--cyan); white-space:nowrap}
+  .sp-hint{font-size:12px; color:var(--faint); margin:14px 0 0; line-height:1.55}
+
   @media (max-width:920px){
     .hero-grid{grid-template-columns:1fr; gap:40px}
     .mock .win{transform:none}
@@ -308,6 +335,7 @@
       </span>
     </a>
     <nav class="nav-links">
+      <a href="news.html" data-ko="새로운 소식" data-en="News">새로운 소식</a>
       <a href="#features" data-ko="기능" data-en="Features">기능</a>
       <a href="#how" data-ko="작동 방식" data-en="How it works">작동 방식</a>
       <a href="#targets" data-ko="지원 대상" data-en="Supported">지원 대상</a>
@@ -442,7 +470,7 @@
         <div class="card reveal">
           <div class="ico">🗂️</div>
           <h3 data-ko="미디어 자동 수집" data-en="Auto media library">미디어 자동 수집</h3>
-          <p data-ko="스크린샷·타이틀·박스아트(2D/3D)·휠 로고·서포트·매뉴얼·플레이 영상까지 자동 다운로드하고 리전 우선순위로 정리합니다." data-en="Screenshots, title screens, 2D/3D box art, wheel logos, support, manuals and gameplay videos — auto-downloaded and region-prioritized.">스크린샷·타이틀·박스아트(2D/3D)·휠 로고·서포트·매뉴얼·플레이 영상까지 자동 다운로드하고 리전 우선순위로 정리합니다.</p>
+          <p data-ko="스크린샷·타이틀·박스아트(2D/3D)·휠 로고·서포트·매뉴얼·플레이 영상까지 자동 다운로드. 리전 우선순위는 미디어 종류마다 따로 — 박스아트는 일본판, 스크린샷은 북미판처럼." data-en="Screenshots, title screens, 2D/3D box art, wheel logos, support, manuals and gameplay videos — auto-downloaded, with region priority set per media type (JP box art with US screenshots, if you like).">스크린샷·타이틀·박스아트(2D/3D)·휠 로고·서포트·매뉴얼·플레이 영상까지 자동 다운로드. 리전 우선순위는 미디어 종류마다 따로 — 박스아트는 일본판, 스크린샷은 북미판처럼.</p>
         </div>
         <div class="card reveal">
           <div class="ico">🎨</div>
@@ -457,12 +485,27 @@
         <div class="card reveal">
           <div class="ico">📦</div>
           <h3 data-ko="멀티 프론트엔드 내보내기" data-en="Multi-frontend export">멀티 프론트엔드 내보내기</h3>
-          <p data-ko="ES-DE·EmulationStation·RetroArch·Pegasus용 gamelist/플레이리스트를 OS별 규칙에 맞춰 생성하고 ROM·미디어를 함께 복사합니다." data-en="Generates gamelists/playlists for ES-DE, EmulationStation, RetroArch and Pegasus per OS conventions, copying ROMs and media together.">ES-DE·EmulationStation·RetroArch·Pegasus용 gamelist/플레이리스트를 OS별 규칙에 맞춰 생성하고 ROM·미디어를 함께 복사합니다.</p>
+          <p data-ko="ES-DE·Batocera·ROCKNIX·JELOS·KNULLI·ArkOS·Pegasus·RetroArch·OnionOS·StockOS까지, 프론트엔드별 gamelist/플레이리스트를 규칙에 맞춰 만듭니다. 기존 목록을 지우지 않는 병합 모드로 즐겨찾기·플레이 기록도 보존합니다." data-en="Builds the right gamelist/playlist for ES-DE, Batocera, ROCKNIX, JELOS, KNULLI, ArkOS, Pegasus, RetroArch, OnionOS and StockOS. A merge mode keeps your existing list, preserving favorites and play history.">ES-DE·Batocera·ROCKNIX·JELOS·KNULLI·ArkOS·Pegasus·RetroArch·OnionOS·StockOS까지, 프론트엔드별 gamelist/플레이리스트를 규칙에 맞춰 만듭니다. 기존 목록을 지우지 않는 병합 모드로 즐겨찾기·플레이 기록도 보존합니다.</p>
         </div>
         <div class="card reveal">
           <div class="ico">🔌</div>
           <h3 data-ko="휴대용 게임기 연동" data-en="Handheld device sync">휴대용 게임기 연동</h3>
-          <p data-ko="Batocera·ArkOS·OnionOS·muOS·ROCKNIX 등 리눅스 기기는 SFTP/SSH로, 안드로이드는 ADB로. 기기별 경로는 자동 인식합니다." data-en="Linux handhelds (Batocera, ArkOS, OnionOS, muOS, ROCKNIX…) over SFTP/SSH and Android over ADB — device paths auto-detected.">Batocera·ArkOS·OnionOS·muOS·ROCKNIX 등 리눅스 기기는 SFTP/SSH로, 안드로이드는 ADB로. 기기별 경로는 자동 인식합니다.</p>
+          <p data-ko="Batocera·ArkOS·OnionOS·muOS·ROCKNIX 등 리눅스 기기는 SFTP/SSH로, 안드로이드는 ADB로. 기기별 경로는 자동 인식하고, 전송 진행률을 파일 단위로 보여주며 끊겨도 실패한 파일만 다시 보냅니다." data-en="Linux handhelds (Batocera, ArkOS, OnionOS, muOS, ROCKNIX…) over SFTP/SSH and Android over ADB — device paths auto-detected, byte-level transfer progress, and only failed files are resent if a transfer drops.">Batocera·ArkOS·OnionOS·muOS·ROCKNIX 등 리눅스 기기는 SFTP/SSH로, 안드로이드는 ADB로. 기기별 경로는 자동 인식하고, 전송 진행률을 파일 단위로 보여주며 끊겨도 실패한 파일만 다시 보냅니다.</p>
+        </div>
+        <div class="card reveal">
+          <div class="ico">📥</div>
+          <h3 data-ko="기존 라이브러리 가져오기" data-en="Import existing libraries">기존 라이브러리 가져오기</h3>
+          <p data-ko="이미 ES-DE나 Pegasus로 세팅해 둔 라이브러리를 그대로 읽어들입니다. 내 컴퓨터는 물론, USB로 연결한 안드로이드나 SFTP 기기에서 시스템·게임·미디어를 한 번에 등록합니다." data-en="Read a library you already set up in ES-DE or Pegasus. Pull systems, games and media in one pass — from this PC, a USB-connected Android device, or an SFTP handheld.">이미 ES-DE나 Pegasus로 세팅해 둔 라이브러리를 그대로 읽어들입니다. 내 컴퓨터는 물론, USB로 연결한 안드로이드나 SFTP 기기에서 시스템·게임·미디어를 한 번에 등록합니다.</p>
+        </div>
+        <div class="card reveal">
+          <div class="ico">🎮</div>
+          <h3 data-ko="컨트롤러 키설정 자동 생성" data-en="Controller mapping, generated">컨트롤러 키설정 자동 생성</h3>
+          <p data-ko="시스템·게임별 입력 설정을 만들어 함께 내보냅니다. RetroArch 리맵(.rmp), DOS 게임용 DOSBox-Pure 패드 설정, Dolphin 계열 개별 프로필까지 기기 규약에 맞춰 생성합니다." data-en="Create per-system and per-game input configs and export them along with your games — RetroArch remaps (.rmp), DOSBox-Pure pad maps for DOS games, and per-title Dolphin profiles, all following each device's conventions.">시스템·게임별 입력 설정을 만들어 함께 내보냅니다. RetroArch 리맵(.rmp), DOS 게임용 DOSBox-Pure 패드 설정, Dolphin 계열 개별 프로필까지 기기 규약에 맞춰 생성합니다.</p>
+        </div>
+        <div class="card reveal">
+          <div class="ico">🗄️</div>
+          <h3 data-ko="기기 탐색기 · 파일 편집" data-en="Device browser & file editing">기기 탐색기 · 파일 편집</h3>
+          <p data-ko="연결한 기기의 내부를 직접 둘러보며 폴더를 만들고 복사·이동·삭제할 수 있습니다. gamelist.xml·cfg 같은 텍스트 파일은 더블클릭으로 열어 그 자리에서 보고 고쳐 저장합니다." data-en="Explore a connected device's storage — create folders, copy, move, delete. Double-click text files like gamelist.xml or .cfg to view, edit and save them right on the device.">연결한 기기의 내부를 직접 둘러보며 폴더를 만들고 복사·이동·삭제할 수 있습니다. gamelist.xml·cfg 같은 텍스트 파일은 더블클릭으로 열어 그 자리에서 보고 고쳐 저장합니다.</p>
         </div>
       </div>
     </div>
@@ -565,7 +608,13 @@
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
             <span data-ko="Windows용 다운로드 (Demo)" data-en="Download for Windows (Demo)">Windows용 다운로드 (Demo)</span>
           </a>
+          <button class="btn btn-ghost" id="sponBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10.5" width="16" height="10.5" rx="2.2"/><path d="M8 10.5V7.6a4 4 0 0 1 8 0v2.9"/></svg>
+            <span data-ko="♥ 후원 전용 베타 다운로드" data-en="♥ Sponsor Beta Download">♥ 후원 전용 베타 다운로드</span>
+          </button>
         </div>
+        <p class="dl-sub" data-ko="데모 버전은 누구나 바로 받을 수 있습니다. 제약이 풀린 1.0 베타(클로즈드 베타)는 후원 시 발급되는 스폰서 코드로 받을 수 있고, 정식 릴리즈는 2026년 8월 말 예정입니다."
+           data-en="The demo is a direct download. The unrestricted 1.0 closed beta requires the sponsor code issued with your donation; the full release is planned for late August 2026.">데모 버전은 누구나 바로 받을 수 있습니다. 제약이 풀린 1.0 베타(클로즈드 베타)는 후원 시 발급되는 스폰서 코드로 받을 수 있고, 정식 릴리즈는 2026년 8월 말 예정입니다.</p>
       </div>
     </div>
   </section>
@@ -580,6 +629,7 @@
       </div>
       <div class="foot-col">
         <h5 data-ko="바로가기" data-en="Links">바로가기</h5>
+        <a href="news.html" data-ko="새로운 소식" data-en="News">새로운 소식</a>
         <a href="#features" data-ko="기능" data-en="Features">기능</a>
         <a href="#how" data-ko="작동 방식" data-en="How it works">작동 방식</a>
         <a href="#targets" data-ko="지원 대상" data-en="Supported">지원 대상</a>
@@ -631,6 +681,28 @@
     <p class="dm-scan" data-ko="카메라 또는 페이 앱으로 QR을 스캔해 후원할 수 있어요." data-en="Scan a QR code with your camera or pay app to donate.">카메라 또는 페이 앱으로 QR을 스캔해 후원할 수 있어요.</p>
     <p class="dm-note" data-ko="후원해 주셨다면 아래 이메일로 알려 주세요. 추후 특전 안내를 위함입니다. 🙏" data-en="If you have donated, please let us know via the email below — for future perks. 🙏">후원해 주셨다면 아래 이메일로 알려 주세요. 추후 특전 안내를 위함입니다. 🙏</p>
     <a class="dm-mail" href="mailto:evegood99@gmail.com?subject=HAE-BANG%20Tool%20Donation">✉ evegood99@gmail.com</a>
+  </div>
+</div>
+
+<!-- 후원 전용 베타 다운로드 모달 (스폰서 코드 입력 → Worker 가 검사 후 목록/링크 발급) -->
+<div class="dm" id="sponModal" aria-hidden="true">
+  <div class="dm-card">
+    <div class="dm-head">
+      <h3 data-ko="후원 전용 베타 다운로드" data-en="Sponsor Beta Download">후원 전용 베타 다운로드</h3>
+      <button class="dm-x" id="sponClose" aria-label="close">&times;</button>
+    </div>
+    <p class="dm-desc" data-ko="후원 시 발급된 스폰서 코드를 입력하세요. 1.0 클로즈드 베타 빌드를 받을 수 있습니다."
+       data-en="Enter the sponsor code issued with your donation to download the 1.0 closed-beta build.">후원 시 발급된 스폰서 코드를 입력하세요. 1.0 클로즈드 베타 빌드를 받을 수 있습니다.</p>
+    <form class="sp-field" id="sponForm" autocomplete="off">
+      <input class="sp-input" id="sponCode" type="text" inputmode="latin" spellcheck="false"
+             maxlength="64" placeholder="SPONSOR-CODE" aria-label="Sponsor code" />
+      <button class="btn btn-primary sp-go" id="sponGo" type="submit" data-ko="확인" data-en="Verify">확인</button>
+    </form>
+    <p class="sp-msg" id="sponMsg" role="status" aria-live="polite"></p>
+    <div class="sp-files" id="sponFiles" hidden></div>
+    <p class="sp-hint" data-ko="코드가 없다면 먼저 후원해 주세요. 후원 후 이메일로 알려 주시면 코드를 보내드립니다. 다운로드 링크는 발급 후 잠시 뒤 만료되며, 다시 확인하면 새로 발급됩니다."
+       data-en="No code yet? Please donate first and email us — we'll send one. Download links expire shortly after issue; verify again to get fresh ones.">코드가 없다면 먼저 후원해 주세요. 후원 후 이메일로 알려 주시면 코드를 보내드립니다. 다운로드 링크는 발급 후 잠시 뒤 만료되며, 다시 확인하면 새로 발급됩니다.</p>
+    <a class="dm-mail" href="mailto:evegood99@gmail.com?subject=HAE-BANG%20Sponsor%20Code">✉ evegood99@gmail.com</a>
   </div>
 </div>
 
@@ -729,7 +801,86 @@
   var dClose = document.getElementById('donateClose');
   if (dClose) dClose.addEventListener('click', closeDonate);
   if (dm) dm.addEventListener('click', function(e){ if (e.target === dm) closeDonate(); });
-  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeDonate(); });
+
+  // ---------- 후원 전용 베타 다운로드 (스폰서 코드) ----------
+  // 코드 검사는 전부 Cloudflare Worker 에서 한다. 이 페이지는 공개 정적 파일이므로
+  // 코드 목록을 여기에 두면 그대로 노출된다 — 절대 클라이언트에 담지 않는다.
+  //   POST {WORKER}/spon/auth  {code}  → {ok, token, exp, files:[{name,size}]}
+  //   GET  {WORKER}/spon/dl?f=<name>&t=<token>  → R2 spon_release/<name> 스트림
+  var SPON_API = 'https://haebang-media.evegood99.workers.dev';
+  var spm = document.getElementById('sponModal');
+  var spMsg = document.getElementById('sponMsg');
+  var spFiles = document.getElementById('sponFiles');
+  var spCode = document.getElementById('sponCode');
+  var spGo = document.getElementById('sponGo');
+
+  function spT(ko, en){ return (lang === 'ko') ? ko : en; }
+  function spSay(text, cls){ spMsg.textContent = text || ''; spMsg.className = 'sp-msg' + (cls ? ' ' + cls : ''); }
+  function spReset(){ spSay(''); spFiles.hidden = true; spFiles.innerHTML = ''; }
+  function closeSpon(){ if (spm) spm.classList.remove('open'); }
+  function fmtSize(n){
+    n = +n || 0;
+    if (n < 1024) return n + ' B';
+    var u = ['KB','MB','GB'], i = -1;
+    do { n /= 1024; i++; } while (n >= 1024 && i < u.length - 1);
+    return n.toFixed(n < 10 ? 1 : 0) + ' ' + u[i];
+  }
+  var sponBtn = document.getElementById('sponBtn');
+  if (sponBtn) sponBtn.addEventListener('click', function(){
+    spReset(); if (spm) spm.classList.add('open');
+    setTimeout(function(){ if (spCode) spCode.focus(); }, 120);
+  });
+  var spClose = document.getElementById('sponClose');
+  if (spClose) spClose.addEventListener('click', closeSpon);
+  if (spm) spm.addEventListener('click', function(e){ if (e.target === spm) closeSpon(); });
+
+  var spForm = document.getElementById('sponForm');
+  if (spForm) spForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    var code = (spCode.value || '').trim();
+    if (!code){ spSay(spT('코드를 입력하세요.', 'Please enter a code.'), 'err'); spCode.focus(); return; }
+    spGo.disabled = true;
+    spSay(spT('확인 중…', 'Verifying…'), 'wait');
+    spFiles.hidden = true; spFiles.innerHTML = '';
+    fetch(SPON_API + '/spon/auth', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({code: code})
+    }).then(function(r){
+      return r.json().catch(function(){ return {ok:false, error:'bad response (' + r.status + ')'}; });
+    }).then(function(d){
+      spGo.disabled = false;
+      if (!d || !d.ok){
+        spSay(spT('코드가 올바르지 않습니다. 다시 확인해 주세요.',
+                  'That code is not valid. Please check and try again.'), 'err');
+        return;
+      }
+      var files = d.files || [];
+      if (!files.length){
+        spSay(spT('아직 올라온 베타 빌드가 없습니다. 조금만 기다려 주세요.',
+                  'No beta build has been published yet. Please check back soon.'), 'wait');
+        return;
+      }
+      spSay(spT('확인되었습니다. 아래에서 내려받으세요.', 'Verified — download below.'), 'ok');
+      files.forEach(function(f){
+        var url = SPON_API + '/spon/dl?f=' + encodeURIComponent(f.name) + '&t=' + encodeURIComponent(d.token);
+        var a = document.createElement('a');
+        a.className = 'sp-file'; a.href = url; a.setAttribute('download', '');
+        var nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = f.name;
+        var sz = document.createElement('span'); sz.className = 'sz'; sz.textContent = fmtSize(f.size);
+        var dl = document.createElement('span'); dl.className = 'dl'; dl.textContent = '↓ ' + spT('받기', 'Get');
+        a.appendChild(nm); a.appendChild(sz); a.appendChild(dl);
+        spFiles.appendChild(a);
+      });
+      spFiles.hidden = false;
+    }).catch(function(){
+      spGo.disabled = false;
+      spSay(spT('서버에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요.',
+                'Could not reach the server. Please try again shortly.'), 'err');
+    });
+  });
+
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape'){ closeDonate(); closeSpon(); } });
 
   // scroll reveal
   var io = new IntersectionObserver(function(entries){

@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>새로운 소식 · 업데이트 노트 — HAE-BANG Rom Setting Tools</title>
+<meta name="description" content="HAE-BANG Rom Setting Tools의 개발 소식과 업데이트 노트. 데모 공개, 1.0 클로즈드 베타, 2026년 8월 말 정식 릴리즈 일정과 새로 추가된 기능을 한눈에." />
+<meta property="og:title" content="새로운 소식 — HAE-BANG Rom Setting Tools" />
+<meta property="og:description" content="데모 공개부터 1.0 클로즈드 베타, 8월 말 정식 릴리즈까지 — 개발 여정과 새 기능 정리." />
+<meta property="og:type" content="article" />
+<meta property="og:image" content="assets/icon.png" />
+<link rel="icon" href="assets/favicon.ico" />
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<style>
+  :root{
+    --bg:#07080d; --bg2:#0a0c14; --surface:#11131d; --surface2:#171a27;
+    --border:#222639; --border2:#2c3147;
+    --text:#e9ebf4; --muted:#9aa1b6; --faint:#6b7186;
+    --cyan:#22d3ee; --violet:#8b5cf6; --indigo:#6366f1; --gold:#fbbf24; --emerald:#34d399; --rose:#fb7185;
+    --grad:linear-gradient(120deg,#22d3ee 0%,#6366f1 50%,#8b5cf6 100%);
+    --grad-soft:linear-gradient(120deg,rgba(34,211,238,.16),rgba(139,92,246,.16));
+    --radius:16px; --maxw:1180px;
+    --shadow:0 24px 60px -20px rgba(0,0,0,.7);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:"Pretendard Variable",Pretendard,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; line-height:1.6; overflow-x:hidden;
+  }
+  body::before{
+    content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background:
+      radial-gradient(900px 520px at 78% -8%, rgba(99,102,241,.20), transparent 60%),
+      radial-gradient(720px 480px at 10% 4%, rgba(34,211,238,.14), transparent 55%),
+      radial-gradient(700px 700px at 50% 120%, rgba(139,92,246,.12), transparent 60%);
+  }
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 22px}
+  .grad-text{background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .muted{color:var(--muted)}
+  .eyebrow{font-size:12.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--cyan); font-weight:700}
+
+  /* ---------- Header ---------- */
+  header{position:sticky; top:0; z-index:50; backdrop-filter:blur(14px);
+    background:rgba(8,9,15,.62); border-bottom:1px solid transparent; transition:.25s}
+  header.scrolled{border-bottom-color:var(--border); background:rgba(8,9,15,.84)}
+  .nav{display:flex; align-items:center; gap:18px; height:66px}
+  .brand{display:flex; align-items:center; gap:11px; font-weight:800; letter-spacing:.2px}
+  .brand img{width:34px; height:34px; border-radius:9px; box-shadow:0 0 0 1px var(--border2), 0 6px 18px -6px rgba(34,211,238,.5)}
+  .brand .bt{font-size:15.5px}
+  .brand .bs{font-size:10.5px; color:var(--muted); font-weight:600; letter-spacing:.04em}
+  .nav-links{display:flex; gap:6px; margin-left:18px}
+  .nav-links a{padding:8px 12px; border-radius:9px; font-size:14px; color:var(--muted); font-weight:600; transition:.18s}
+  .nav-links a:hover,.nav-links a.active{color:var(--text); background:var(--surface)}
+  .nav-right{margin-left:auto; display:flex; align-items:center; gap:10px}
+  .icon-btn{display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:10px;
+    border:1px solid var(--border); color:var(--muted); background:var(--surface); transition:.18s; cursor:pointer}
+  .icon-btn:hover{color:var(--text); border-color:var(--border2); transform:translateY(-1px)}
+  .lang{font-size:12.5px; font-weight:800; letter-spacing:.04em}
+  .btn{display:inline-flex; align-items:center; gap:8px; font-weight:700; border-radius:11px; cursor:pointer;
+    padding:11px 18px; font-size:14px; border:1px solid transparent; transition:.2s; white-space:nowrap}
+  .btn-primary{background:var(--grad); color:#05070d; box-shadow:0 10px 30px -10px rgba(99,102,241,.7)}
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 16px 40px -12px rgba(99,102,241,.85)}
+  .btn-ghost{border-color:var(--border2); color:var(--text); background:var(--surface)}
+  .btn-ghost:hover{border-color:var(--cyan); color:#fff; transform:translateY(-2px)}
+
+  /* ---------- Hero ---------- */
+  .nhero{padding:66px 0 26px; text-align:center}
+  .nhero h1{font-size:clamp(30px,4.4vw,46px); font-weight:800; letter-spacing:-.025em; margin:14px 0 14px}
+  .nhero p{color:var(--muted); font-size:16.5px; max-width:640px; margin:0 auto}
+
+  /* ---------- 예정 배너 ---------- */
+  section{padding:34px 0}
+  .next{position:relative; border:1px solid var(--border2); border-radius:22px; overflow:hidden;
+    padding:32px 30px; background:var(--surface); box-shadow:var(--shadow)}
+  .next::before{content:""; position:absolute; inset:0; background:var(--grad-soft); pointer-events:none}
+  .next-in{position:relative; display:grid; grid-template-columns:1fr auto; gap:26px; align-items:center}
+  .pill{display:inline-flex; align-items:center; gap:7px; font-size:11.5px; font-weight:800; letter-spacing:.1em;
+    text-transform:uppercase; padding:6px 11px; border-radius:999px;
+    border:1px solid rgba(251,191,36,.4); background:rgba(251,191,36,.12); color:var(--gold)}
+  .blink{width:7px; height:7px; border-radius:50%; background:var(--gold); animation:bl 1.4s infinite}
+  @keyframes bl{0%,100%{opacity:1}50%{opacity:.25}}
+  .next h2{font-size:clamp(21px,2.6vw,28px); font-weight:800; letter-spacing:-.02em; margin:14px 0 10px}
+  .next p{color:var(--muted); font-size:15px; margin:0; max-width:640px}
+  .next-cta{display:flex; flex-direction:column; gap:10px; align-items:stretch}
+  /* 로드맵: 클로즈드 베타 → 정식 릴리즈 순서 */
+  .road{list-style:none; margin:18px 0 0; padding:0; display:flex; flex-direction:column; gap:9px}
+  .road li{display:flex; align-items:baseline; gap:11px; font-size:14.5px; color:var(--muted)}
+  .road .rd{flex:0 0 auto; font-size:11.5px; font-weight:800; letter-spacing:.05em; padding:3px 9px;
+    border-radius:999px; border:1px solid var(--border2); background:var(--surface2); color:var(--faint);
+    min-width:104px; text-align:center}
+  .road li.now .rd{border-color:rgba(251,191,36,.45); background:rgba(251,191,36,.12); color:var(--gold)}
+  .road li.next-up .rd{border-color:rgba(34,211,238,.45); background:rgba(34,211,238,.1); color:var(--cyan)}
+  .road b{color:var(--text); font-weight:700}
+
+  /* ---------- 타임라인 ---------- */
+  .tl{position:relative; margin:8px 0 0; padding-left:34px}
+  .tl::before{content:""; position:absolute; left:9px; top:6px; bottom:6px; width:2px;
+    background:linear-gradient(180deg,var(--cyan),var(--indigo) 45%,var(--violet) 80%,transparent)}
+  .tl-item{position:relative; padding:0 0 34px}
+  .tl-item:last-child{padding-bottom:6px}
+  .tl-dot{position:absolute; left:-34px; top:5px; width:20px; height:20px; border-radius:50%;
+    background:var(--bg2); border:2px solid var(--border2); display:flex; align-items:center; justify-content:center}
+  .tl-dot i{width:8px; height:8px; border-radius:50%; background:var(--indigo); display:block}
+  .tl-item.hl .tl-dot{border-color:var(--cyan); box-shadow:0 0 0 5px rgba(34,211,238,.1)}
+  .tl-item.hl .tl-dot i{background:var(--cyan)}
+  .tl-date{font-size:12.5px; font-weight:800; letter-spacing:.06em; color:var(--faint); font-variant-numeric:tabular-nums}
+  .tl-title{font-size:18.5px; font-weight:800; letter-spacing:-.015em; margin:6px 0 4px}
+  .tl-body{border:1px solid var(--border); border-radius:14px; background:var(--surface);
+    padding:18px 20px; margin-top:12px}
+  .tl-body ul{margin:0; padding-left:19px}
+  .tl-body li{color:var(--muted); font-size:14.5px; margin:7px 0; line-height:1.62}
+  .tl-body li b{color:var(--text); font-weight:700}
+  .tags{display:flex; gap:6px; flex-wrap:wrap; margin-top:9px}
+  .tag{font-size:11px; font-weight:800; letter-spacing:.05em; padding:4px 9px; border-radius:999px;
+    border:1px solid var(--border2); color:var(--muted); background:var(--surface2)}
+  .tag.new{border-color:rgba(52,211,153,.42); color:var(--emerald); background:rgba(52,211,153,.1)}
+  .tag.fix{border-color:rgba(251,113,133,.42); color:var(--rose); background:rgba(251,113,133,.1)}
+  .tag.imp{border-color:rgba(34,211,238,.42); color:var(--cyan); background:rgba(34,211,238,.1)}
+  .tag.rel{border-color:rgba(251,191,36,.42); color:var(--gold); background:rgba(251,191,36,.1)}
+
+  .sec-head{text-align:center; max-width:680px; margin:0 auto 32px}
+  .sec-head h2{font-size:clamp(24px,3.2vw,34px); font-weight:800; letter-spacing:-.02em; margin:10px 0 10px}
+  .sec-head p{color:var(--muted); font-size:15.5px; margin:0}
+
+  /* ---------- reveal ---------- */
+  .reveal{opacity:0; transform:translateY(22px); transition:opacity .6s ease, transform .6s ease}
+  .reveal.in{opacity:1; transform:none}
+
+  /* ---------- Footer ---------- */
+  footer{border-top:1px solid var(--border); padding:46px 0 30px; margin-top:30px; background:var(--bg2)}
+  .foot{display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:34px}
+  .foot-col h5{font-size:13px; text-transform:uppercase; letter-spacing:.1em; color:var(--faint); margin:0 0 14px}
+  .foot-col a{display:block; font-size:14px; color:var(--muted); margin:9px 0; transition:.15s}
+  .foot-col a:hover{color:var(--cyan)}
+  .foot-bottom{display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap;
+    border-top:1px solid var(--border); margin-top:34px; padding-top:22px; font-size:13px; color:var(--faint)}
+
+  @media (max-width:900px){
+    .foot{grid-template-columns:1fr; gap:26px}
+    .next-in{grid-template-columns:1fr}
+  }
+  @media (max-width:720px){
+    .nav-links{display:none}
+    .tl{padding-left:28px}
+    .tl-dot{left:-28px}
+  }
+</style>
+</head>
+<body>
+
+<header id="hdr">
+  <div class="wrap nav">
+    <a class="brand" href="index.html">
+      <img src="assets/icon.png" alt="HAE-BANG logo" />
+      <span>
+        <span class="bt">HAE-BANG</span>
+        <div class="bs" data-ko="롬 세팅 툴" data-en="Rom Setting Tools">롬 세팅 툴</div>
+      </span>
+    </a>
+    <nav class="nav-links">
+      <a href="news.html" class="active" data-ko="새로운 소식" data-en="News">새로운 소식</a>
+      <a href="index.html#features" data-ko="기능" data-en="Features">기능</a>
+      <a href="index.html#how" data-ko="작동 방식" data-en="How it works">작동 방식</a>
+      <a href="guide.html" data-ko="가이드" data-en="Guide">가이드</a>
+      <a href="story.html" data-ko="읽을거리" data-en="Read">읽을거리</a>
+    </nav>
+    <div class="nav-right">
+      <button class="icon-btn lang" id="langBtn" title="Language" aria-label="Language">EN</button>
+      <a class="btn btn-primary" href="index.html#download" data-ko="다운로드" data-en="Download">다운로드</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="nhero">
+    <div class="wrap">
+      <span class="eyebrow" data-ko="새로운 소식" data-en="News">새로운 소식</span>
+      <h1>
+        <span class="grad-text" data-ko="개발 여정과 업데이트" data-en="The road so far">개발 여정과 업데이트</span>
+      </h1>
+      <p data-ko="데모 최초 공개부터 곧 시작되는 1.0 클로즈드 베타, 그리고 8월 말 정식 릴리즈까지. 무엇이 새로 들어왔고 무엇이 좋아졌는지 정리했습니다."
+         data-en="From the first demo release through the upcoming 1.0 closed beta to the full release in late August — what's new and what got better.">데모 최초 공개부터 곧 시작되는 1.0 클로즈드 베타, 그리고 8월 말 정식 릴리즈까지. 무엇이 새로 들어왔고 무엇이 좋아졌는지 정리했습니다.</p>
+    </div>
+  </section>
+
+  <!-- 곧 공개: 1.0 베타 클로즈드 베타 -->
+  <section>
+    <div class="wrap">
+      <div class="next reveal">
+        <div class="next-in">
+          <div>
+            <span class="pill"><span class="blink"></span><span data-ko="공개 예정" data-en="Coming soon">공개 예정</span></span>
+            <h2 data-ko="1.0 베타 → 정식 릴리즈" data-en="1.0 Beta → Full Release">1.0 베타 → 정식 릴리즈</h2>
+            <p data-ko="데모에서 걸려 있던 시스템 2개·게임 100개 제한이 풀린 1.0 베타를, 먼저 후원자분들께 클로즈드 베타로 공개합니다. 후원 시 발급되는 스폰서 코드를 입력하면 베타 빌드를 받을 수 있습니다."
+               data-en="The 1.0 beta — without the demo's 2-system / 100-game limits — goes to sponsors first as a closed beta. Enter the sponsor code issued with your donation to download the beta build.">데모에서 걸려 있던 시스템 2개·게임 100개 제한이 풀린 1.0 베타를, 먼저 후원자분들께 클로즈드 베타로 공개합니다. 후원 시 발급되는 스폰서 코드를 입력하면 베타 빌드를 받을 수 있습니다.</p>
+            <ul class="road">
+              <li>
+                <span class="rd" data-ko="공개 중" data-en="Available">공개 중</span>
+                <span data-ko="데모 버전 — 메가드라이브·슈퍼패미콤, 시스템 2개·게임 100개" data-en="Demo build — Mega Drive &amp; Super Famicom, 2 systems / 100 games"><b>데모 버전</b> — 메가드라이브·슈퍼패미콤, 시스템 2개·게임 100개</span>
+              </li>
+              <li class="now">
+                <span class="rd" data-ko="곧" data-en="Next">곧</span>
+                <span data-ko="1.0 베타 클로즈드 베타 — 후원자 전용, 스폰서 코드로 다운로드" data-en="1.0 closed beta — sponsors only, via sponsor code"><b>1.0 베타 클로즈드 베타</b> — 후원자 전용, 스폰서 코드로 다운로드</span>
+              </li>
+              <li class="next-up">
+                <span class="rd" data-ko="8월 말 예정" data-en="Late Aug">8월 말 예정</span>
+                <span data-ko="정식 릴리즈 1.0 — 제약 없는 전체 버전, 누구나 다운로드" data-en="Full release 1.0 — unrestricted, open to everyone"><b>정식 릴리즈 1.0</b> — 제약 없는 전체 버전, 누구나 다운로드</span>
+              </li>
+            </ul>
+          </div>
+          <div class="next-cta">
+            <a class="btn btn-primary" href="index.html#download" data-ko="베타 다운로드로 이동" data-en="Go to beta download">베타 다운로드로 이동</a>
+            <a class="btn btn-ghost" href="index.html#download" data-ko="데모 먼저 써보기" data-en="Try the demo first">데모 먼저 써보기</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 타임라인 -->
+  <section>
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow" data-ko="업데이트 노트" data-en="Changelog">업데이트 노트</span>
+        <h2 data-ko="무엇이 달라졌나" data-en="What changed">무엇이 달라졌나</h2>
+        <p data-ko="최근 항목이 위에 있습니다. 개발 기록을 기준으로 정리했습니다."
+           data-en="Newest first, based on the development log.">최근 항목이 위에 있습니다. 개발 기록을 기준으로 정리했습니다.</p>
+      </div>
+
+      <div class="tl">
+
+        <!-- 2026-07-30 -->
+        <article class="tl-item hl reveal">
+          <div class="tl-dot"><i></i></div>
+          <div class="tl-date">2026.07.30</div>
+          <h3 class="tl-title" data-ko="신뢰성 대규모 개선 — 조용한 실패를 없앴습니다" data-en="A big reliability pass — no more silent failures">신뢰성 대규모 개선 — 조용한 실패를 없앴습니다</h3>
+          <div class="tags">
+            <span class="tag fix" data-ko="수정" data-en="Fix">수정</span>
+            <span class="tag imp" data-ko="개선" data-en="Improved">개선</span>
+            <span class="tag new" data-ko="신규" data-en="New">신규</span>
+          </div>
+          <div class="tl-body">
+            <ul>
+              <li data-ko="전송 실패를 더 이상 숨기지 않습니다. 통신이 끊겨 파일이 전송되지 않았는데도 '내보내기 완료'로 끝나던 문제를 고쳤습니다. 실패한 파일 수와 이름을 알려주고, 다시 내보내면 실패분만 재전송합니다."
+                  data-en="Transfer failures are no longer hidden. Previously a dropped connection could still end with “Export complete”. Now you get the failed count and names, and re-exporting retries only those.">전송 실패를 더 이상 숨기지 않습니다. 통신이 끊겨 파일이 전송되지 않았는데도 '내보내기 완료'로 끝나던 문제를 고쳤습니다. 실패한 파일 수와 이름을 알려주고, 다시 내보내면 실패분만 재전송합니다.</li>
+              <li data-ko="ES-DE의 대체 에뮬레이터 설정을 지켜냅니다. ES-DE는 시스템별 에뮬레이터를 gamelist.xml에 특수한 형식으로 저장하는데, 이를 읽지 못해 내보낼 때 사용자의 선택이 사라지던 문제를 해결했습니다."
+                  data-en="Your ES-DE alternative-emulator choices survive an export. ES-DE stores them in gamelist.xml in an unusual shape that we failed to parse — so exporting used to wipe them.">ES-DE의 대체 에뮬레이터 설정을 지켜냅니다. ES-DE는 시스템별 에뮬레이터를 gamelist.xml에 특수한 형식으로 저장하는데, 이를 읽지 못해 내보낼 때 사용자의 선택이 사라지던 문제를 해결했습니다.</li>
+              <li data-ko="가져오기에서 건너뛰던 시스템을 되살렸습니다. 같은 이유로 파싱에 실패해 '?개'로 표시되며 가져올 수 없던 시스템들이 정상 인식됩니다."
+                  data-en="Systems that used to be skipped on import now work. The same parsing issue made them show “?” and become unselectable.">가져오기에서 건너뛰던 시스템을 되살렸습니다. 같은 이유로 파싱에 실패해 '?개'로 표시되며 가져올 수 없던 시스템들이 정상 인식됩니다.</li>
+              <li data-ko="안드로이드 Pegasus 가져오기를 추가했습니다. 내보내기는 지원하는데 가져오기는 ES-DE 전용이던 비대칭을 해소했습니다."
+                  data-en="Android Pegasus import added — export already supported it, import didn’t.">안드로이드 Pegasus 가져오기를 추가했습니다. 내보내기는 지원하는데 가져오기는 ES-DE 전용이던 비대칭을 해소했습니다.</li>
+              <li data-ko="ES-DE custom_systems 지원 — 내보낼 때 시스템별 롬 경로를 따로 지정할 수 있습니다(직접 입력 또는 기기 탐색)."
+                  data-en="ES-DE custom_systems support — set a per-system ROM path on export (type it or browse the device).">ES-DE custom_systems 지원 — 내보낼 때 시스템별 롬 경로를 따로 지정할 수 있습니다(직접 입력 또는 기기 탐색).</li>
+              <li data-ko="ES-DE가 인식하지 못하던 폴더명을 공식 시스템명으로 자동 보정합니다(Atari Lynx, 3DS 등)."
+                  data-en="Folder names ES-DE couldn’t recognize are auto-corrected to its official system names (Atari Lynx, 3DS, and more).">ES-DE가 인식하지 못하던 폴더명을 공식 시스템명으로 자동 보정합니다(Atari Lynx, 3DS 등).</li>
+              <li data-ko="같은 이미지를 두 번 합성·전송하던 낭비를 제거했습니다. 미디어 파일 수와 전송 시간이 줄어듭니다."
+                  data-en="Removed duplicate media work — the same image was being composited and transferred twice.">같은 이미지를 두 번 합성·전송하던 낭비를 제거했습니다. 미디어 파일 수와 전송 시간이 줄어듭니다.</li>
+              <li data-ko="기기 탐색기에서 텍스트 파일 보기·편집·저장이 가능합니다(txt/xml/cfg 등). 편집기를 닫으면 탐색창으로 정확히 돌아옵니다."
+                  data-en="View, edit and save text files right in the device browser (txt/xml/cfg…), and closing the editor returns you to the browser.">기기 탐색기에서 텍스트 파일 보기·편집·저장이 가능합니다(txt/xml/cfg 등). 편집기를 닫으면 탐색창으로 정확히 돌아옵니다.</li>
+              <li data-ko="매칭 결과가 항상 같아졌습니다. 같은 롬 폴더를 다시 스캔하면 매번 조금씩 달라지던 비결정성을 제거했습니다."
+                  data-en="Matching is now deterministic — re-scanning the same folder no longer yields slightly different results.">매칭 결과가 항상 같아졌습니다. 같은 롬 폴더를 다시 스캔하면 매번 조금씩 달라지던 비결정성을 제거했습니다.</li>
+              <li data-ko="전송 진행률을 바이트 단위로 표시합니다 — '게임파일명 (234MB / 764MB) [3/91]'. 큰 롬 파일에서 멈춘 것처럼 보이던 문제가 없습니다."
+                  data-en="Byte-level transfer progress — “game.zip (234MB / 764MB) [3/91]”. Large ROMs no longer look frozen.">전송 진행률을 바이트 단위로 표시합니다 — '게임파일명 (234MB / 764MB) [3/91]'. 큰 롬 파일에서 멈춘 것처럼 보이던 문제가 없습니다.</li>
+              <li data-ko="마스터 DB 조회 속도를 크게 끌어올렸습니다(인덱스 추가 + 연결 재사용). 메타 편집기와 추천 목록이 즉시 열립니다."
+                  data-en="Master-DB lookups are much faster (indexes + connection reuse) — the meta editor and suggestion list open instantly.">마스터 DB 조회 속도를 크게 끌어올렸습니다(인덱스 추가 + 연결 재사용). 메타 편집기와 추천 목록이 즉시 열립니다.</li>
+              <li data-ko="SFTP 주소 입력에서 점(.)이 자동으로 찍힙니다."
+                  data-en="SFTP address input now inserts dots automatically.">SFTP 주소 입력에서 점(.)이 자동으로 찍힙니다.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- 2026-07-29 -->
+        <article class="tl-item reveal">
+          <div class="tl-dot"><i></i></div>
+          <div class="tl-date">2026.07.29</div>
+          <h3 class="tl-title" data-ko="PS Vita — Vita3K 설치 방식 개편" data-en="PS Vita — reworked Vita3K install flow">PS Vita — Vita3K 설치 방식 개편</h3>
+          <div class="tags">
+            <span class="tag new" data-ko="신규" data-en="New">신규</span>
+            <span class="tag imp" data-ko="개선" data-en="Improved">개선</span>
+          </div>
+          <div class="tl-body">
+            <ul>
+              <li data-ko="PS Vita 게임(.vpk)을 풀어 기기의 Vita3K 앱 폴더로 바로 설치합니다. 이미 설치된 타이틀은 자동으로 건너뜁니다."
+                  data-en="PS Vita games (.vpk) are unpacked straight into the device’s Vita3K app folder, skipping titles already installed.">PS Vita 게임(.vpk)을 풀어 기기의 Vita3K 앱 폴더로 바로 설치합니다. 이미 설치된 타이틀은 자동으로 건너뜁니다.</li>
+              <li data-ko="기기에 Vita3K가 없으면 수 GB를 헛되게 전송하지 않고 미리 안내하고 건너뜁니다."
+                  data-en="If Vita3K isn’t installed, we warn and skip instead of wasting a multi-GB transfer.">기기에 Vita3K가 없으면 수 GB를 헛되게 전송하지 않고 미리 안내하고 건너뜁니다.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- 2026-07-26 ~ 27 -->
+        <article class="tl-item reveal">
+          <div class="tl-dot"><i></i></div>
+          <div class="tl-date">2026.07.26 – 27</div>
+          <h3 class="tl-title" data-ko="미디어 리전 우선순위 — 원하는 지역판으로" data-en="Media region priority — pick your regional art">미디어 리전 우선순위 — 원하는 지역판으로</h3>
+          <div class="tags">
+            <span class="tag new" data-ko="신규" data-en="New">신규</span>
+          </div>
+          <div class="tl-body">
+            <ul>
+              <li data-ko="박스아트·스크린샷·매뉴얼 등 미디어 종류마다 선호 리전(일본/북미/유럽…) 순위를 따로 지정할 수 있습니다."
+                  data-en="Set a preferred region order (JP / US / EU …) per media type — box art, screenshots, manuals and more.">박스아트·스크린샷·매뉴얼 등 미디어 종류마다 선호 리전(일본/북미/유럽…) 순위를 따로 지정할 수 있습니다.</li>
+              <li data-ko="매뉴얼도 리전 순위에 따라 받아옵니다."
+                  data-en="Manuals follow the same region priority.">매뉴얼도 리전 순위에 따라 받아옵니다.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- 2026-07-17 : 데모 릴리즈 -->
+        <article class="tl-item hl reveal">
+          <div class="tl-dot"><i></i></div>
+          <div class="tl-date">2026.07.17</div>
+          <h3 class="tl-title" data-ko="데모 버전 최초 공개 🎉" data-en="First demo release 🎉">데모 버전 최초 공개 🎉</h3>
+          <div class="tags">
+            <span class="tag rel" data-ko="릴리즈" data-en="Release">릴리즈</span>
+          </div>
+          <div class="tl-body">
+            <ul>
+              <li data-ko="누구나 설치해 볼 수 있는 데모 빌드를 처음 공개했습니다. 메가드라이브·슈퍼패미콤 두 시스템, 시스템 2개·게임 100개까지 체험할 수 있습니다."
+                  data-en="The first publicly installable demo build. Try Mega Drive and Super Famicom — up to 2 systems and 100 games.">누구나 설치해 볼 수 있는 데모 빌드를 처음 공개했습니다. 메가드라이브·슈퍼패미콤 두 시스템, 시스템 2개·게임 100개까지 체험할 수 있습니다.</li>
+              <li data-ko="실행 시 데모 제약사항 안내를 표시하고, '다시 보지 않기'로 끌 수 있습니다."
+                  data-en="A startup notice explains the demo limits, with a “don’t show again” option.">실행 시 데모 제약사항 안내를 표시하고, '다시 보지 않기'로 끌 수 있습니다.</li>
+              <li data-ko="이어서 사용 가이드 페이지도 함께 열었습니다."
+                  data-en="The usage guide page opened alongside it.">이어서 사용 가이드 페이지도 함께 열었습니다.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- 2026-06-24 ~ 25 -->
+        <article class="tl-item reveal">
+          <div class="tl-dot"><i></i></div>
+          <div class="tl-date">2026.06.24 – 25</div>
+          <h3 class="tl-title" data-ko="미디어 서버 전환 + 컨트롤러 키설정" data-en="New media backend + controller mapping">미디어 서버 전환 + 컨트롤러 키설정</h3>
+          <div class="tags">
+            <span class="tag new" data-ko="신규" data-en="New">신규</span>
+            <span class="tag imp" data-ko="개선" data-en="Improved">개선</span>
+          </div>
+          <div class="tl-body">
+            <ul>
+              <li data-ko="미디어 다운로드를 Cloudflare 기반으로 옮겼습니다. 엣지 캐시를 타면서 이미지·영상 받는 속도가 크게 빨라졌습니다."
+                  data-en="Media downloads moved onto Cloudflare — edge caching makes images and videos land much faster.">미디어 다운로드를 Cloudflare 기반으로 옮겼습니다. 엣지 캐시를 타면서 이미지·영상 받는 속도가 크게 빨라졌습니다.</li>
+              <li data-ko="컨트롤러 키설정 기능을 추가했습니다. RetroArch 리맵(.rmp), DOS 게임용 DOSBox-Pure 패드 설정, Dolphin 계열 개별 프로필까지 내보낼 때 함께 만들어 줍니다."
+                  data-en="Controller mapping added — RetroArch remaps (.rmp), DOSBox-Pure pad configs for DOS games, and Dolphin-family profiles are generated on export.">컨트롤러 키설정 기능을 추가했습니다. RetroArch 리맵(.rmp), DOS 게임용 DOSBox-Pure 패드 설정, Dolphin 계열 개별 프로필까지 내보낼 때 함께 만들어 줍니다.</li>
+              <li data-ko="ArkOS·OnionOS·RG34xxSP/TSP StockOS의 리맵 경로 규약까지 지원합니다."
+                  data-en="Remap path conventions for ArkOS, OnionOS and RG34xxSP/TSP StockOS are supported too.">ArkOS·OnionOS·RG34xxSP/TSP StockOS의 리맵 경로 규약까지 지원합니다.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- 2026-06-20 -->
+        <article class="tl-item reveal">
+          <div class="tl-dot"><i></i></div>
+          <div class="tl-date">2026.06.20</div>
+          <h3 class="tl-title" data-ko="v1.0 기반 대규모 개편 — 새 UI로 완전 이전" data-en="v1.0 overhaul — fully moved to the new UI">v1.0 기반 대규모 개편 — 새 UI로 완전 이전</h3>
+          <div class="tags">
+            <span class="tag imp" data-ko="개선" data-en="Improved">개선</span>
+            <span class="tag new" data-ko="신규" data-en="New">신규</span>
+          </div>
+          <div class="tl-body">
+            <ul>
+              <li data-ko="구형 인터페이스를 완전히 걷어내고 새 웹 기반 UI 하나로 통합했습니다. 화면 전환이 부드러워지고 다크/라이트 테마와 한/영 전환이 재시작 없이 즉시 적용됩니다."
+                  data-en="The legacy interface is gone; everything runs on one new web-based UI. Smoother navigation, and dark/light plus KO/EN switch instantly without a restart.">구형 인터페이스를 완전히 걷어내고 새 웹 기반 UI 하나로 통합했습니다. 화면 전환이 부드러워지고 다크/라이트 테마와 한/영 전환이 재시작 없이 즉시 적용됩니다.</li>
+              <li data-ko="기기 탐색기를 추가했습니다. SFTP·ADB로 연결한 기기의 폴더를 직접 열어 보고 폴더 만들기·복사·이동·삭제가 가능합니다."
+                  data-en="Device browser added — open folders on an SFTP/ADB-connected device and create, copy, move or delete right there.">기기 탐색기를 추가했습니다. SFTP·ADB로 연결한 기기의 폴더를 직접 열어 보고 폴더 만들기·복사·이동·삭제가 가능합니다.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- 2026-06-17 -->
+        <article class="tl-item reveal">
+          <div class="tl-dot"><i></i></div>
+          <div class="tl-date">2026.06.17</div>
+          <h3 class="tl-title" data-ko="공식 홈페이지 공개" data-en="Official homepage launched">공식 홈페이지 공개</h3>
+          <div class="tags">
+            <span class="tag rel" data-ko="릴리즈" data-en="Release">릴리즈</span>
+          </div>
+          <div class="tl-body">
+            <ul>
+              <li data-ko="소개 페이지와 '읽을거리'를 함께 열었습니다. 에뮬레이터가 처음인 분도 이해할 수 있게 레트로 세팅 이야기를 풀어 두었습니다."
+                  data-en="The landing page opened together with “Read” — a beginner-friendly take on retro emulator setup.">소개 페이지와 '읽을거리'를 함께 열었습니다. 에뮬레이터가 처음인 분도 이해할 수 있게 레트로 세팅 이야기를 풀어 두었습니다.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- 2026-06-13 ~ 14 -->
+        <article class="tl-item reveal">
+          <div class="tl-dot"><i></i></div>
+          <div class="tl-date">2026.06.13 – 14</div>
+          <h3 class="tl-title" data-ko="내보내기 · 프론트엔드 세팅 · 메타 저장" data-en="Export, frontend settings, saved metadata">내보내기 · 프론트엔드 세팅 · 메타 저장</h3>
+          <div class="tags">
+            <span class="tag new" data-ko="신규" data-en="New">신규</span>
+          </div>
+          <div class="tl-body">
+            <ul>
+              <li data-ko="ES-DE·EmulationStation 계열·Pegasus·RetroArch·StockOS 등 프론트엔드별 규약에 맞춰 게임 목록과 미디어를 내보냅니다."
+                  data-en="Export game lists and media following each frontend’s conventions — ES-DE, EmulationStation forks, Pegasus, RetroArch, StockOS.">ES-DE·EmulationStation 계열·Pegasus·RetroArch·StockOS 등 프론트엔드별 규약에 맞춰 게임 목록과 미디어를 내보냅니다.</li>
+              <li data-ko="시스템별 에뮬레이터·코어를 골라 저장해 두면 내보낼 때 함께 적용됩니다."
+                  data-en="Pick an emulator/core per system once; exports carry it along.">시스템별 에뮬레이터·코어를 골라 저장해 두면 내보낼 때 함께 적용됩니다.</li>
+              <li data-ko="직접 손본 메타 정보가 저장되어 재스캔에도 남습니다. 장르 한글 표기도 정리했습니다."
+                  data-en="Hand-edited metadata persists across re-scans, and genre names were localized to Korean.">직접 손본 메타 정보가 저장되어 재스캔에도 남습니다. 장르 한글 표기도 정리했습니다.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- 2026-06-08 ~ 09 -->
+        <article class="tl-item reveal">
+          <div class="tl-dot"><i></i></div>
+          <div class="tl-date">2026.06.08 – 09</div>
+          <h3 class="tl-title" data-ko="매칭 정확도 향상 + 이미지 편집" data-en="Better matching + image editing">매칭 정확도 향상 + 이미지 편집</h3>
+          <div class="tags">
+            <span class="tag imp" data-ko="개선" data-en="Improved">개선</span>
+            <span class="tag new" data-ko="신규" data-en="New">신규</span>
+          </div>
+          <div class="tl-body">
+            <ul>
+              <li data-ko="파일명이 엉망이어도 게임을 찾아냅니다. 해시 대조 → 정확 검색 → 토큰 검색 → 유사도 매칭을 단계적으로 시도하고, 그래도 못 찾으면 AI에게 물어봅니다."
+                  data-en="Finds games even from messy filenames: hash → exact → token → fuzzy matching in stages, and asks an AI when all else fails.">파일명이 엉망이어도 게임을 찾아냅니다. 해시 대조 → 정확 검색 → 토큰 검색 → 유사도 매칭을 단계적으로 시도하고, 그래도 못 찾으면 AI에게 물어봅니다.</li>
+              <li data-ko="추천 목록에 유사도 매칭을 도입해 후보를 더 잘 뽑아냅니다."
+                  data-en="Fuzzy matching in the suggestion list surfaces better candidates.">추천 목록에 유사도 매칭을 도입해 후보를 더 잘 뽑아냅니다.</li>
+              <li data-ko="믹스 이미지 편집과 이미지 확대 보기를 추가했습니다. 박스아트·스크린샷·로고를 합쳐 원하는 배치로 만들 수 있습니다."
+                  data-en="Mix-image editing and zoom view added — compose box art, screenshots and logos into the layout you want.">믹스 이미지 편집과 이미지 확대 보기를 추가했습니다. 박스아트·스크린샷·로고를 합쳐 원하는 배치로 만들 수 있습니다.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- 2024-12-09 -->
+        <article class="tl-item reveal">
+          <div class="tl-dot"><i></i></div>
+          <div class="tl-date">2024.12.09</div>
+          <h3 class="tl-title" data-ko="개발 시작" data-en="Development begins">개발 시작</h3>
+          <div class="tags">
+            <span class="tag" data-ko="시작" data-en="Start">시작</span>
+          </div>
+          <div class="tl-body">
+            <ul>
+              <li data-ko="흩어진 ROM을 정리하는 일이 왜 이렇게 번거로울까 — 그 질문에서 시작한 개인 프로젝트가 첫 커밋을 남겼습니다."
+                  data-en="“Why is organizing ROMs this tedious?” — the question that started this personal project, first commit landed.">흩어진 ROM을 정리하는 일이 왜 이렇게 번거로울까 — 그 질문에서 시작한 개인 프로젝트가 첫 커밋을 남겼습니다.</li>
+            </ul>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div style="max-width:340px">
+        <a class="brand" href="index.html"><img src="assets/icon.png" alt="logo" style="width:30px;height:30px"/><span class="bt">HAE-BANG Rom Setting Tools</span></a>
+        <p class="muted" style="font-size:13.5px; margin:14px 0 0" data-ko="레트로 게임 라이브러리를 큐레이션하는 전용 도구. 한국 개발자가 만든 한/영 지원 앱." data-en="A dedicated curator for retro game libraries. Built in Korea, Korean & English.">레트로 게임 라이브러리를 큐레이션하는 전용 도구. 한국 개발자가 만든 한/영 지원 앱.</p>
+      </div>
+      <div class="foot-col">
+        <h5 data-ko="바로가기" data-en="Links">바로가기</h5>
+        <a href="news.html" data-ko="새로운 소식" data-en="News">새로운 소식</a>
+        <a href="index.html#features" data-ko="기능" data-en="Features">기능</a>
+        <a href="index.html#how" data-ko="작동 방식" data-en="How it works">작동 방식</a>
+        <a href="guide.html" data-ko="가이드" data-en="Guide">가이드</a>
+        <a href="story.html" data-ko="읽을거리" data-en="Read">읽을거리</a>
+        <a href="index.html#download" data-ko="다운로드" data-en="Download">다운로드</a>
+      </div>
+      <div class="foot-col">
+        <h5 data-ko="후원" data-en="Support">후원</h5>
+        <p class="muted" style="font-size:13px;margin:0 0 12px" data-ko="후원하시면 1.0 베타 클로즈드 베타에 참여할 수 있습니다." data-en="Sponsors get access to the 1.0 closed beta.">후원하시면 1.0 베타 클로즈드 베타에 참여할 수 있습니다.</p>
+        <a class="btn btn-ghost" href="index.html#download" data-ko="♥ 후원 · 베타 받기" data-en="♥ Support · Get beta">♥ 후원 · 베타 받기</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© <span id="yr"></span> HAE-BANG Rom Setting Tools. All rights reserved.</span>
+      <span data-ko="Windows 전용 · Python · pywebview" data-en="Windows only · Python · pywebview">Windows 전용 · Python · pywebview</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // language toggle (ko <-> en) — index.html 과 동일한 data-ko/data-en 방식 + localStorage 공유
+  var lang = 'ko';
+  function applyLang(l){
+    lang = l;
+    document.documentElement.lang = l;
+    document.querySelectorAll('[data-ko]').forEach(function(el){
+      var v = el.getAttribute('data-' + l);
+      if (v != null) el.textContent = v;
+    });
+    document.getElementById('langBtn').textContent = (l === 'ko') ? 'EN' : '한';
+    try { localStorage.setItem('hb_lang', l); } catch(e){}
+  }
+  document.getElementById('langBtn').addEventListener('click', function(){
+    applyLang(lang === 'ko' ? 'en' : 'ko');
+  });
+  try { var saved = localStorage.getItem('hb_lang'); if (saved) applyLang(saved); } catch(e){}
+
+  // header shadow on scroll
+  var hdr = document.getElementById('hdr');
+  function onScroll(){ hdr.classList.toggle('scrolled', window.scrollY > 8); }
+  onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
+
+  // reveal on scroll
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {rootMargin:'0px 0px -8% 0px', threshold:.06});
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+</script>
+</body>
+</html>

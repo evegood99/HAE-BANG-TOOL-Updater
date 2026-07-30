@@ -146,6 +146,7 @@
       <span><span class="bt">HAE-BANG</span><div class="bs"><span class="ko-only">롬 세팅 툴</span><span class="en-only">Rom Setting Tools</span></div></span>
     </a>
     <nav class="nav-links">
+      <a href="news.html"><span class="ko-only">새로운 소식</span><span class="en-only">News</span></a>
       <a href="index.html#features"><span class="ko-only">기능</span><span class="en-only">Features</span></a>
       <a href="index.html#how"><span class="ko-only">작동 방식</span><span class="en-only">How it works</span></a>
       <a href="guide.html" class="active"><span class="ko-only">가이드</span><span class="en-only">Guide</span></a>
@@ -166,8 +167,8 @@
       <span class="en-only"><span class="grad-text">User Guide</span> — every feature, explained</span>
     </h1>
     <p>
-      <span class="ko-only">시스템 추가부터 메타·미디어 편집, 컨트롤러 설정, 전역 설정, 기기 내보내기까지 — HAE-BANG Rom Setting Tools가 다루는 모든 기능을 순서대로 정리한 매뉴얼입니다.</span>
-      <span class="en-only">From adding systems to editing metadata & media, controller mapping, global settings, and exporting to devices — a complete manual for everything HAE-BANG Rom Setting Tools can do.</span>
+      <span class="ko-only">시스템 추가부터 메타·미디어 편집, 컨트롤러 설정, 기기 내보내기와 <strong>가져오기</strong>, <strong>기기 탐색기</strong>까지 — HAE-BANG Rom Setting Tools가 다루는 모든 기능을 순서대로 정리한 매뉴얼입니다.</span>
+      <span class="en-only">From adding systems to editing metadata &amp; media, controller mapping, exporting to devices, <strong>importing</strong> existing libraries and the <strong>device browser</strong> — a complete manual for everything HAE-BANG Rom Setting Tools can do.</span>
     </p>
   </div>
 </section>
@@ -193,7 +194,15 @@
     <a class="sub" href="#ai"><span class="ko-only">AI 설정</span><span class="en-only">AI settings</span></a>
     <a class="sub" href="#scraper"><span class="ko-only">ScreenScraper</span><span class="en-only">ScreenScraper</span></a>
     <a href="#export"><span class="ko-only">8. 내보내기</span><span class="en-only">8. Export</span></a>
-    <a href="#etc"><span class="ko-only">9. 후원 · 업데이트</span><span class="en-only">9. Support · Updates</span></a>
+    <a class="sub" href="#export-target"><span class="ko-only">대상 기기 · 프론트엔드</span><span class="en-only">Target &amp; front-end</span></a>
+    <a class="sub" href="#export-media"><span class="ko-only">내보낼 미디어</span><span class="en-only">Media to export</span></a>
+    <a class="sub" href="#export-folder"><span class="ko-only">폴더 · 롬 경로</span><span class="en-only">Folders &amp; ROM paths</span></a>
+    <a class="sub" href="#export-run"><span class="ko-only">전송 · 진행률</span><span class="en-only">Transfer &amp; progress</span></a>
+    <a href="#import"><span class="ko-only">9. 가져오기</span><span class="en-only">9. Import</span></a>
+    <a class="sub" href="#import-local"><span class="ko-only">내 컴퓨터에서</span><span class="en-only">From this PC</span></a>
+    <a class="sub" href="#import-device"><span class="ko-only">기기에서</span><span class="en-only">From a device</span></a>
+    <a href="#browser"><span class="ko-only">10. 기기 탐색기 · 파일 편집</span><span class="en-only">10. Device Browser</span></a>
+    <a href="#etc"><span class="ko-only">11. 후원 · 업데이트</span><span class="en-only">11. Support · Updates</span></a>
   </aside>
 
   <!-- ===== CONTENT ===== -->
@@ -213,8 +222,12 @@
         <span class="en-only">The screen is split into the <span class="hl">system list (left)</span> and the <span class="hl">game list / details (right)</span>. Pick a system to list its games; pick a game to see its info, media, video and manual. The top-right holds <strong>theme</strong>, <strong>language (KO/EN, switches instantly without a restart)</strong>, <strong>settings</strong>, and <strong>Donate ♥</strong>.</span>
       </p>
       <div class="tip">
-        <span class="ko-only"><b>기본 흐름</b> — ① 시스템 추가 → ② ROM 자동 매칭·미디어 다운로드 → ③ 필요하면 메타/미디어 편집 → ④ 기기로 내보내기.</span>
-        <span class="en-only"><b>Typical flow</b> — ① add a system → ② auto-match ROMs & download media → ③ tweak metadata/media if needed → ④ export to your device.</span>
+        <span class="ko-only"><b>기본 흐름</b> — ① 시스템 추가 → ② ROM 자동 매칭·미디어 다운로드 → ③ 필요하면 메타/미디어 편집 → ④ 기기로 내보내기. 이미 다른 프론트엔드로 세팅해 둔 라이브러리가 있다면 ①을 <a href="#import">가져오기</a>로 대체할 수 있습니다.</span>
+        <span class="en-only"><b>Typical flow</b> — ① add a system → ② auto-match ROMs &amp; download media → ③ tweak metadata/media if needed → ④ export to your device. If you already have a library set up in another front-end, you can replace ① with <a href="#import">Import</a>.</span>
+      </div>
+      <div class="note">
+        <span class="ko-only"><b>데모 버전을 쓰고 계신다면</b> — 체험용 제약이 있습니다. <strong>메가드라이브·슈퍼패미컴 2개 시스템</strong>, <strong>시스템 최대 2개</strong>, <strong>게임 최대 100개</strong>까지 추가할 수 있고 그 외 기능은 모두 동일합니다. 제약이 풀린 1.0 베타는 <a href="news.html">새로운 소식</a>에서 안내합니다.</span>
+        <span class="en-only"><b>Using the demo build?</b> — it has trial limits: only <strong>Mega Drive &amp; Super Famicom</strong>, up to <strong>2 systems</strong> and <strong>100 games</strong>. Everything else works the same. See <a href="news.html">News</a> for the unrestricted 1.0 beta.</span>
       </div>
     </section>
 
@@ -358,6 +371,7 @@
 
       <h3 id="region"><span class="ko-only">리전 우선순위</span><span class="en-only">Region priority</span></h3>
       <p><span class="ko-only">한 게임에 여러 지역판 미디어(일본/북미/유럽/한국 등)가 있을 때, <strong>어느 지역을 우선</strong>으로 받고 표시할지 순서를 정합니다. 시스템별로 다른 순서를 저장할 수도 있습니다.</span><span class="en-only">When a game has media for multiple regions (JP/US/EU/KR…), set the <strong>preferred order</strong> for downloading and display. You can save a different order per system.</span></p>
+      <p><span class="ko-only">순위는 <strong>미디어 종류마다 따로</strong> 지정할 수 있습니다. 예를 들어 <em>박스아트는 일본판</em>을 쓰면서 <em>스크린샷은 북미판</em>을 쓰는 식입니다. 매뉴얼도 같은 순위를 따라 내려받습니다.</span><span class="en-only">Priorities can be set <strong>per media type</strong> — e.g. Japanese box art with US screenshots. Manuals follow the same ordering.</span></p>
 
       <h3 id="ai"><span class="ko-only">AI 설정</span><span class="en-only">AI settings</span></h3>
       <p><span class="ko-only">매뉴얼 번역, AI로 메타 채우기 등에 쓰이는 LLM을 설정합니다.</span><span class="en-only">Configure the LLM used for manual translation, AI meta-fill, etc.</span></p>
@@ -377,32 +391,107 @@
       <h2><span class="ko-only">내보내기</span><span class="en-only">Export</span></h2>
       <p><span class="ko-only">완성한 게임 목록과 미디어를 <span class="path">gamelist.xml</span>과 함께 기기로 내보냅니다. 한 개 이상의 시스템을 골라 시작합니다.</span><span class="en-only">Send your finished game list and media — together with <span class="path">gamelist.xml</span> — to a device. Pick one or more systems to begin.</span></p>
 
-      <h3><span class="ko-only">1) 대상 기기 선택</span><span class="en-only">1) Choose the target</span></h3>
+      <h3 id="export-target"><span class="ko-only">1) 대상 기기와 프론트엔드 선택</span><span class="en-only">1) Choose the target &amp; front-end</span></h3>
+      <p><span class="ko-only">먼저 <strong>어디로 보낼지</strong>(연결 방식)를 고르고, 그 다음 <strong>어떤 프론트엔드 규약으로 만들지</strong>를 고릅니다. 이 두 가지는 별개입니다.</span><span class="en-only">First choose <strong>where to send it</strong> (the connection), then <strong>which front-end layout to build</strong>. These are two separate choices.</span></p>
       <table class="ftable">
-        <tr><th style="width:34%"><span class="ko-only">대상</span><span class="en-only">Target</span></th><th><span class="ko-only">연결 방식</span><span class="en-only">Connection</span></th></tr>
-        <tr><td><span class="ko-only">내 컴퓨터</span><span class="en-only">My Computer</span></td><td><span class="ko-only">로컬 PC의 폴더로 내보내기.</span><span class="en-only">Export to a folder on this PC.</span></td></tr>
-        <tr><td><span class="ko-only">안드로이드 (USB)</span><span class="en-only">Android (USB)</span></td><td><span class="ko-only">USB로 연결한 안드로이드 기기(ES-DE 등). 기기에서 <strong>개발자 옵션 &gt; USB 디버깅 On</strong> 필요. 내장/외장 스토리지 선택.</span><span class="en-only">Android device over USB (ES-DE, etc.). Needs <strong>Developer Options &gt; USB Debugging on</strong>. Choose internal/external storage.</span></td></tr>
-        <tr><td><span class="ko-only">리눅스 (SFTP)</span><span class="en-only">Linux (SFTP)</span></td><td><span class="ko-only">커스텀 OS 휴대용 기기에 IP·아이디·비번으로 접속. OnionOS · Batocera · KNULLI · ROCKNIX · JELOS · muOS · RG34xxSP/TSP StockOS 등.</span><span class="en-only">Handhelds running custom OS via IP/user/password: OnionOS · Batocera · KNULLI · ROCKNIX · JELOS · muOS · RG34xxSP/TSP StockOS, etc.</span></td></tr>
+        <tr><th style="width:34%"><span class="ko-only">내보내기 대상</span><span class="en-only">Destination</span></th><th><span class="ko-only">연결 방식</span><span class="en-only">Connection</span></th></tr>
+        <tr><td><span class="ko-only">내 컴퓨터</span><span class="en-only">My Computer</span></td><td><span class="ko-only">로컬 PC의 폴더로 내보내기. SD카드를 리더기에 꽂아 직접 쓸 때도 이 방식입니다.</span><span class="en-only">Export to a folder on this PC — also how you write directly to an SD card in a reader.</span></td></tr>
+        <tr><td><span class="ko-only">안드로이드 (ADB)</span><span class="en-only">Android (ADB)</span></td><td><span class="ko-only">USB로 연결한 안드로이드 기기. 기기에서 <strong>개발자 옵션 &gt; USB 디버깅 On</strong> 필요. 연결하면 기기의 실제 롬 경로를 자동으로 찾아 채웁니다.</span><span class="en-only">Android device over USB. Needs <strong>Developer Options &gt; USB Debugging on</strong>. Once connected, the device's actual ROM path is detected and filled in.</span></td></tr>
+        <tr><td><span class="ko-only">커스텀 리눅스 (SFTP)</span><span class="en-only">Custom Linux (SFTP)</span></td><td><span class="ko-only">커스텀 OS 휴대용 기기에 IP·계정·비밀번호로 접속. 대상 OS를 고르면 계정·롬 경로 기본값이 자동 입력됩니다(수정 가능).</span><span class="en-only">Handhelds running a custom OS via IP / user / password. Picking the target OS auto-fills the usual account and ROM path (editable).</span></td></tr>
       </table>
+      <p><span class="ko-only"><strong>대상 OS / 프론트엔드</strong>는 아래 중에서 고릅니다. 각각 폴더 구조·메타파일 형식·미디어 종류가 달라서, 고르는 순간 화면의 옵션이 그에 맞게 바뀝니다.</span><span class="en-only">Pick the <strong>target OS / front-end</strong> from the list below. Each has its own folder layout, metadata format and media set, so the options on screen change accordingly.</span></p>
+      <table class="ftable">
+        <tr><th style="width:34%"><span class="ko-only">프론트엔드</span><span class="en-only">Front-end</span></th><th><span class="ko-only">만들어지는 메타파일</span><span class="en-only">Metadata it writes</span></th></tr>
+        <tr><td>ES-DE</td><td><span class="path">ES-DE/gamelists/&lt;시스템&gt;/gamelist.xml</span><span class="ko-only"> · 미디어는 <span class="path">downloaded_media</span> 로 분리</span><span class="en-only"> · media kept separately in <span class="path">downloaded_media</span></span></td></tr>
+        <tr><td>Batocera / ROCKNIX / JELOS / KNULLI</td><td><span class="path">roms/&lt;시스템&gt;/gamelist.xml</span><span class="ko-only"> · 미디어도 롬 폴더 안</span><span class="en-only"> · media inside the ROM folder</span></td></tr>
+        <tr><td>ArkOS</td><td><span class="path">roms/&lt;시스템&gt;/gamelist.xml</span><span class="ko-only"> · <span class="path">images/</span> 관례</span><span class="en-only"> · <span class="path">images/</span> convention</span></td></tr>
+        <tr><td>Pegasus (pegasus-frontend)</td><td><span class="path">metadata.pegasus.txt</span></td></tr>
+        <tr><td>RetroArch</td><td><span class="path">playlists/&lt;시스템&gt;.lpl</span><span class="ko-only"> + <span class="path">thumbnails</span></span><span class="en-only"> + <span class="path">thumbnails</span></span></td></tr>
+        <tr><td>OnionOS</td><td><span class="path">miyoogamelist.xml</span><span class="ko-only"> + <span class="path">Imgs/</span></span><span class="en-only"> + <span class="path">Imgs/</span></span></td></tr>
+        <tr><td>RG34xxSP / TSP StockOS</td><td><span class="ko-only">메타파일 없이 이미지만(기기 규약 폴더명 자동 고정)</span><span class="en-only">Images only, no metadata file (device folder names are fixed automatically)</span></td></tr>
+      </table>
+      <div class="note"><span class="ko-only"><b>muOS 사용자</b> — 전용 항목은 없지만 폴더 규약이 OnionOS와 같아 <strong>OnionOS</strong>를 골라 내보내면 됩니다.</span><span class="en-only"><b>muOS users</b> — there's no dedicated entry, but the folder convention matches OnionOS, so pick <strong>OnionOS</strong>.</span></div>
 
-      <h3><span class="ko-only">2) 세부 옵션</span><span class="en-only">2) Options</span></h3>
+      <h3 id="export-media"><span class="ko-only">2) 내보낼 미디어 고르기</span><span class="en-only">2) Pick the media to export</span></h3>
+      <p><span class="ko-only">프론트엔드마다 쓸 수 있는 <strong>이미지 자리(슬롯)</strong>가 다릅니다. 각 슬롯을 켜고 끌 수 있고, 그 자리에 <strong>어떤 원본을 넣을지</strong>도 따로 고를 수 있습니다.</span><span class="en-only">Each front-end exposes different <strong>image slots</strong>. Toggle each slot on/off, and choose <strong>which source</strong> goes into it.</span></p>
       <ul>
-        <li><span class="ko-only"><strong>프론트엔드</strong> — ES-DE 또는 EmulationStation 형식의 <span class="path">gamelist.xml</span> 생성.</span><span class="en-only"><strong>Front-end</strong> — generate a <span class="path">gamelist.xml</span> for ES-DE or EmulationStation.</span></li>
-        <li><span class="ko-only"><strong>스크린샷(대표 이미지) 타입</strong> — 기본 스크린샷 / 미디어 믹스 / 3D 박스 커버 / 카트리지(Support) / 로고(Wheel) / 앞표지(Cover) / 케이스(Box Texture) 중 선택.</span><span class="en-only"><strong>Showcase image type</strong> — base screenshot / mixed / 3D box cover / support / logo (wheel) / cover / box texture.</span></li>
-        <li><span class="ko-only"><strong>제목 · 설명 언어</strong> — 제목과 설명을 각각 한글/영문으로 내보냅니다.</span><span class="en-only"><strong>Title & description language</strong> — export title and description each in Korean or English.</span></li>
-        <li><span class="ko-only"><strong>ROM 복사</strong> — 메타뿐 아니라 ROM 파일 자체도 함께 복사할지 선택.</span><span class="en-only"><strong>Copy ROMs</strong> — optionally copy the ROM files themselves, not just metadata.</span></li>
-        <li><span class="ko-only"><strong>미디어 복사</strong> — 이미지/영상 미디어를 대상 기기에 복사(다시 복사 옵션 포함).</span><span class="en-only"><strong>Copy media</strong> — copy image/video media to the device (with a re-copy option).</span></li>
-        <li><span class="ko-only"><strong>컨트롤러 리맵 포함</strong> — 위에서 만든 게임별/시스템별 입력 설정을 함께 내보냅니다.</span><span class="en-only"><strong>Include remaps</strong> — export the per-game/per-system input configs you made above.</span></li>
+        <li><span class="ko-only"><strong>슬롯</strong> — 메인 이미지, 박스(3D), 마퀴/로고, 타이틀 화면, 앞표지, 카트리지, 영상, 매뉴얼 등. 프론트엔드가 지원하지 않는 슬롯은 아예 나타나지 않습니다.</span><span class="en-only"><strong>Slots</strong> — main image, box (3D), marquee/logo, title screen, cover, cartridge, video, manual and more. Slots a front-end doesn't support simply don't appear.</span></li>
+        <li><span class="ko-only"><strong>원본 선택</strong> — 각 슬롯 옆 콤보에서 믹스 · 스크린샷 · 타이틀 · 앞표지 · 3D박스 · 케이스 · 휠/로고 · 서포트 중에 고릅니다. 예를 들어 <em>메인 이미지</em>에 기본값인 <strong>믹스</strong>(박스+스크린샷+로고 합성) 대신 <strong>스크린샷</strong>만 넣을 수도 있습니다.</span><span class="en-only"><strong>Source</strong> — the combo next to each slot offers mix · screenshot · title screen · cover · 3D box · box texture · wheel/logo · support. For example the <em>main image</em> defaults to <strong>mix</strong> (box + screenshot + logo composited) but you can switch it to plain <strong>screenshot</strong>.</span></li>
+        <li><span class="ko-only"><strong>제목 · 설명 언어</strong> — 제목과 설명을 각각 한글/영문으로 내보냅니다.</span><span class="en-only"><strong>Title &amp; description language</strong> — export title and description each in Korean or English.</span></li>
       </ul>
-      <div class="tip"><span class="ko-only">OS마다 폴더·파일 규칙이 다른데, 프로그램이 선택한 기기 OS에 맞춰 경로와 이름을 자동으로 맞춰 줍니다. 안드로이드 내보내기 시 내부적으로 adb를 사용하므로, 끝난 뒤 기기 폴더가 안내됩니다.</span><span class="en-only">Folder/file conventions differ per OS; the tool adapts paths and names to the chosen device OS automatically. Android export uses adb under the hood, and the target folder is shown when it finishes.</span></div>
+      <div class="tip"><span class="ko-only"><b>메인 이미지가 곧 대표 이미지입니다</b> — EmulationStation 계열에서 게임 목록에 크게 뜨는 그림이 이 슬롯입니다. 기본값이 믹스인 이유는 박스·스크린샷·로고가 한 장에 들어가 정보량이 가장 많기 때문입니다.</span><span class="en-only"><b>The main image is the showcase image</b> — it's what EmulationStation-family front-ends display large in the game list. It defaults to the mix because that one picture carries box, screenshot and logo at once.</span></div>
+
+      <h3 id="export-folder"><span class="ko-only">3) 폴더 이름과 롬 경로</span><span class="en-only">3) Folder names &amp; ROM paths</span></h3>
+      <ul>
+        <li><span class="ko-only"><strong>롬 경로 (기기)</strong> — 기기에서 게임이 들어갈 최상위 경로입니다. 연결하면 자동으로 채워지고, <strong>📂 탐색</strong>으로 기기 안을 직접 둘러보며 고를 수도 있습니다.</span><span class="en-only"><strong>ROMs path (device)</strong> — the root where games go on the device. It's auto-filled on connect, and <strong>📂 Browse</strong> lets you pick it by exploring the device.</span></li>
+        <li><span class="ko-only"><strong>내보내기 폴더</strong> — 시스템마다 폴더 이름을 지정할 수 있습니다. 고른 프론트엔드의 공식 시스템명으로 자동 보정되며(예: ES-DE에서 Atari Lynx는 <span class="path">atarilynx</span>), 직접 고쳐도 됩니다. 바꾸면 즉시 저장됩니다.</span><span class="en-only"><strong>Export folder</strong> — a folder name per system. It's auto-corrected to the chosen front-end's official system name (e.g. Atari Lynx becomes <span class="path">atarilynx</span> on ES-DE) and is editable. Edits save immediately.</span></li>
+        <li><span class="ko-only"><strong>하위 폴더</strong> — <span class="path">/</span> 로 구분해 <span class="path">snes/hack</span> 처럼 적으면 그 하위에 들어갑니다. 여러 시스템을 같은 폴더로 지정하면 <strong>하나로 합쳐</strong> 내보냅니다.</span><span class="en-only"><strong>Subfolders</strong> — write <span class="path">snes/hack</span> with a <span class="path">/</span> to nest it. Point several systems at the same folder and they are <strong>merged</strong> on export.</span></li>
+        <li><span class="ko-only"><strong>롬 경로 (시스템별)</strong> — ES-DE 전용입니다. ES-DE는 <span class="path">custom_systems</span> 로 시스템마다 롬 위치를 다르게 둘 수 있어서, 그 구성에 맞춰 이 시스템만 다른 절대경로로 보낼 수 있습니다. 비우면 <strong>Default</strong>(위의 롬 경로 기준)입니다.</span><span class="en-only"><strong>Per-system ROM path</strong> — ES-DE only. ES-DE can point each system at a different location via <span class="path">custom_systems</span>, so you can send just that system elsewhere. Leave it empty for <strong>Default</strong> (relative to the ROMs path above).</span></li>
+      </ul>
+      <div class="warn"><span class="ko-only"><b>시스템별 롬 경로는 ES-DE에서만 보입니다</b> — 다른 프론트엔드는 <span class="path">gamelist.xml</span>과 미디어가 <em>롬 폴더 안에</em> 있어야 하고 고정된 롬 루트만 훑기 때문에, 롬만 딴 곳으로 옮기면 게임이 전부 인식되지 않습니다.</span><span class="en-only"><b>Per-system ROM paths appear only for ES-DE</b> — other front-ends need <span class="path">gamelist.xml</span> and media <em>inside</em> the ROM folder and only scan a fixed ROM root, so moving just the ROMs would break every game.</span></div>
+
+      <h3 id="export-run"><span class="ko-only">4) 게임 목록 처리 · 전송</span><span class="en-only">4) Game list handling &amp; transfer</span></h3>
+      <ul>
+        <li><span class="ko-only"><strong>게임 목록(gamelist) 처리</strong> — <strong>병합 (권장)</strong>은 기기에 이미 있는 목록을 지우지 않고 선택한 게임만 갱신·추가합니다. 즐겨찾기·플레이 횟수처럼 기기에서 관리되는 값도 보존됩니다. <strong>전체 교체</strong>는 목록을 통째로 새로 씁니다.</span><span class="en-only"><strong>Game list handling</strong> — <strong>Merge (recommended)</strong> keeps the device's existing list and only updates/adds the selected games, preserving device-managed values like favorites and play counts. <strong>Replace</strong> rewrites the whole list.</span></li>
+        <li><span class="ko-only"><strong>ROM 파일도 복사</strong> — 메타뿐 아니라 ROM 자체를 함께 보냅니다. 이름·크기가 같은 파일은 건너뛰므로, 두 번째 내보내기부터는 훨씬 빠릅니다.</span><span class="en-only"><strong>Copy ROM files too</strong> — sends the ROMs as well as the metadata. Files with the same name and size are skipped, so repeat exports are much faster.</span></li>
+        <li><span class="ko-only"><strong>컨트롤러 키 설정 포함</strong> — <a href="#controller">6장</a>에서 만든 시스템·게임별 입력 설정을 함께 내보냅니다. RetroArch가 없는 기기에서는 무시됩니다. 리맵 경로는 자동으로 잡히고, 필요하면 직접 지정할 수 있습니다.</span><span class="en-only"><strong>Include controller mappings</strong> — exports the per-system/per-game input configs from <a href="#controller">chapter 6</a>. Ignored on devices without RetroArch. The remap path is detected automatically, or you can set it yourself.</span></li>
+        <li><span class="ko-only"><strong>PS Vita</strong> — <span class="path">.vpk</span> 를 풀어 기기의 Vita3K 앱 폴더로 바로 설치합니다. 이미 설치된 타이틀은 건너뛰고, 기기에 Vita3K가 없으면 수 GB를 헛되게 보내지 않고 미리 알려 줍니다.</span><span class="en-only"><strong>PS Vita</strong> — <span class="path">.vpk</span> files are unpacked straight into the device's Vita3K app folder. Already-installed titles are skipped, and if Vita3K is missing you're told up front instead of wasting a multi-GB transfer.</span></li>
+      </ul>
+      <p><span class="ko-only">전송이 시작되면 <strong>단계별 진행률</strong>이 표시됩니다. 큰 ROM 파일은 <span class="path">게임파일명 (234MB / 764MB) [3/91]</span> 처럼 바이트 단위로 진행 상황이 보이고, <strong>취소</strong>도 가능합니다.</span><span class="en-only">Once transfer starts you get <strong>per-phase progress</strong>. Large ROMs report byte-level progress like <span class="path">game.zip (234MB / 764MB) [3/91]</span>, and you can <strong>cancel</strong> at any time.</span></p>
+      <div class="tip"><span class="ko-only">OS마다 폴더·파일 규칙이 다른데, 프로그램이 고른 프론트엔드에 맞춰 경로와 이름을 자동으로 맞춰 줍니다. 전송하지 못한 파일이 있으면 <strong>몇 개가 실패했는지 파일명과 함께 알려 주고</strong>, 다시 내보내면 실패한 파일만 재전송합니다.</span><span class="en-only">Folder and file conventions differ per OS; the tool adapts paths and names to the chosen front-end. If any file fails to transfer you're told <strong>how many failed, with their names</strong> — and re-exporting retries only those.</span></div>
       <div class="warn"><span class="ko-only"><b>안드로이드 연결이 안 될 때</b> — 케이블 연결 상태에서 <strong>USB 디버깅을 껐다가 다시 켜</strong> 보세요. 기기에 뜨는 <strong>USB 디버깅 허용</strong> 창도 확인해야 합니다.</span><span class="en-only"><b>If Android won't connect</b> — with the cable plugged in, <strong>toggle USB Debugging off and on</strong>. Also accept the <strong>Allow USB debugging</strong> prompt on the device.</span></div>
     </section>
 
-    <!-- 9. ETC -->
+    <!-- 9. IMPORT -->
+    <section class="gsec" id="import">
+      <p class="kicker">09 — IMPORT</p>
+      <h2><span class="ko-only">가져오기</span><span class="en-only">Import</span></h2>
+      <p><span class="ko-only">내보내기의 반대 방향입니다. <strong>이미 다른 프론트엔드로 세팅해 둔 라이브러리</strong>를 이 프로그램으로 읽어들여 시스템과 게임을 한 번에 등록합니다. ROM 폴더를 처음부터 다시 스캔할 필요가 없습니다.</span><span class="en-only">The reverse of Export. Read <strong>a library you already set up in another front-end</strong> and register its systems and games in one pass — no need to re-scan your ROM folders from scratch.</span></p>
+      <p><span class="ko-only">지원하는 원본은 <strong>ES-DE</strong>(<span class="path">gamelist.xml</span>)와 <strong>Pegasus</strong>(<span class="path">metadata.pegasus.txt</span>)이며, 읽어올 위치는 <strong>내 컴퓨터 · 안드로이드 · 커스텀 리눅스(SFTP)</strong> 세 곳입니다.</span><span class="en-only">Supported sources are <strong>ES-DE</strong> (<span class="path">gamelist.xml</span>) and <strong>Pegasus</strong> (<span class="path">metadata.pegasus.txt</span>), read from <strong>this PC, Android, or custom Linux (SFTP)</strong>.</span></p>
+
+      <h3 id="import-local"><span class="ko-only">내 컴퓨터에서 가져오기</span><span class="en-only">From this PC</span></h3>
+      <ul>
+        <li><span class="ko-only"><strong>ES-DE</strong> — <span class="path">ES-DE/gamelists</span> 폴더를 고릅니다. ES-DE 루트를 골라도 알아서 찾습니다. 미디어는 <span class="path">downloaded_media</span> 규약을 따라 자동으로 연결됩니다.</span><span class="en-only"><strong>ES-DE</strong> — pick the <span class="path">ES-DE/gamelists</span> folder (picking the ES-DE root works too). Media is matched automatically via the <span class="path">downloaded_media</span> convention.</span></li>
+        <li><span class="ko-only"><strong>Pegasus</strong> — 시스템 폴더들의 상위 폴더를 고르거나, <strong>자동 감지</strong>로 설정 폴더(<span class="path">%LOCALAPPDATA%\pegasus-frontend</span>)를 찾게 합니다. 설정 폴더를 고르면 <span class="path">game_dirs.txt</span>에 등록된 게임 폴더들을 따라갑니다.</span><span class="en-only"><strong>Pegasus</strong> — pick the parent folder of your system folders, or hit <strong>Auto</strong> to locate the config folder (<span class="path">%LOCALAPPDATA%\pegasus-frontend</span>). From there it follows the game folders listed in <span class="path">game_dirs.txt</span>.</span></li>
+        <li><span class="ko-only"><strong>롬 루트 폴더</strong> — 자동으로 추정하지만 맞지 않으면 직접 고칠 수 있습니다.</span><span class="en-only"><strong>ROM root folder</strong> — auto-guessed, and editable if the guess is off.</span></li>
+      </ul>
+
+      <h3 id="import-device"><span class="ko-only">기기에서 가져오기</span><span class="en-only">From a device</span></h3>
+      <p><span class="ko-only">기기의 라이브러리를 <strong>지정한 로컬 폴더로 복제한 뒤</strong>, 그 파일을 기준으로 등록합니다. 원본 기기는 읽기만 합니다.</span><span class="en-only">The device library is <strong>copied into a local folder you choose</strong>, then imported from those files. The device itself is only read.</span></p>
+      <ol>
+        <li><span class="ko-only"><strong>복제 대상 폴더</strong>를 지정합니다. 롬과 미디어가 이 폴더에 저장됩니다.</span><span class="en-only">Choose the <strong>destination folder</strong> — ROMs and media are copied here.</span></li>
+        <li><span class="ko-only"><strong>기기 검색</strong>을 누르면 메타파일만 먼저 빠르게 받아 <strong>시스템 목록</strong>을 보여줍니다. 게임 수도 함께 표시됩니다.</span><span class="en-only">Hit <strong>Scan device</strong> — only the metadata files are fetched first, giving you the <strong>system list</strong> with game counts.</span></li>
+        <li><span class="ko-only">가져올 시스템을 체크하고 <strong>표시이름 접두</strong>를 정한 뒤(예: <span class="path">[Android]</span>) 실행합니다. 선택한 시스템의 롬·미디어만 내려받습니다.</span><span class="en-only">Check the systems you want, set a <strong>display-name prefix</strong> (e.g. <span class="path">[Android]</span>) and run. Only the selected systems' ROMs and media are pulled.</span></li>
+      </ol>
+      <table class="ftable">
+        <tr><th style="width:26%"><span class="ko-only">가져올 위치</span><span class="en-only">Source device</span></th><th><span class="ko-only">지원 원본 · 준비물</span><span class="en-only">Supported sources · requirements</span></th></tr>
+        <tr><td><span class="ko-only">안드로이드</span><span class="en-only">Android</span></td><td><span class="ko-only"><strong>ES-DE</strong> 와 <strong>Pegasus</strong> 모두 가져올 수 있습니다. USB 연결 + 파일전송(MTP)·USB 디버깅 허용 상태여야 합니다.</span><span class="en-only">Both <strong>ES-DE</strong> and <strong>Pegasus</strong>. Requires USB connection with file transfer (MTP) and USB debugging allowed.</span></td></tr>
+        <tr><td><span class="ko-only">커스텀 리눅스(SFTP)</span><span class="en-only">Custom Linux (SFTP)</span></td><td><span class="ko-only">EmulationStation 계열 구조(<span class="path">&lt;시스템&gt;/gamelist.xml</span>)를 읽습니다. IP·계정·비밀번호와 원격 롬 경로가 필요합니다.</span><span class="en-only">Reads the EmulationStation-family layout (<span class="path">&lt;system&gt;/gamelist.xml</span>). Needs IP, account, password and the remote ROM path.</span></td></tr>
+      </table>
+      <div class="tip"><span class="ko-only">가져온 게임은 모두 <strong>수동(manual)</strong> 상태로 등록되고, 미디어는 캐시로 복사됩니다. 가능한 경우 마스터 DB의 게임과 자동으로 연결해 두므로, 이후 메타 편집기에서 더 나은 후보로 교체할 수 있습니다.</span><span class="en-only">Imported games are registered as <strong>manual</strong> and their media is copied into the cache. Where possible they're linked to the master database, so you can swap in better candidates later from the Meta Editor.</span></div>
+      <div class="warn"><span class="ko-only"><b>가져온 시스템을 전체 재스캔하면 주의</b> — 수동으로 들어온 데이터가 초기화됩니다. 목록에서 미지원으로 표시된 시스템은 이 앱의 메타 서버·자동매칭 대상이 아니라 로컬 전용으로 추가됩니다.</span><span class="en-only"><b>Careful with a full re-scan of an imported system</b> — it resets the manually imported data. Systems shown as unsupported are added local-only, outside this app's metadata server and auto-matching.</span></div>
+    </section>
+
+    <!-- 10. DEVICE BROWSER -->
+    <section class="gsec" id="browser">
+      <p class="kicker">10 — DEVICE BROWSER</p>
+      <h2><span class="ko-only">기기 탐색기 · 파일 편집</span><span class="en-only">Device Browser &amp; File Editing</span></h2>
+      <p><span class="ko-only">안드로이드(ADB) 또는 SFTP로 연결한 뒤 <strong>📂 탐색</strong>을 누르면 기기 내부를 직접 둘러볼 수 있습니다. 내보내기 화면에서 <strong>롬 경로를 눈으로 확인하고 지정</strong>할 때 가장 요긴합니다.</span><span class="en-only">Connect over Android (ADB) or SFTP, then hit <strong>📂 Browse</strong> to explore the device. It's most useful for <strong>seeing and picking the ROM path</strong> during export.</span></p>
+      <ul>
+        <li><span class="ko-only"><strong>폴더 작업</strong> — 새 폴더 만들기, 복사·잘라내기·붙여넣기, 삭제, 여러 항목 선택.</span><span class="en-only"><strong>Folder operations</strong> — new folder, copy / cut / paste, delete, multi-select.</span></li>
+        <li><span class="ko-only"><strong>이 폴더로 지정</strong> — 현재 보고 있는 폴더를 롬 경로로 바로 설정합니다. 시스템별 롬 경로도 각 행의 작은 <strong>📁</strong> 버튼으로 이렇게 지정할 수 있습니다.</span><span class="en-only"><strong>Use this folder</strong> — sets the folder you're viewing as the ROM path. Per-system ROM paths can be picked the same way via the small <strong>📁</strong> button on each row.</span></li>
+        <li><span class="ko-only"><strong>텍스트 파일 편집</strong> — 파일을 <strong>더블클릭</strong>하면 내용을 보고 고쳐서 저장할 수 있습니다. <span class="path">gamelist.xml</span>·<span class="path">.cfg</span>·<span class="path">.ini</span>·<span class="path">.m3u</span> 같은 설정 파일을 기기에서 빼내지 않고 바로 손볼 때 편리합니다. 자동 줄바꿈 토글과 <span class="path">Ctrl+S</span> 저장을 지원합니다.</span><span class="en-only"><strong>Text file editing</strong> — <strong>double-click</strong> a file to view, edit and save it. Handy for tweaking <span class="path">gamelist.xml</span>, <span class="path">.cfg</span>, <span class="path">.ini</span> or <span class="path">.m3u</span> right on the device. Word-wrap toggle and <span class="path">Ctrl+S</span> are supported.</span></li>
+      </ul>
+      <div class="note"><span class="ko-only">편집기는 한글이 들어간 파일(UTF-8·CP949)도 인식해 열고, 원래 인코딩을 유지해 저장합니다. 저장하지 않은 변경이 있으면 닫을 때 확인을 받고, 편집기를 닫으면 탐색창으로 돌아옵니다.</span><span class="en-only">The editor detects and preserves the original encoding (UTF-8 / CP949), asks before discarding unsaved changes, and returns you to the browser when closed.</span></div>
+      <div class="warn"><span class="ko-only"><b>기기 파일을 직접 고치는 기능입니다</b> — 삭제·덮어쓰기는 되돌릴 수 없습니다. 중요한 설정 파일은 고치기 전에 복사해 두시길 권합니다.</span><span class="en-only"><b>This edits device files directly</b> — deletes and overwrites can't be undone. Copy important config files before changing them.</span></div>
+    </section>
+
+    <!-- 11. ETC -->
     <section class="gsec" id="etc">
-      <p class="kicker">09 — MORE</p>
+      <p class="kicker">11 — MORE</p>
       <h2><span class="ko-only">후원 · 업데이트</span><span class="en-only">Support · Updates</span></h2>
-      <p><span class="ko-only">이 프로그램은 개발자 1인이 기획·개발·DB 구축·서버 운영·테스트까지 모두 맡고 있습니다. 도움이 되었다면 <strong>후원 ♥</strong> 버튼으로 작은 응원을 보내 주세요. 새 버전이 나오면 프로그램이 업데이트를 안내합니다.</span><span class="en-only">This tool is built by a single developer handling planning, development, database, server ops and testing. If it helped you, consider a small token of support via the <strong>Donate ♥</strong> button. When a new version ships, the app will let you know.</span></p>
+      <p><span class="ko-only">이 프로그램은 개발자 1인이 기획·개발·DB 구축·서버 운영·테스트까지 모두 맡고 있습니다. 도움이 되었다면 <strong>후원 ♥</strong> 버튼으로 작은 응원을 보내 주세요. 후원하시면 제약이 없는 <strong>1.0 클로즈드 베타</strong>에 먼저 참여하실 수 있습니다.</span><span class="en-only">This tool is built by a single developer handling planning, development, database, server ops and testing. If it helped you, consider a small token of support via the <strong>Donate ♥</strong> button — sponsors get early access to the unrestricted <strong>1.0 closed beta</strong>.</span></p>
+      <p><span class="ko-only"><strong>새 버전 확인</strong> — 현재 버전은 설정 화면에서 볼 수 있습니다. 앱 내 자동 업데이트 알림은 준비 중이라, 새 버전 소식은 <a href="news.html">새로운 소식</a> 페이지에서 확인해 주세요.</span><span class="en-only"><strong>Checking for updates</strong> — your current version is shown in Settings. In-app update notifications are still in the works, so please watch the <a href="news.html">News</a> page for new releases.</span></p>
       <div class="note"><span class="ko-only">더 궁금한 점이나 잘 안 되는 부분은 <a href="index.html#download">다운로드 페이지</a>의 안내와 <a href="story.html">읽을거리</a>를 참고하세요. 레트로 에뮬레이터 세팅의 큰 그림을 이해하는 데 도움이 됩니다.</span><span class="en-only">For more, see the guidance on the <a href="index.html#download">download page</a> and the <a href="story.html">reading article</a> — they help you grasp the big picture of retro emulator setup.</span></div>
     </section>
 
