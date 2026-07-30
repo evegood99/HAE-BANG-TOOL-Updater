@@ -114,6 +114,10 @@
   .tl-body ul{margin:0; padding-left:19px}
   .tl-body li{color:var(--muted); font-size:14.5px; margin:7px 0; line-height:1.62}
   .tl-body li b{color:var(--text); font-weight:700}
+  /* 큰 항목의 섹션 소제목 */
+  .tl-grp{margin:16px 0 4px; font-size:14.5px; font-weight:800; color:var(--text); letter-spacing:-.01em}
+  .tl-grp:first-child{margin-top:2px}
+  .tl-grp .hl{background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent}
   .tags{display:flex; gap:6px; flex-wrap:wrap; margin-top:9px}
   .tag{font-size:11px; font-weight:800; letter-spacing:.05em; padding:4px 9px; border-radius:999px;
     border:1px solid var(--border2); color:var(--muted); background:var(--surface2)}
@@ -251,10 +255,6 @@
                   data-en="Transfer failures are no longer hidden. Previously a dropped connection could still end with “Export complete”. Now you get the failed count and names, and re-exporting retries only those.">전송 실패를 더 이상 숨기지 않습니다. 통신이 끊겨 파일이 전송되지 않았는데도 '내보내기 완료'로 끝나던 문제를 고쳤습니다. 실패한 파일 수와 이름을 알려주고, 다시 내보내면 실패분만 재전송합니다.</li>
               <li data-ko="ES-DE의 대체 에뮬레이터 설정을 지켜냅니다. ES-DE는 시스템별 에뮬레이터를 gamelist.xml에 특수한 형식으로 저장하는데, 이를 읽지 못해 내보낼 때 사용자의 선택이 사라지던 문제를 해결했습니다."
                   data-en="Your ES-DE alternative-emulator choices survive an export. ES-DE stores them in gamelist.xml in an unusual shape that we failed to parse — so exporting used to wipe them.">ES-DE의 대체 에뮬레이터 설정을 지켜냅니다. ES-DE는 시스템별 에뮬레이터를 gamelist.xml에 특수한 형식으로 저장하는데, 이를 읽지 못해 내보낼 때 사용자의 선택이 사라지던 문제를 해결했습니다.</li>
-              <li data-ko="가져오기에서 건너뛰던 시스템을 되살렸습니다. 같은 이유로 파싱에 실패해 '?개'로 표시되며 가져올 수 없던 시스템들이 정상 인식됩니다."
-                  data-en="Systems that used to be skipped on import now work. The same parsing issue made them show “?” and become unselectable.">가져오기에서 건너뛰던 시스템을 되살렸습니다. 같은 이유로 파싱에 실패해 '?개'로 표시되며 가져올 수 없던 시스템들이 정상 인식됩니다.</li>
-              <li data-ko="안드로이드 Pegasus 가져오기를 추가했습니다. 내보내기는 지원하는데 가져오기는 ES-DE 전용이던 비대칭을 해소했습니다."
-                  data-en="Android Pegasus import added — export already supported it, import didn’t.">안드로이드 Pegasus 가져오기를 추가했습니다. 내보내기는 지원하는데 가져오기는 ES-DE 전용이던 비대칭을 해소했습니다.</li>
               <li data-ko="ES-DE custom_systems 지원 — 내보낼 때 시스템별 롬 경로를 따로 지정할 수 있습니다(직접 입력 또는 기기 탐색)."
                   data-en="ES-DE custom_systems support — set a per-system ROM path on export (type it or browse the device).">ES-DE custom_systems 지원 — 내보낼 때 시스템별 롬 경로를 따로 지정할 수 있습니다(직접 입력 또는 기기 탐색).</li>
               <li data-ko="ES-DE가 인식하지 못하던 폴더명을 공식 시스템명으로 자동 보정합니다(Atari Lynx, 3DS 등)."
@@ -294,21 +294,57 @@
           </div>
         </article>
 
-        <!-- 2026-07-26 ~ 27 -->
-        <article class="tl-item reveal">
+        <!-- 2026-07-20 ~ 26 : 대규모 기능 업데이트 -->
+        <article class="tl-item hl reveal">
           <div class="tl-dot"><i></i></div>
-          <div class="tl-date">2026.07.26 – 27</div>
-          <h3 class="tl-title" data-ko="미디어 리전 우선순위 — 원하는 지역판으로" data-en="Media region priority — pick your regional art">미디어 리전 우선순위 — 원하는 지역판으로</h3>
+          <div class="tl-date">2026.07.20 – 26</div>
+          <h3 class="tl-title" data-ko="대규모 기능 업데이트 — 가져오기 · 한글 데이터 · 내보내기 개편" data-en="A big feature update — Import, Korean data, revamped Export">대규모 기능 업데이트 — 가져오기 · 한글 데이터 · 내보내기 개편</h3>
           <div class="tags">
             <span class="tag new" data-ko="신규" data-en="New">신규</span>
+            <span class="tag imp" data-ko="개선" data-en="Improved">개선</span>
           </div>
           <div class="tl-body">
+
+            <p class="tl-grp" data-ko="🆕 가져오기 — 기존 라이브러리를 그대로 흡수" data-en="🆕 Import — absorb an existing library as-is">🆕 가져오기 — 기존 라이브러리를 그대로 흡수</p>
             <ul>
-              <li data-ko="박스아트·스크린샷·매뉴얼 등 미디어 종류마다 선호 리전(일본/북미/유럽…) 순위를 따로 지정할 수 있습니다."
-                  data-en="Set a preferred region order (JP / US / EU …) per media type — box art, screenshots, manuals and more.">박스아트·스크린샷·매뉴얼 등 미디어 종류마다 선호 리전(일본/북미/유럽…) 순위를 따로 지정할 수 있습니다.</li>
-              <li data-ko="매뉴얼도 리전 순위에 따라 받아옵니다."
-                  data-en="Manuals follow the same region priority.">매뉴얼도 리전 순위에 따라 받아옵니다.</li>
+              <li data-ko="기기 셋업을 처음부터 다시 할 필요가 없습니다. 한 땀 한 땀 세팅해 오신 데이터를 존중하기 위한 기능입니다."
+                  data-en="No need to set up your device from scratch — this feature respects the library you built by hand.">기기 셋업을 처음부터 다시 할 필요가 없습니다. 한 땀 한 땀 세팅해 오신 데이터를 존중하기 위한 기능입니다.</li>
+              <li data-ko="ES-DE · Pegasus 라이브러리를 통째로 가져옵니다 — gamelist · 미디어 · 메타데이터까지 자동 인식."
+                  data-en="Import a whole ES-DE or Pegasus library — gamelists, media and metadata are all recognized automatically.">ES-DE · Pegasus 라이브러리를 통째로 가져옵니다 — gamelist · 미디어 · 메타데이터까지 자동 인식.</li>
+              <li data-ko="USB 안드로이드 · SFTP 리눅스 기기에서 직접 — 기기 안의 롬+미디어를 PC로 복제하면서 시스템을 자동 등록합니다."
+                  data-en="Directly from USB Android or SFTP Linux devices — ROMs and media are copied to the PC while systems register themselves.">USB 안드로이드 · SFTP 리눅스 기기에서 직접 — 기기 안의 롬+미디어를 PC로 복제하면서 시스템을 자동 등록합니다.</li>
+              <li data-ko="새턴 · 3DO · PC-FX 같은 CD(폴더) 게임도 완벽 지원하고, es_settings.xml 의 미디어 경로 설정까지 존중합니다."
+                  data-en="Full support for CD (folder) systems like Saturn, 3DO and PC-FX, honoring the media path set in es_settings.xml.">새턴 · 3DO · PC-FX 같은 CD(폴더) 게임도 완벽 지원하고, es_settings.xml 의 미디어 경로 설정까지 존중합니다.</li>
+              <li data-ko="가져온 게임은 자동 롬매칭으로 game_id 를 식별 → 이후 '수동 게임 보강'으로 빈 메타·미디어를 서버에서 채웁니다."
+                  data-en="Imported games are auto-matched to a game_id, then 'fill-in' pulls any missing metadata and media from the server.">가져온 게임은 자동 롬매칭으로 game_id 를 식별 → 이후 '수동 게임 보강'으로 빈 메타·미디어를 서버에서 채웁니다.</li>
             </ul>
+
+            <p class="tl-grp" data-ko="🇰🇷 한글 데이터 대규모 품질 개선" data-en="🇰🇷 A major pass on Korean data quality">🇰🇷 한글 데이터 대규모 품질 개선</p>
+            <ul>
+              <li data-ko="게임 제목 19,800여 건 교정 — 시스템 전체의 한글 제목을 상용 LLM으로 전수 검수했습니다."
+                  data-en="~19,800 game titles corrected — every system's Korean titles reviewed end-to-end with a commercial LLM.">게임 제목 19,800여 건 교정 — 시스템 전체의 한글 제목을 상용 LLM으로 전수 검수했습니다.</li>
+              <li data-ko="게임 설명 57,700여 건 재번역 — 성능 좋은 로컬 LLM을 투입해 어색한 번역투를 모두 다듬었습니다."
+                  data-en="~57,700 descriptions retranslated — a capable local LLM reworked all the stiff, machine-y phrasing.">게임 설명 57,700여 건 재번역 — 성능 좋은 로컬 LLM을 투입해 어색한 번역투를 모두 다듬었습니다.</li>
+            </ul>
+
+            <p class="tl-grp" data-ko="내보내기 개편" data-en="Export, revamped">내보내기 개편</p>
+            <ul>
+              <li data-ko="병합 내보내기(기본) — 기기에서 직접 추가한 게임·즐겨찾기를 보존하면서 갱신합니다 (ES-DE gamelist · RetroArch .lpl · Pegasus 모두)."
+                  data-en="Merge export (default) — updates while preserving games and favorites added on the device itself (ES-DE gamelist, RetroArch .lpl and Pegasus alike).">병합 내보내기(기본) — 기기에서 직접 추가한 게임·즐겨찾기를 보존하면서 갱신합니다 (ES-DE gamelist · RetroArch .lpl · Pegasus 모두).</li>
+              <li data-ko="전체 교체를 고르면 삭제 예정 목록을 먼저 보여주고, 남길 파일을 직접 체크할 수 있는 안전장치가 있습니다."
+                  data-en="Choose full replace and you first see a to-be-deleted list, with a safeguard to check off files you want to keep.">전체 교체를 고르면 삭제 예정 목록을 먼저 보여주고, 남길 파일을 직접 체크할 수 있는 안전장치가 있습니다.</li>
+              <li data-ko="안드로이드 증분 전송 — 같은 파일은 건너뛰어 두 번째 내보내기부터 훨씬 빠릅니다."
+                  data-en="Incremental Android transfer — identical files are skipped, so the second export onward is much faster.">안드로이드 증분 전송 — 같은 파일은 건너뛰어 두 번째 내보내기부터 훨씬 빠릅니다.</li>
+            </ul>
+
+            <p class="tl-grp" data-ko="그 외" data-en="Also">그 외</p>
+            <ul>
+              <li data-ko="파일명 태그 표기 옵션(기본 OFF) — 예: aaa(korea).zip → (정발판), aaa(한패).zip → (한글판) 처럼 파일명 괄호 태그를 제목 접미사로 붙입니다."
+                  data-en="Filename-tag labels (off by default) — e.g. aaa(korea).zip shows '(정발판)', aaa(한패).zip shows '(한글판)', turning filename tags into a title suffix.">파일명 태그 표기 옵션(기본 OFF) — 예: aaa(korea).zip → (정발판), aaa(한패).zip → (한글판) 처럼 파일명 괄호 태그를 제목 접미사로 붙입니다.</li>
+              <li data-ko="미디어 리전 우선순위 — 박스아트·스크린샷·매뉴얼 등 미디어 종류마다 선호 리전(일본/북미/유럽…)을 따로 지정할 수 있습니다."
+                  data-en="Media region priority — set a preferred region (JP / US / EU …) per media type: box art, screenshots, manuals and more.">미디어 리전 우선순위 — 박스아트·스크린샷·매뉴얼 등 미디어 종류마다 선호 리전(일본/북미/유럽…)을 따로 지정할 수 있습니다.</li>
+            </ul>
+
           </div>
         </article>
 
