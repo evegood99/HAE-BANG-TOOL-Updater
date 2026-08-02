@@ -15,24 +15,20 @@
   <div class="wrap nav">
     <a class="brand" href="../index.html">
       <img src="../assets/icon.png" alt="" />
-      <span>
-        <span class="bt">HAE-BANG</span><br />
-        <span class="bs">Rom Setting Tools</span>
-      </span>
+      <span><span class="bt">HAE-BANG</span><br /><span class="bs">Rom Setting Tools</span></span>
     </a>
     <nav class="nav-links">
       <a href="../index.html">홈</a>
-      <a href="../guide.html">가이드</a>
       <a href="./" class="on">게임 아카이브</a>
       <a href="timeline.html">연도별</a>
     </nav>
-    <div class="nav-right">
-      <a class="btn" id="back">← 목록</a>
-    </div>
+    <div class="nav-right"><a class="btn" id="back">← 목록</a></div>
   </div>
 </header>
 
 <div class="wrap" id="main"><div class="loading">불러오는 중…</div></div>
+
+<div class="lb" id="lb"><button class="x" id="lb-x">✕</button><div id="lb-body"></div></div>
 
 <footer>
   <div class="wrap">
@@ -48,26 +44,10 @@
 
 <script>
 const THUMB_BASE = 'https://pub-ce7fb67413a8472b9d565037b8fbd5ef.r2.dev';
-// 원본 미디어는 앱과 같은 워커를 통해 받는다(공개 라우트). 썸네일과 달리 양이 적다.
 const MEDIA_BASE = 'https://haebang-media.evegood99.workers.dev/pub';
 const P = new URLSearchParams(location.search);
-const SYS = P.get('sys') || '';
-const ID = P.get('id') || '';
+const SYS = P.get('sys') || '', ID = P.get('id') || '';
 
-// 미디어 종류 표시명 + 갤러리 노출 순서 (manuals 는 아래 전용 뷰어에서 따로 다룬다)
-const KIND = [
-  ['screenshots', '스크린샷'],
-  ['titlescreens', '타이틀 화면'],
-  ['cover', '박스 앞표지'],
-  ['box3d', '3D 박스'],
-  ['box2dside', '박스 측면'],
-  ['boxtexture', '케이스 전개도'],
-  ['support', '카트리지 · 디스크'],
-  ['wheel', '로고'],
-  ['videos', '영상'],
-];
-
-// 리전 코드 → 표시명. 표지 비교에서 어느 나라 판본인지 바로 알 수 있게.
 const REGION_NAME = {
   jp: '🇯🇵 일본판', us: '🇺🇸 북미판', eu: '🇪🇺 유럽판', kr: '🇰🇷 한국판',
   wor: '🌏 월드판', ss: '🌐 공통', fr: '🇫🇷 프랑스판', de: '🇩🇪 독일판',
@@ -75,153 +55,180 @@ const REGION_NAME = {
   cn: '🇨🇳 중국판', asi: '🌏 아시아판',
 };
 const regionName = (r) => REGION_NAME[r] || (r ? r.toUpperCase() : '기타');
+// 리전 선택 시 선호 순서(그 판본에 없는 자료는 이 순서로 대체한다)
+const REGION_ORDER = ['kr', 'jp', 'us', 'eu', 'wor', 'ss'];
 
-function esc(s) {
-  return String(s ?? '').replace(/[&<>"]/g, (c) =>
-    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-}
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const mediaUrl = (sysId, fn) => `${MEDIA_BASE}/${sysId}/${encodeURIComponent(fn)}`;
 
-/**
- * 리전별 표지 비교 — 같은 게임의 일본판/북미판/유럽판 박스를 나란히.
- * 표지가 2개 이상 있을 때만 의미가 있어 그때만 노출한다.
- */
-function regionSection(g, byKind) {
-  const covers = byKind.cover || [];
-  if (covers.length < 2) return '';
-  return `<section class="gallery">
-    <div class="sec-head" style="margin-bottom:14px">
-      <h2 style="font-size:20px">리전별 표지</h2>
-      <span class="muted">같은 게임도 발매 지역에 따라 표지가 다릅니다</span>
-    </div>
-    <div class="regions">
-      ${covers.map((m) => `
-        <figure class="rg" style="margin:0">
-          <img src="${mediaUrl(g.sys_id, m.filename)}" alt="" loading="lazy" />
-          <div class="flag"><b>${esc(regionName(m.region))}</b></div>
-        </figure>`).join('')}
-    </div>
-  </section>`;
-}
+/* ---------- 라이트박스 ---------- */
+const lb = document.getElementById('lb'), lbBody = document.getElementById('lb-body');
+function openLb(html) { lbBody.innerHTML = html; lb.classList.add('on'); }
+function closeLb() { lb.classList.remove('on'); lbBody.innerHTML = ''; }
+document.getElementById('lb-x').onclick = closeLb;
+lb.onclick = (e) => { if (e.target === lb) closeLb(); };
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLb(); });
 
-/** 설명서 뷰어 — 스캔 PDF 를 브라우저 내장 뷰어로 바로 넘겨본다. */
-function manualSection(g, byKind) {
-  const mans = byKind.manuals || [];
-  if (!mans.length) return '';
-  return `<section class="gallery">
-    <div class="sec-head" style="margin-bottom:14px">
-      <h2 style="font-size:20px">설명서</h2>
-      <span class="muted">스캔된 원본 설명서를 그대로 볼 수 있습니다</span>
-    </div>
-    <div class="manual">
-      <div class="manual-bar">
-        ${mans.map((m, i) => `<button class="btn man-btn${i === 0 ? ' btn-primary' : ''}"
-            data-f="${esc(m.filename)}">${esc(regionName(m.region))}</button>`).join('')}
-        <span class="sp"></span>
-        <a class="btn" id="man-dl" target="_blank" rel="noopener">새 창에서 열기 ↗</a>
-      </div>
-      <iframe id="man-frame" title="설명서" loading="lazy"></iframe>
-    </div>
-  </section>`;
-}
-
-function bindManual(g, byKind) {
-  const mans = byKind.manuals || [];
-  if (!mans.length) return;
-  const frame = document.getElementById('man-frame');
-  const dl = document.getElementById('man-dl');
-  const show = (fn) => {
-    const url = mediaUrl(g.sys_id, fn);
-    frame.src = url;
-    dl.href = url;
-  };
-  document.querySelectorAll('.man-btn').forEach((b) => {
-    b.onclick = () => {
-      document.querySelectorAll('.man-btn').forEach((x) => x.classList.remove('btn-primary'));
-      b.classList.add('btn-primary');
-      show(b.dataset.f);
-    };
+/* ---------- 데이터 정리 ----------
+   media 를 [종류][리전] 으로 색인해 두고, 선택된 리전 → 없으면 선호 순서로 대체한다.
+   이렇게 하면 리전 버튼 하나로 표지·카트리지·설명서가 함께 그 판본으로 바뀐다. */
+function indexMedia(list) {
+  const idx = {};                       // type -> { region|'' : filename }
+  const regions = new Set();
+  for (const m of list) {
+    (idx[m.type] ||= {})[m.region || ''] = m.filename;
+    if (m.region) regions.add(m.region);
+  }
+  const order = [...regions].sort((a, b) => {
+    const ia = REGION_ORDER.indexOf(a), ib = REGION_ORDER.indexOf(b);
+    return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib) || a.localeCompare(b);
   });
-  show(mans[0].filename);
+  return { idx, regions: order };
+}
+/** 해당 종류의 파일 — 선택 리전 우선, 없으면 선호 순서, 그래도 없으면 아무거나 */
+function pick(idx, type, region) {
+  const m = idx[type];
+  if (!m) return null;
+  if (region && m[region]) return m[region];
+  for (const r of REGION_ORDER) if (m[r]) return m[r];
+  const keys = Object.keys(m);
+  return keys.length ? m[keys[0]] : null;
+}
+/** 해당 종류에서 리전 상관없이 전부 (스크린샷처럼 여러 장 보여줄 때) */
+function all(idx, type) {
+  return Object.entries(idx[type] || {}).map(([region, filename]) => ({ region, filename }));
+}
+
+/* ---------- 렌더 ---------- */
+let G, IDX, REGIONS, curRegion = '';
+
+function renderMedia() {
+  const g = G;
+  const box3d = pick(IDX, 'box3d', curRegion);
+  const cover = pick(IDX, 'cover', curRegion);
+  const cart = pick(IDX, 'support', curRegion);
+  const main = box3d || cover;
+
+  // 케이스 위에 카트리지를 겹쳐 얹는다. 둘 중 하나만 있으면 단독 배치.
+  const stage = main
+    ? `<div class="stage${cart && main ? '' : ' solo'}">
+         <img class="main" src="${mediaUrl(g.sys_id, main)}" alt="" />
+         ${cart && main !== cart ? `<img class="cart" src="${mediaUrl(g.sys_id, cart)}" alt="" />` : ''}
+       </div>`
+    : (g.thumb ? `<div class="stage solo"><img class="main" src="${THUMB_BASE}/${g.sys_id}/${g.game_id}.webp" alt="" /></div>` : '');
+  document.getElementById('stage-box').innerHTML = stage;
+
+  // 로고
+  const wheel = pick(IDX, 'wheel', curRegion);
+  document.getElementById('logo-box').innerHTML = wheel
+    ? `<img src="${mediaUrl(g.sys_id, wheel)}" alt="${esc(g.name_kor || g.name || '')}" />` : '';
+
+  // 영상 — 자동재생(음소거 필수), 반복
+  const vid = pick(IDX, 'videos', curRegion);
+  document.getElementById('vid-box').innerHTML = vid
+    ? `<div class="vid"><video src="${mediaUrl(g.sys_id, vid)}"
+         autoplay muted loop playsinline controls preload="metadata"></video></div>` : '';
+
+  // 스크린샷 + 타이틀 화면(있는 만큼 전부, 크게)
+  const shots = [...all(IDX, 'screenshots'), ...all(IDX, 'titlescreens')];
+  document.getElementById('shot-box').innerHTML = shots.length
+    ? `<div class="sec-t"><h2>화면</h2><span>${shots.length}장 · 누르면 크게</span></div>
+       <div class="shots">${shots.map((m) =>
+         `<figure data-src="${mediaUrl(g.sys_id, m.filename)}"><img src="${mediaUrl(g.sys_id, m.filename)}" alt="" loading="lazy" /></figure>`).join('')}</div>` : '';
+
+  // 부가 자료 — 케이스 전개도·박스 측면·앞표지(메인이 3D일 때)
+  const extras = [];
+  const bt = pick(IDX, 'boxtexture', curRegion);
+  const side = pick(IDX, 'box2dside', curRegion);
+  if (bt) extras.push([bt, '케이스 전개도']);
+  if (side) extras.push([side, '박스 측면']);
+  if (cover && main !== cover) extras.push([cover, '박스 앞표지']);
+  if (cart && main === cart) extras.push([cart, '카트리지 · 디스크']);
+  document.getElementById('extra-box').innerHTML = extras.length
+    ? `<div class="sec-t"><h2>패키지</h2><span>실물 자료</span></div>
+       <div class="extras">${extras.map(([fn, label]) =>
+         `<figure data-src="${mediaUrl(g.sys_id, fn)}">
+            <img src="${mediaUrl(g.sys_id, fn)}" alt="" loading="lazy" /><figcaption>${label}</figcaption>
+          </figure>`).join('')}</div>` : '';
+
+  // 설명서 — 앞표지만, 누르면 전체 화면
+  const man = pick(IDX, 'manuals', curRegion);
+  document.getElementById('man-box').innerHTML = man
+    ? `<div class="sec-t"><h2>설명서</h2><span>누르면 전체 화면으로 볼 수 있습니다</span></div>
+       <div class="man-card" data-pdf="${mediaUrl(g.sys_id, man)}">
+         <div class="man-cover">
+           <iframe src="${mediaUrl(g.sys_id, man)}#toolbar=0&navpanes=0&scrollbar=0&view=FitH" title="설명서 표지"></iframe>
+         </div>
+         <div class="cap"><b>원본 설명서</b>스캔본 · ${esc(regionName(curRegion))}</div>
+       </div>` : '';
+
+  // 클릭 → 라이트박스
+  document.querySelectorAll('[data-src]').forEach((el) => {
+    el.onclick = () => openLb(`<img src="${el.dataset.src}" alt="" />`);
+  });
+  const mc = document.querySelector('[data-pdf]');
+  if (mc) mc.onclick = () => openLb(`<iframe src="${mc.dataset.pdf}" title="설명서"></iframe>`);
 }
 
 function render(d) {
-  const g = d.game;
+  G = d.game;
+  const g = G;
   const title = g.name_kor || g.name || '(제목 없음)';
   document.title = `${title} — 레트로 게임 아카이브`;
   document.getElementById('back').href = `platform.html?sys=${encodeURIComponent(g.slug)}`;
 
-  // 종류별로 묶고, 각 종류 안에서는 리전 순
-  const byKind = {};
-  for (const m of d.media) (byKind[m.type] ||= []).push(m);
+  const m = indexMedia(d.media);
+  IDX = m.idx; REGIONS = m.regions;
+  curRegion = REGIONS.find((r) => REGION_ORDER.includes(r)) || REGIONS[0] || '';
 
-  const meta = [
-    ['기종', g.slug], ['발매', g.year], ['장르', g.genre],
-    ['개발사', g.developer], ['플레이어', g.players],
-  ].filter(([, v]) => v)
-   .map(([k, v]) => `<span>${k} <b>${esc(v)}</b></span>`).join('');
+  const meta = [['기종', g.slug], ['발매', g.year], ['장르', g.genre],
+                ['개발사', g.developer], ['플레이어', g.players]]
+    .filter(([, v]) => v).map(([k, v]) => `<span>${k} <b>${esc(v)}</b></span>`).join('');
 
-  const coverFile = (byKind.cover || byKind.box3d || byKind.titlescreens || [])[0];
-  const cover = g.thumb
-    ? `<img src="${THUMB_BASE}/${g.sys_id}/${g.game_id}.webp" alt="${esc(title)}" />`
-    : (coverFile ? `<img src="${mediaUrl(g.sys_id, coverFile.filename)}" alt="${esc(title)}" />`
-                 : `<div class="noimg" style="padding:40px 0;text-align:center;color:var(--faint)">이미지 없음</div>`);
-
-  // 갤러리 탭 — 실제로 가진 종류만
-  const tabs = KIND.filter(([k]) => byKind[k] && byKind[k].length);
   const nav = [];
-  if (d.prev) nav.push(`<a href="game.html?sys=${encodeURIComponent(g.slug)}&id=${d.prev.game_id}">
-      <span class="lbl">← 이전</span>${esc(d.prev.name_kor || d.prev.name)}</a>`);
-  else nav.push('<span></span>');
+  nav.push(d.prev
+    ? `<a href="game.html?sys=${encodeURIComponent(g.slug)}&id=${d.prev.game_id}">
+         <span class="lbl">← 이전</span>${esc(d.prev.name_kor || d.prev.name)}</a>` : '<span></span>');
   if (d.next) nav.push(`<a style="text-align:right" href="game.html?sys=${encodeURIComponent(g.slug)}&id=${d.next.game_id}">
       <span class="lbl">다음 →</span>${esc(d.next.name_kor || d.next.name)}</a>`);
 
   document.getElementById('main').innerHTML = `
-    <article class="detail">
-      <div class="cover">${cover}</div>
-      <div>
-        <div class="eyebrow">${esc(g.slug)}</div>
-        <h1>${esc(title)}</h1>
-        ${g.name && g.name !== title ? `<div class="en">${esc(g.name)}</div>` : ''}
-        <div class="meta">${meta}</div>
-        <div class="desc">${esc(g.description_kor || g.description || '등록된 설명이 없습니다.')}</div>
+    <section class="gd">
+      ${REGIONS.length > 1 ? `<div class="regbar"><span class="lb">판본</span>
+        ${REGIONS.map((r) => `<button data-r="${r}"${r === curRegion ? ' class="on"' : ''}>${esc(regionName(r))}</button>`).join('')}
+      </div>` : ''}
+
+      <div class="gd-logo" id="logo-box"></div>
+
+      <div class="gd-top">
+        <div id="stage-box"></div>
+        <div>
+          <div class="eyebrow">${esc(g.slug)}</div>
+          <h1>${esc(title)}</h1>
+          ${g.name && g.name !== title ? `<div class="en">${esc(g.name)}</div>` : ''}
+          <div class="meta">${meta}</div>
+          <div class="desc">${esc(g.description_kor || g.description || '등록된 설명이 없습니다.')}</div>
+        </div>
       </div>
-    </article>
 
-    ${regionSection(g, byKind)}
-    ${manualSection(g, byKind)}
+      <div id="vid-box"></div>
+      <div id="shot-box"></div>
+      <div id="extra-box"></div>
+      <div id="man-box"></div>
 
-    ${tabs.length ? `<section class="gallery">
-      <div class="gal-tabs">
-        ${tabs.map(([k, label], i) =>
-          `<button data-k="${k}" class="${i === 0 ? 'on' : ''}">${label} ${byKind[k].length}</button>`).join('')}
-      </div>
-      <div class="shots" id="shots"></div>
-    </section>` : ''}
+      <div class="navrow">${nav.join('')}</div>
+    </section>`;
 
-    <div class="navrow">${nav.join('')}</div>`;
-
-  bindManual(g, byKind);
-
-  if (!tabs.length) return;
-  const showKind = (k) => {
-    document.getElementById('shots').innerHTML = byKind[k].map((m) => {
-      const url = mediaUrl(g.sys_id, m.filename);
-      const cap = (m.region || '').toUpperCase();
-      const body = k === 'videos'
-        ? `<video src="${url}" controls preload="none"></video>`
-        : `<img src="${url}" alt="" loading="lazy" />`;
-      return `<figure>${body}${cap ? `<figcaption>${cap}</figcaption>` : ''}</figure>`;
-    }).join('');
-  };
-  document.querySelectorAll('.gal-tabs button').forEach((b) => {
+  document.querySelectorAll('.regbar button').forEach((b) => {
     b.onclick = () => {
-      document.querySelectorAll('.gal-tabs button').forEach((x) => x.classList.remove('on'));
+      document.querySelectorAll('.regbar button').forEach((x) => x.classList.remove('on'));
       b.classList.add('on');
-      showKind(b.dataset.k);
+      curRegion = b.dataset.r;
+      renderMedia();
     };
   });
-  showKind(tabs[0][0]);
+  renderMedia();
 }
 
 (async () => {
