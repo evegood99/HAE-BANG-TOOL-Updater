@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>레트로 게임 아카이브 — HAE-BANG</title>
+<meta name="description" content="50개 기종, 76,000여 개 레트로 게임의 박스아트·스크린샷·카트리지 실물과 한국어 설명을 감상하세요." />
+<meta property="og:title" content="레트로 게임 아카이브 — HAE-BANG" />
+<meta property="og:description" content="50개 기종, 76,000여 개 레트로 게임을 한국어로 감상하는 아카이브." />
+<meta property="og:type" content="website" />
+<link rel="icon" href="../assets/favicon.ico" />
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="../index.html">
+      <img src="../assets/icon.png" alt="" />
+      <span>
+        <span class="bt">HAE-BANG</span><br />
+        <span class="bs">Rom Setting Tools</span>
+      </span>
+    </a>
+    <nav class="nav-links">
+      <a href="../index.html">홈</a>
+      <a href="../guide.html">가이드</a>
+      <a href="./" class="on">게임 아카이브</a>
+    </nav>
+    <div class="nav-right">
+      <button class="btn" id="btn-random">🎲 무작위</button>
+    </div>
+  </div>
+</header>
+
+<section class="hero wrap">
+  <div class="eyebrow">Retro Game Archive</div>
+  <h1>레트로 게임을 <span class="grad-text">한국어로</span> 감상하다</h1>
+  <p class="muted" style="max-width:60ch">
+    박스아트와 스크린샷은 물론, 카트리지 실물과 케이스 전개도까지.
+    흩어져 있던 레트로 게임 자료를 기종별로 모아 두었습니다.
+  </p>
+  <div class="stats">
+    <div class="stat"><b id="s-games">—</b><span>수록 게임</span></div>
+    <div class="stat"><b id="s-plats">—</b><span>기종</span></div>
+    <div class="stat"><b>1971–2024</b><span>발매 연도</span></div>
+  </div>
+</section>
+
+<section class="sec wrap">
+  <div class="sec-head">
+    <h2>오늘의 게임</h2>
+    <span class="muted">매일 한 편씩 소개합니다</span>
+  </div>
+  <div id="today"><div class="loading">불러오는 중…</div></div>
+</section>
+
+<section class="sec wrap">
+  <div class="sec-head">
+    <h2>기종별 둘러보기</h2>
+    <span class="muted" id="plat-note"></span>
+  </div>
+  <div id="plats"><div class="loading">불러오는 중…</div></div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>© HAE-BANG Rom Setting Tools</div>
+    <div class="credit">
+      게임 정보·이미지 출처
+      <a href="https://www.screenscraper.fr/" target="_blank" rel="noopener">ScreenScraper</a>
+      (CC BY-NC-SA 4.0). 각 이미지의 저작권은 해당 퍼블리셔에 있습니다.<br />
+      권리 관련 요청은 홈페이지의 연락처로 알려주시면 신속히 조치하겠습니다.
+    </div>
+  </div>
+</footer>
+
+<script>
+// 썸네일 기본 주소 — 나중에 커스텀 도메인을 붙이면 이 한 줄만 바꾸면 된다.
+const THUMB_BASE = 'https://pub-ce7fb67413a8472b9d565037b8fbd5ef.r2.dev';
+const thumbUrl = (sysId, gameId) => `${THUMB_BASE}/${sysId}/${gameId}.webp`;
+const nf = new Intl.NumberFormat('ko-KR');
+
+async function api(path) {
+  const r = await fetch(path);
+  const j = await r.json();
+  if (!j.ok) throw new Error(j.error || 'API error');
+  return j;
+}
+
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"]/g, (c) =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+}
+
+function renderToday(g) {
+  const title = g.name_kor || g.name || '(제목 없음)';
+  const sub = [g.name_kor && g.name, g.year, g.developer].filter(Boolean).join(' · ');
+  document.getElementById('today').innerHTML = `
+    <article class="today">
+      <a href="game.html?sys=${g.sys_id}&id=${g.game_id}">
+        <img src="${thumbUrl(g.sys_id, g.game_id)}" alt="${esc(title)}" loading="lazy" />
+      </a>
+      <div>
+        <div class="eyebrow">${esc(g.slug)}</div>
+        <h3>${esc(title)}</h3>
+        <div class="sub">${esc(sub)}</div>
+        <p>${esc(g.description_kor || '등록된 설명이 없습니다.')}</p>
+        <div class="acts">
+          <a class="btn btn-primary" href="game.html?sys=${g.sys_id}&id=${g.game_id}">자세히 보기</a>
+          <button class="btn" id="btn-another">다른 게임 보기</button>
+        </div>
+      </div>
+    </article>`;
+  document.getElementById('btn-another').onclick = loadRandom;
+}
+
+async function loadToday() {
+  try { renderToday((await api('/api/featured')).game); }
+  catch (e) { document.getElementById('today').innerHTML =
+    `<div class="error">오늘의 게임을 불러오지 못했습니다 — ${esc(e.message)}</div>`; }
+}
+async function loadRandom() {
+  try { renderToday((await api('/api/featured?random=1')).game); }
+  catch (e) { /* 기존 카드 유지 */ }
+}
+
+async function loadSystems() {
+  const box = document.getElementById('plats');
+  try {
+    const { systems } = await api('/api/systems');
+    const max = Math.max(...systems.map((s) => s.game_count), 1);
+    const total = systems.reduce((a, s) => a + s.game_count, 0);
+    document.getElementById('s-games').textContent = nf.format(total);
+    document.getElementById('s-plats').textContent = systems.length;
+    document.getElementById('plat-note').textContent = `게임이 많은 순`;
+    box.className = 'plats';
+    box.innerHTML = systems.map((s) => `
+      <a class="plat" href="platform.html?sys=${encodeURIComponent(s.slug)}">
+        <div class="pn">${esc(s.name)}</div>
+        <div class="pc">${nf.format(s.game_count)}개</div>
+        <div class="bar"><i style="width:${Math.max(4, s.game_count / max * 100)}%"></i></div>
+      </a>`).join('');
+  } catch (e) {
+    box.innerHTML = `<div class="error">기종 목록을 불러오지 못했습니다 — ${esc(e.message)}</div>`;
+  }
+}
+
+document.getElementById('btn-random').onclick = loadRandom;
+loadToday();
+loadSystems();
+</script>
+</body>
+</html>

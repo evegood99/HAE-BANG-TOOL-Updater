@@ -1,0 +1,10 @@
+# Cloudflare Wrangler 로컬 상태(로컬 D1 데이터·캐시). 로컬 개발 산출물이라 커밋하지 않는다.
+.wrangler/
+
+# 로컬 환경변수/시크릿 — 절대 커밋 금지
+.dev.vars
+.env
+
+# OS / 편집기
+Thumbs.db
+.DS_Store
