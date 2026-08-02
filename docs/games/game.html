@@ -108,41 +108,48 @@ function renderMedia() {
   const box3d = pick(IDX, 'box3d', curRegion);
   const cover = pick(IDX, 'cover', curRegion);
   const cart = pick(IDX, 'support', curRegion);
+  const bt = pick(IDX, 'boxtexture', curRegion);
+  const vid = pick(IDX, 'videos', curRegion);
   const main = box3d || cover;
 
-  // 케이스 위에 카트리지를 겹쳐 얹는다. 둘 중 하나만 있으면 단독 배치.
-  const stage = main
-    ? `<div class="stage${cart && main ? '' : ' solo'}">
-         <img class="main" src="${mediaUrl(g.sys_id, main)}" alt="" />
-         ${cart && main !== cart ? `<img class="cart" src="${mediaUrl(g.sys_id, cart)}" alt="" />` : ''}
-       </div>`
-    : (g.thumb ? `<div class="stage solo"><img class="main" src="${THUMB_BASE}/${g.sys_id}/${g.game_id}.webp" alt="" /></div>` : '');
-  document.getElementById('stage-box').innerHTML = stage;
+  // 케이스를 누르면 뒤집혀 전개도(뒷면)가 보인다 — 실물을 돌려보는 느낌.
+  // 카트리지는 뒤집힘과 별개로 위에 얹히고, 영상이 있으면 눌러서 재생한다.
+  const face = main ? `
+    <div class="flip" id="flip">
+      <div class="face front"><img src="${mediaUrl(g.sys_id, main)}" alt="" /></div>
+      ${bt ? `<div class="face back"><img src="${mediaUrl(g.sys_id, bt)}" alt="" /></div>` : ''}
+      ${bt ? '<div class="hint">눌러서 뒤집기 ↻</div>' : ''}
+    </div>` : (g.thumb ? `<div class="flip"><div class="face front">
+      <img src="${THUMB_BASE}/${g.sys_id}/${g.game_id}.webp" alt="" /></div></div>` : '');
 
-  // 로고
+  const cartHtml = (cart && main !== cart) ? `
+    <div class="cart-wrap" id="cart-wrap" title="${vid ? '눌러서 영상 보기' : ''}">
+      <img class="cart" src="${mediaUrl(g.sys_id, cart)}" alt="" />
+      ${vid ? '<div class="play">▶</div>' : ''}
+    </div>` : '';
+
+  document.getElementById('stage-box').innerHTML = face
+    ? `<div class="stage${cartHtml ? '' : ' solo'}">${face}${cartHtml}</div>` : '';
+
+  // 로고는 제목 바로 위
   const wheel = pick(IDX, 'wheel', curRegion);
   document.getElementById('logo-box').innerHTML = wheel
     ? `<img src="${mediaUrl(g.sys_id, wheel)}" alt="${esc(g.name_kor || g.name || '')}" />` : '';
 
   // 영상 — 자동재생(음소거 필수), 반복
-  const vid = pick(IDX, 'videos', curRegion);
   document.getElementById('vid-box').innerHTML = vid
-    ? `<div class="vid"><video src="${mediaUrl(g.sys_id, vid)}"
+    ? `<div class="vid"><video id="gvid" src="${mediaUrl(g.sys_id, vid)}"
          autoplay muted loop playsinline controls preload="metadata"></video></div>` : '';
 
-  // 스크린샷 + 타이틀 화면(있는 만큼 전부, 크게)
-  const shots = [...all(IDX, 'screenshots'), ...all(IDX, 'titlescreens')];
+  // 타이틀 화면 · 스크린샷 — 양옆으로 크게
+  const shots = [...all(IDX, 'titlescreens'), ...all(IDX, 'screenshots')];
   document.getElementById('shot-box').innerHTML = shots.length
     ? `<div class="sec-t"><h2>화면</h2><span>${shots.length}장 · 누르면 크게</span></div>
        <div class="shots">${shots.map((m) =>
          `<figure data-src="${mediaUrl(g.sys_id, m.filename)}"><img src="${mediaUrl(g.sys_id, m.filename)}" alt="" loading="lazy" /></figure>`).join('')}</div>` : '';
 
-  // 부가 자료 — 케이스 전개도·박스 측면·앞표지(메인이 3D일 때)
+  // 부가 자료 — 케이스는 뒤집기로 보므로 여기선 앞표지 정도만
   const extras = [];
-  const bt = pick(IDX, 'boxtexture', curRegion);
-  const side = pick(IDX, 'box2dside', curRegion);
-  if (bt) extras.push([bt, '케이스 전개도']);
-  if (side) extras.push([side, '박스 측면']);
   if (cover && main !== cover) extras.push([cover, '박스 앞표지']);
   if (cart && main === cart) extras.push([cart, '카트리지 · 디스크']);
   document.getElementById('extra-box').innerHTML = extras.length
@@ -162,6 +169,23 @@ function renderMedia() {
          </div>
          <div class="cap"><b>원본 설명서</b>스캔본 · ${esc(regionName(curRegion))}</div>
        </div>` : '';
+
+  // 케이스 뒤집기 — 전개도가 있을 때만
+  const flip = document.getElementById('flip');
+  if (flip && bt) flip.onclick = () => flip.classList.toggle('on');
+
+  // 카트리지 클릭 → 영상 재생(영상이 없으면 카트리지를 크게)
+  const cw = document.getElementById('cart-wrap');
+  if (cw) {
+    cw.onclick = () => {
+      if (vid) {
+        openLb(`<video src="${mediaUrl(g.sys_id, vid)}" autoplay controls playsinline
+                  style="max-width:96vw;max-height:92vh;border-radius:10px;background:#000"></video>`);
+      } else if (cart) {
+        openLb(`<img src="${mediaUrl(g.sys_id, cart)}" alt="" />`);
+      }
+    };
+  }
 
   // 클릭 → 라이트박스
   document.querySelectorAll('[data-src]').forEach((el) => {
@@ -199,11 +223,10 @@ function render(d) {
         ${REGIONS.map((r) => `<button data-r="${r}"${r === curRegion ? ' class="on"' : ''}>${esc(regionName(r))}</button>`).join('')}
       </div>` : ''}
 
-      <div class="gd-logo" id="logo-box"></div>
-
       <div class="gd-top">
         <div id="stage-box"></div>
         <div>
+          <div class="gd-logo" id="logo-box"></div>
           <div class="eyebrow">${esc(g.slug)}</div>
           <h1>${esc(title)}</h1>
           ${g.name && g.name !== title ? `<div class="en">${esc(g.name)}</div>` : ''}

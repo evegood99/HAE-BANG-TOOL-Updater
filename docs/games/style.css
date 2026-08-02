@@ -134,31 +134,43 @@ footer a{color:var(--muted)}
 .regbar button:hover{color:var(--text); border-color:var(--indigo)}
 .regbar button.on{background:var(--grad); border-color:transparent; color:#0a0c14; font-weight:800}
 
-/* 상단: 로고를 크게 얹고, 그 아래 케이스+카트리지 합성과 정보 */
-.gd-logo{min-height:74px; display:flex; align-items:center; margin-bottom:6px}
-.gd-logo img{max-height:112px; max-width:min(460px,100%); object-fit:contain;
-  filter:drop-shadow(0 10px 30px rgba(0,0,0,.6))}
-
-.gd-top{display:grid; grid-template-columns:minmax(300px,420px) 1fr; gap:40px; align-items:start}
+/* 상단: 왼쪽 패키지 / 오른쪽 로고+제목+설명 */
+.gd-top{display:grid; grid-template-columns:minmax(280px,400px) 1fr; gap:44px; align-items:start}
 @media(max-width:860px){ .gd-top{grid-template-columns:1fr; gap:26px} }
 
-/* 3D 케이스 위에 카트리지/디스크를 살짝 겹쳐 얹는다(앱의 믹스 이미지와 같은 발상) */
-.stage{position:relative; padding:6px 0 18px}
-.stage .main{width:100%; display:block; border-radius:10px;
-  filter:drop-shadow(0 26px 46px rgba(0,0,0,.72))}
-.stage .cart{position:absolute; right:-4%; bottom:0; width:46%;
-  transform:rotate(5deg); transform-origin:bottom right;
-  filter:drop-shadow(0 16px 28px rgba(0,0,0,.8)); transition:.25s}
-.stage:hover .cart{transform:rotate(2deg) translateY(-6px)}
-.stage.solo .main{max-width:88%; margin:0 auto}
+/* 로고는 제목 바로 위에 */
+.gd-logo{min-height:56px; display:flex; align-items:flex-end; margin-bottom:12px}
+.gd-logo img{max-height:96px; max-width:min(400px,100%); object-fit:contain;
+  filter:drop-shadow(0 10px 26px rgba(0,0,0,.6))}
 
-.gd h1{margin:0 0 6px; font-size:clamp(24px,3.2vw,36px); letter-spacing:-.02em; line-height:1.18}
-.gd .en{color:var(--muted); font-size:15px; margin-bottom:16px}
-.meta{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px}
-.meta span{background:var(--surface); border:1px solid var(--border); border-radius:999px;
-  padding:5px 13px; font-size:12.5px; color:var(--muted)}
-.meta span b{color:var(--text); font-weight:700}
-.desc{font-size:15px; line-height:1.9; color:#c9cfe0; white-space:pre-wrap}
+/* 3D 케이스(누르면 뒤집혀 전개도) 위에 카트리지를 겹쳐 얹는다 */
+.stage{position:relative; width:68%; padding:6px 0 22px; perspective:1400px}
+.flip{position:relative; transform-style:preserve-3d; cursor:pointer;
+  transition:transform .65s cubic-bezier(.2,.75,.2,1)}
+.flip.on{transform:rotateY(180deg)}
+.flip .face{backface-visibility:hidden; -webkit-backface-visibility:hidden}
+.flip .face img{width:100%; display:block; border-radius:8px;
+  filter:drop-shadow(0 24px 42px rgba(0,0,0,.72))}
+.flip .back{position:absolute; inset:0; transform:rotateY(180deg);
+  display:flex; align-items:center; justify-content:center}
+.flip .back img{max-height:100%; object-fit:contain}
+.flip .hint{position:absolute; left:50%; bottom:-6px; transform:translateX(-50%);
+  background:rgba(10,12,20,.86); border:1px solid var(--border2); border-radius:999px;
+  padding:4px 11px; font-size:11px; color:var(--muted); white-space:nowrap;
+  opacity:0; transition:.2s; pointer-events:none}
+.stage:hover .flip .hint{opacity:1}
+
+.stage .cart{position:absolute; right:-20%; bottom:6px; width:52%; cursor:pointer;
+  transform:rotate(5deg); transform-origin:bottom right; z-index:2;
+  filter:drop-shadow(0 16px 28px rgba(0,0,0,.85)); transition:.25s}
+.stage .cart:hover{transform:rotate(2deg) translateY(-8px) scale(1.04)}
+.stage .cart-wrap{position:absolute; right:-20%; bottom:6px; width:52%; z-index:2}
+.stage .cart-wrap .cart{position:static; width:100%}
+.stage .play{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  width:42px; height:42px; border-radius:50%; background:rgba(10,12,20,.72);
+  border:1px solid rgba(255,255,255,.35); color:#fff; display:flex; align-items:center;
+  justify-content:center; font-size:15px; pointer-events:none; opacity:.9}
+.stage.solo{width:78%}
 
 /* 영상 — 자동재생, 크게 */
 .vid{margin:44px 0 0; border-radius:var(--radius); overflow:hidden;
@@ -169,7 +181,7 @@ footer a{color:var(--muted)}
 .sec-t{display:flex; align-items:baseline; gap:12px; margin:44px 0 16px}
 .sec-t h2{margin:0; font-size:19px; letter-spacing:-.01em}
 .sec-t span{font-size:12.5px; color:var(--faint)}
-.shots{display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:16px}
+.shots{display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:18px}
 .shots figure{margin:0; border-radius:12px; overflow:hidden; border:1px solid var(--border);
   background:var(--surface2); cursor:zoom-in; transition:.18s}
 .shots figure:hover{border-color:var(--indigo); transform:translateY(-2px)}
