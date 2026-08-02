@@ -112,15 +112,16 @@ function renderMedia() {
   const vid = pick(IDX, 'videos', curRegion);
   const main = box3d || cover;
 
-  // 케이스를 누르면 뒤집혀 전개도(뒷면)가 보인다 — 실물을 돌려보는 느낌.
-  // 카트리지는 뒤집힘과 별개로 위에 얹히고, 영상이 있으면 눌러서 재생한다.
-  const face = main ? `
-    <div class="flip" id="flip">
-      <div class="face front"><img src="${mediaUrl(g.sys_id, main)}" alt="" /></div>
-      ${bt ? `<div class="face back"><img src="${mediaUrl(g.sys_id, bt)}" alt="" /></div>` : ''}
-      ${bt ? '<div class="hint">눌러서 뒤집기 ↻</div>' : ''}
-    </div>` : (g.thumb ? `<div class="flip"><div class="face front">
-      <img src="${THUMB_BASE}/${g.sys_id}/${g.game_id}.webp" alt="" /></div></div>` : '');
+  // 케이스를 누르면 3D 로 돌아가고, 동시에 제목·설명 아래에서 전개도가
+  // 가로 전체로 펼쳐진다. 힌트와 카트리지는 회전체 밖에 두어 글씨가 반전되지 않는다.
+  const caseSrc = main ? mediaUrl(g.sys_id, main)
+                       : (g.thumb ? `${THUMB_BASE}/${g.sys_id}/${g.game_id}.webp` : '');
+  const face = caseSrc ? `
+      <div class="flip" id="flip">
+        <div class="face front"><img src="${caseSrc}" alt="" /></div>
+        ${bt ? `<div class="face back"><img src="${mediaUrl(g.sys_id, bt)}" alt="" /></div>` : ''}
+      </div>
+      ${bt ? '<div class="hint" id="hint">케이스 돌려보기 ↻</div>' : ''}` : '';
 
   const cartHtml = (cart && main !== cart) ? `
     <div class="cart-wrap" id="cart-wrap">
@@ -131,21 +132,10 @@ function renderMedia() {
   document.getElementById('stage-box').innerHTML = face
     ? `<div class="stage${cartHtml ? '' : ' solo'}" id="stage">${face}${cartHtml}</div>` : '';
 
-  // 로고 — 가로세로비와 제목 길이를 보고 '제목 옆' 또는 '제목 위'를 고른다
+  // 로고 — 항상 제목 오른쪽
   const wheel = pick(IDX, 'wheel', curRegion);
-  const logoBox = document.getElementById('logo-box');
-  logoBox.innerHTML = wheel
+  document.getElementById('logo-box').innerHTML = wheel
     ? `<img src="${mediaUrl(g.sys_id, wheel)}" alt="${esc(g.name_kor || g.name || '')}" />` : '';
-  if (wheel) {
-    const im = logoBox.querySelector('img');
-    im.onload = () => {
-      const wideLogo = (im.naturalWidth / im.naturalHeight) > 3.2;
-      const longTitle = (G.name_kor || G.name || '').length > 14;
-      // 둘 다 짧을 때만 한 줄에 나란히 — 그 외에는 제목 위에 얹는다
-      document.getElementById('titlerow')
-        .classList.toggle('inline', !wideLogo && !longTitle);
-    };
-  }
 
   // 타이틀 화면 · 스크린샷 — 양옆으로 크게
   const shots = [...all(IDX, 'titlescreens'), ...all(IDX, 'screenshots')];
@@ -176,30 +166,38 @@ function renderMedia() {
          <div class="cap"><b>원본 설명서</b>스캔본 · ${esc(regionName(curRegion))}</div>
        </div>` : '';
 
-  // 케이스 뒤집기 — 뒤집으면서 무대 폭을 넓히고 높이를 전개도 비율에 맞춰
-  // 키운다. 전개도는 가로로 길어서, 앞면 높이에 갇히면 아주 작게 보이기 때문이다.
+  // 무대 높이는 앞면 비율로 고정한다(면이 absolute). 돌아가도 레이아웃이 흔들리지 않는다.
   const stage = document.getElementById('stage');
   const flip = document.getElementById('flip');
+  const hint = document.getElementById('hint');
+  const unfold = document.getElementById('unfold');
   if (flip) {
     const frontImg = flip.querySelector('.front img');
-    const backImg = flip.querySelector('.back img');
-    // 면이 absolute 라 높이를 직접 지정해야 한다. 앞면 비율로 초기 높이를 잡는다.
     const setH = () => {
       const w = stage.clientWidth || 1;
-      const im = flip.classList.contains('on') ? backImg : frontImg;
-      const r = (im && im.naturalWidth) ? im.naturalHeight / im.naturalWidth : 1.35;
+      const r = frontImg && frontImg.naturalWidth
+        ? frontImg.naturalHeight / frontImg.naturalWidth : 1.35;
       flip.style.height = Math.round(w * r) + 'px';
     };
-    const ready = (im) => im && (im.complete ? Promise.resolve() : new Promise((r) => { im.onload = r; im.onerror = r; }));
-    Promise.all([ready(frontImg), ready(backImg)]).then(setH);
+    if (frontImg && !frontImg.complete) frontImg.onload = setH; else setH();
     window.addEventListener('resize', setH);
 
     if (bt) {
+      // 전개도는 아래 패널에 미리 담아두고, 열 때 grid-template-rows 로 부드럽게 펼친다.
+      unfold.innerHTML = `<div class="in">
+          <img src="${mediaUrl(g.sys_id, bt)}" alt="" />
+          <div class="cap">케이스 전개도 · ${esc(regionName(curRegion))} · 누르면 크게</div>
+        </div>`;
+      unfold.querySelector('img').onclick = () =>
+        openLb(`<img src="${mediaUrl(g.sys_id, bt)}" alt="" />`);
+
       flip.onclick = () => {
         const on = !flip.classList.contains('on');
-        flip.classList.toggle('on', on);
-        stage.classList.toggle('wide', on);      // 폭 확대(전개도를 크게)
-        requestAnimationFrame(() => requestAnimationFrame(setH));
+        flip.classList.toggle('on', on);          // 3D 회전
+        stage.classList.toggle('flipped', on);    // 카트리지 비켜주기
+        unfold.classList.toggle('on', on);        // 아래로 펼치기
+        if (hint) hint.textContent = on ? '원래대로 ↩' : '케이스 돌려보기 ↻';
+        if (on) setTimeout(() => unfold.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 320);
       };
     }
   }
@@ -209,8 +207,18 @@ function renderMedia() {
   if (cw) {
     cw.onclick = () => {
       if (vid) {
-        openLb(`<video src="${mediaUrl(g.sys_id, vid)}" autoplay controls playsinline
-                  style="width:min(1600px,97vw);max-height:94vh;border-radius:10px;background:#000"></video>`);
+        // 영상 위에 어떤 게임인지 보이도록 로고와 제목을 함께 얹는다.
+        const t = G.name_kor || G.name || '';
+        const sub = [G.name && G.name !== t ? G.name : '', G.year, G.developer]
+          .filter(Boolean).join(' · ');
+        openLb(`<div class="lb-wrap">
+            <div class="lb-head">
+              ${wheel ? `<img src="${mediaUrl(g.sys_id, wheel)}" alt="" />` : ''}
+              <div><div class="t">${esc(t)}</div>${sub ? `<div class="s">${esc(sub)}</div>` : ''}</div>
+            </div>
+            <video src="${mediaUrl(g.sys_id, vid)}" autoplay controls playsinline
+              style="width:min(1600px,97vw);max-height:82vh;border-radius:10px;background:#000"></video>
+          </div>`);
       } else if (cart) {
         openLb(`<img src="${mediaUrl(g.sys_id, cart)}" alt="" />`);
       }
@@ -238,7 +246,8 @@ function render(d) {
 
   const meta = [['기종', g.slug], ['발매', g.year], ['장르', g.genre],
                 ['개발사', g.developer], ['플레이어', g.players]]
-    .filter(([, v]) => v).map(([k, v]) => `<span>${k} <b>${esc(v)}</b></span>`).join('');
+    .filter(([, v]) => v)
+    .map(([k, v]) => `<div><span class="k">${k}</span><span class="v">${esc(v)}</span></div>`).join('');
 
   const nav = [];
   nav.push(d.prev
@@ -267,6 +276,7 @@ function render(d) {
         </div>
       </div>
 
+      <div class="unfold" id="unfold"></div>
       <div id="shot-box"></div>
       <div id="extra-box"></div>
       <div id="man-box"></div>
