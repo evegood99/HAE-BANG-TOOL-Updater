@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>게임 상세 — 레트로 게임 아카이브</title>
+<link rel="icon" href="../assets/favicon.ico" />
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="../index.html">
+      <img src="../assets/icon.png" alt="" />
+      <span>
+        <span class="bt">HAE-BANG</span><br />
+        <span class="bs">Rom Setting Tools</span>
+      </span>
+    </a>
+    <nav class="nav-links">
+      <a href="../index.html">홈</a>
+      <a href="../guide.html">가이드</a>
+      <a href="./" class="on">게임 아카이브</a>
+    </nav>
+    <div class="nav-right">
+      <a class="btn" id="back">← 목록</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap" id="main"><div class="loading">불러오는 중…</div></div>
+
+<footer>
+  <div class="wrap">
+    <div>© HAE-BANG Rom Setting Tools</div>
+    <div class="credit">
+      게임 정보·이미지 출처
+      <a href="https://www.screenscraper.fr/" target="_blank" rel="noopener">ScreenScraper</a>
+      (CC BY-NC-SA 4.0). 각 이미지의 저작권은 해당 퍼블리셔에 있습니다.<br />
+      권리 관련 요청은 홈페이지의 연락처로 알려주시면 신속히 조치하겠습니다.
+    </div>
+  </div>
+</footer>
+
+<script>
+const THUMB_BASE = 'https://pub-ce7fb67413a8472b9d565037b8fbd5ef.r2.dev';
+// 원본 미디어는 앱과 같은 워커를 통해 받는다(공개 라우트). 썸네일과 달리 양이 적다.
+const MEDIA_BASE = 'https://haebang-media.evegood99.workers.dev/pub';
+const P = new URLSearchParams(location.search);
+const SYS = P.get('sys') || '';
+const ID = P.get('id') || '';
+
+// 미디어 종류 표시명 + 갤러리 노출 순서
+const KIND = [
+  ['screenshots', '스크린샷'],
+  ['titlescreens', '타이틀 화면'],
+  ['cover', '박스 앞표지'],
+  ['box3d', '3D 박스'],
+  ['box2dside', '박스 측면'],
+  ['boxtexture', '케이스 전개도'],
+  ['support', '카트리지 · 디스크'],
+  ['wheel', '로고'],
+  ['videos', '영상'],
+];
+
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"]/g, (c) =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+}
+const mediaUrl = (sysId, fn) => `${MEDIA_BASE}/${sysId}/${encodeURIComponent(fn)}`;
+
+function render(d) {
+  const g = d.game;
+  const title = g.name_kor || g.name || '(제목 없음)';
+  document.title = `${title} — 레트로 게임 아카이브`;
+  document.getElementById('back').href = `platform.html?sys=${encodeURIComponent(g.slug)}`;
+
+  // 종류별로 묶고, 각 종류 안에서는 리전 순
+  const byKind = {};
+  for (const m of d.media) (byKind[m.type] ||= []).push(m);
+
+  const meta = [
+    ['기종', g.slug], ['발매', g.year], ['장르', g.genre],
+    ['개발사', g.developer], ['플레이어', g.players],
+  ].filter(([, v]) => v)
+   .map(([k, v]) => `<span>${k} <b>${esc(v)}</b></span>`).join('');
+
+  const coverFile = (byKind.cover || byKind.box3d || byKind.titlescreens || [])[0];
+  const cover = g.thumb
+    ? `<img src="${THUMB_BASE}/${g.sys_id}/${g.game_id}.webp" alt="${esc(title)}" />`
+    : (coverFile ? `<img src="${mediaUrl(g.sys_id, coverFile.filename)}" alt="${esc(title)}" />`
+                 : `<div class="noimg" style="padding:40px 0;text-align:center;color:var(--faint)">이미지 없음</div>`);
+
+  // 갤러리 탭 — 실제로 가진 종류만
+  const tabs = KIND.filter(([k]) => byKind[k] && byKind[k].length);
+  const nav = [];
+  if (d.prev) nav.push(`<a href="game.html?sys=${encodeURIComponent(g.slug)}&id=${d.prev.game_id}">
+      <span class="lbl">← 이전</span>${esc(d.prev.name_kor || d.prev.name)}</a>`);
+  else nav.push('<span></span>');
+  if (d.next) nav.push(`<a style="text-align:right" href="game.html?sys=${encodeURIComponent(g.slug)}&id=${d.next.game_id}">
+      <span class="lbl">다음 →</span>${esc(d.next.name_kor || d.next.name)}</a>`);
+
+  document.getElementById('main').innerHTML = `
+    <article class="detail">
+      <div class="cover">${cover}</div>
+      <div>
+        <div class="eyebrow">${esc(g.slug)}</div>
+        <h1>${esc(title)}</h1>
+        ${g.name && g.name !== title ? `<div class="en">${esc(g.name)}</div>` : ''}
+        <div class="meta">${meta}</div>
+        <div class="desc">${esc(g.description_kor || g.description || '등록된 설명이 없습니다.')}</div>
+      </div>
+    </article>
+
+    ${tabs.length ? `<section class="gallery">
+      <div class="gal-tabs">
+        ${tabs.map(([k, label], i) =>
+          `<button data-k="${k}" class="${i === 0 ? 'on' : ''}">${label} ${byKind[k].length}</button>`).join('')}
+      </div>
+      <div class="shots" id="shots"></div>
+    </section>` : ''}
+
+    <div class="navrow">${nav.join('')}</div>`;
+
+  if (!tabs.length) return;
+  const showKind = (k) => {
+    document.getElementById('shots').innerHTML = byKind[k].map((m) => {
+      const url = mediaUrl(g.sys_id, m.filename);
+      const cap = (m.region || '').toUpperCase();
+      const body = k === 'videos'
+        ? `<video src="${url}" controls preload="none"></video>`
+        : `<img src="${url}" alt="" loading="lazy" />`;
+      return `<figure>${body}${cap ? `<figcaption>${cap}</figcaption>` : ''}</figure>`;
+    }).join('');
+  };
+  document.querySelectorAll('.gal-tabs button').forEach((b) => {
+    b.onclick = () => {
+      document.querySelectorAll('.gal-tabs button').forEach((x) => x.classList.remove('on'));
+      b.classList.add('on');
+      showKind(b.dataset.k);
+    };
+  });
+  showKind(tabs[0][0]);
+}
+
+(async () => {
+  try {
+    const r = await fetch(`/api/game/${encodeURIComponent(ID)}?sys=${encodeURIComponent(SYS)}`);
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.error || 'not found');
+    render(d);
+  } catch (e) {
+    document.getElementById('main').innerHTML =
+      `<div class="error">게임 정보를 불러오지 못했습니다 — ${esc(e.message)}</div>`;
+  }
+})();
+</script>
+</body>
+</html>

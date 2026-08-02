@@ -139,6 +139,10 @@ async function loadSystems() {
     box.className = 'plats';
     box.innerHTML = systems.map((s) => `
       <a class="plat" href="platform.html?sys=${encodeURIComponent(s.slug)}">
+        <div class="logo">
+          <img src="logos/${esc(s.slug)}.svg" alt="" loading="lazy"
+               onerror="this.parentNode.style.display='none'" />
+        </div>
         <div class="pn">${esc(s.name)}</div>
         <div class="pc">${nf.format(s.game_count)}개</div>
         <div class="bar"><i style="width:${Math.max(4, s.game_count / max * 100)}%"></i></div>
