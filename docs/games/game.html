@@ -65,6 +65,15 @@ const mediaUrl = (sysId, fn) => `${MEDIA_BASE}/${sysId}/${encodeURIComponent(fn)
 /* ---------- 라이트박스 ---------- */
 const lb = document.getElementById('lb'), lbBody = document.getElementById('lb-body');
 function openLb(html) { lbBody.innerHTML = html; lb.classList.add('on'); }
+/** 90도 돌려 세운 이미지를 화면에 맞춰 감싼다 — transform 은 레이아웃 크기를 바꾸지 않아
+    돌린 뒤의 크기(nh × nw)를 상자에 직접 잡아 줘야 한다. */
+function rotBox(src, nw, nh) {
+  if (!nw || !nh) return `<img src="${src}" alt="" />`;
+  const s = Math.min(window.innerWidth * 0.94 / nh, window.innerHeight * 0.92 / nw);
+  return `<div class="rotbox" style="width:${Math.round(nh * s)}px;height:${Math.round(nw * s)}px">
+            <img src="${src}" style="width:${Math.round(nw * s)}px;height:${Math.round(nh * s)}px" alt="" />
+          </div>`;
+}
 function closeLb() { lb.classList.remove('on'); lbBody.innerHTML = ''; }
 document.getElementById('lb-x').onclick = closeLb;
 lb.onclick = (e) => { if (e.target === lb) closeLb(); };
@@ -123,11 +132,20 @@ function renderMedia() {
       </div>
       ${bt ? '<div class="hint" id="hint">↻ 케이스 펴보기</div>' : ''}` : '';
 
+  // 카트리지·디스크가 있으면 그것을, 없고 영상만 있으면 같은 자리에 영상 카드를 둔다.
+  // (영상은 있는데 카트 이미지가 없는 게임이 1만 개가 넘어 그대로 두면 영상을 볼 길이 없다)
+  const shotForPoster = pick(IDX, 'titlescreens', curRegion) || pick(IDX, 'screenshots', curRegion);
   const cartHtml = (cart && main !== cart) ? `
     <div class="cart-wrap" id="cart-wrap">
       <img src="${mediaUrl(g.sys_id, cart)}" alt="" />
       ${vid ? '<div class="vlabel">▶ 영상 보기</div>' : ''}
-    </div>` : '';
+    </div>` : (vid ? `
+    <div class="cart-wrap vid-only" id="cart-wrap">
+      ${shotForPoster ? `<img src="${mediaUrl(g.sys_id, shotForPoster)}" alt="" />`
+                      : '<div class="ph"></div>'}
+      <div class="play">▶</div>
+      <div class="vlabel">▶ 영상 보기</div>
+    </div>` : '');
 
   document.getElementById('stage-box').innerHTML = face
     ? `<div class="stage${cartHtml ? '' : ' solo'}" id="stage">${face}${cartHtml}</div>` : '';
@@ -173,23 +191,56 @@ function renderMedia() {
   const unfold = document.getElementById('unfold');
   if (flip) {
     const frontImg = flip.querySelector('.front img');
+    let wide = false;              // 가로형 케이스(슈퍼패미컴·N64 등)인가
+    let layoutTex = () => {};      // 전개도 크기 계산 — 전개도가 있을 때만 채워진다
+
     const setH = () => {
+      const nw = (frontImg && frontImg.naturalWidth) || 0;
+      const nh = (frontImg && frontImg.naturalHeight) || 0;
+      // 폭을 재기 전에 가로형 여부를 반영해야 한다(가로형은 무대 폭이 다르다)
+      wide = nw > 0 && nw > nh * 1.05;
+      stage.classList.toggle('wide', wide);
       const w = stage.clientWidth || 1;
-      const r = frontImg && frontImg.naturalWidth
-        ? frontImg.naturalHeight / frontImg.naturalWidth : 1.35;
-      flip.style.height = Math.round(w * r) + 'px';
+      flip.style.height = Math.round(w * (nw ? nh / nw : 1.35)) + 'px';
+      layoutTex();
     };
     if (frontImg && !frontImg.complete) frontImg.onload = setH; else setH();
     window.addEventListener('resize', setH);
 
     if (bt) {
       // 전개도는 아래 패널에 미리 담아두고, 열 때 grid-template-rows 로 부드럽게 펼친다.
+      const texSrc = mediaUrl(g.sys_id, bt);
       unfold.innerHTML = `<div class="in">
-          <img src="${mediaUrl(g.sys_id, bt)}" alt="" />
+          <div class="tex"><img src="${texSrc}" alt="" /></div>
           <div class="cap">케이스 전개도 · ${esc(regionName(curRegion))} · 누르면 크게</div>
         </div>`;
-      unfold.querySelector('img').onclick = () =>
-        openLb(`<img src="${mediaUrl(g.sys_id, bt)}" alt="" />`);
+      const texBox = unfold.querySelector('.tex');
+      const texImg = texBox.querySelector('img');
+
+      // 가로형 케이스의 전개도는 원본이 90도 돌아간 채 저장돼 있다(텍스처 높이 = 표지 가로).
+      // 그대로 두면 글씨가 옆으로 누우므로 되돌려 세우고, 돌린 뒤의 크기를 상자에 잡아 준다.
+      layoutTex = () => {
+        const nw = texImg.naturalWidth, nh = texImg.naturalHeight;
+        if (!wide || !nw) {
+          texBox.classList.remove('rot');
+          texBox.style.width = texBox.style.height = '';
+          texImg.style.width = texImg.style.height = '';
+          return;
+        }
+        texBox.classList.add('rot');
+        const pw = unfold.clientWidth || 900;
+        const mh = Math.min(window.innerHeight * 0.78, 1000);
+        const s = Math.min(pw / nh, mh / nw);   // 돌리면 (nh × nw) 가 된다
+        texImg.style.width = Math.round(nw * s) + 'px';
+        texImg.style.height = Math.round(nh * s) + 'px';
+        texBox.style.width = Math.round(nh * s) + 'px';
+        texBox.style.height = Math.round(nw * s) + 'px';
+      };
+      if (!texImg.complete) texImg.onload = layoutTex; else layoutTex();
+
+      texImg.onclick = () => openLb(
+        wide ? rotBox(texSrc, texImg.naturalWidth, texImg.naturalHeight)
+             : `<img src="${texSrc}" alt="" />`);
 
       flip.onclick = () => {
         const on = !flip.classList.contains('on');
