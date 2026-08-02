@@ -135,47 +135,47 @@ footer a{color:var(--muted)}
 .regbar button.on{background:var(--grad); border-color:transparent; color:#0a0c14; font-weight:800}
 
 /* 상단: 왼쪽 패키지 / 오른쪽 로고+제목+설명 */
-.gd-top{display:grid; grid-template-columns:minmax(280px,400px) 1fr; gap:44px; align-items:start}
+.gd-top{display:grid; grid-template-columns:minmax(300px,430px) 1fr; gap:46px; align-items:start}
 @media(max-width:860px){ .gd-top{grid-template-columns:1fr; gap:26px} }
 
-/* 로고는 제목 바로 위에 */
-.gd-logo{min-height:56px; display:flex; align-items:flex-end; margin-bottom:12px}
-.gd-logo img{max-height:96px; max-width:min(400px,100%); object-fit:contain;
-  filter:drop-shadow(0 10px 26px rgba(0,0,0,.6))}
+/* 로고 배치 — 기본은 제목 위(stack), 로고가 짧고 제목도 짧으면 제목 옆(inline) */
+.titlerow{display:flex; flex-direction:column-reverse; align-items:flex-start; gap:10px}
+.titlerow.inline{flex-direction:row; align-items:center; gap:18px; flex-wrap:wrap}
+.titlerow .lg{display:flex; align-items:center; min-height:0}
+.titlerow .lg img{max-height:74px; max-width:min(360px,100%); object-fit:contain;
+  filter:drop-shadow(0 8px 22px rgba(0,0,0,.6))}
+.titlerow.inline .lg img{max-height:54px; max-width:220px}
 
-/* 3D 케이스(누르면 뒤집혀 전개도) 위에 카트리지를 겹쳐 얹는다 */
-.stage{position:relative; width:68%; padding:6px 0 22px; perspective:1400px}
+/* 케이스: 누르면 뒤집히면서 폭이 넓어져 전개도가 크게 보인다 */
+.stage{position:relative; width:66%; padding:6px 0 26px; perspective:1600px;
+  transition:width .65s cubic-bezier(.2,.75,.2,1)}
+.stage.wide{width:100%}
 .flip{position:relative; transform-style:preserve-3d; cursor:pointer;
-  transition:transform .65s cubic-bezier(.2,.75,.2,1)}
+  transition:transform .65s cubic-bezier(.2,.75,.2,1), height .65s cubic-bezier(.2,.75,.2,1)}
 .flip.on{transform:rotateY(180deg)}
-.flip .face{backface-visibility:hidden; -webkit-backface-visibility:hidden}
-.flip .face img{width:100%; display:block; border-radius:8px;
+.flip .face{position:absolute; inset:0; backface-visibility:hidden;
+  -webkit-backface-visibility:hidden; display:flex; align-items:center; justify-content:center}
+.flip .face img{max-width:100%; max-height:100%; object-fit:contain; border-radius:8px;
   filter:drop-shadow(0 24px 42px rgba(0,0,0,.72))}
-.flip .back{position:absolute; inset:0; transform:rotateY(180deg);
-  display:flex; align-items:center; justify-content:center}
-.flip .back img{max-height:100%; object-fit:contain}
-.flip .hint{position:absolute; left:50%; bottom:-6px; transform:translateX(-50%);
+.flip .back{transform:rotateY(180deg)}
+.flip .hint{position:absolute; left:50%; bottom:-16px; transform:translateX(-50%);
   background:rgba(10,12,20,.86); border:1px solid var(--border2); border-radius:999px;
-  padding:4px 11px; font-size:11px; color:var(--muted); white-space:nowrap;
+  padding:4px 12px; font-size:11px; color:var(--muted); white-space:nowrap;
+  opacity:0; transition:.2s; pointer-events:none; z-index:3}
+.stage:hover .hint{opacity:1}
+
+/* 카트리지 — 케이스 위에 크게 겹친다 */
+.cart-wrap{position:absolute; right:-24%; bottom:-2%; width:80%; z-index:2; cursor:pointer;
+  transform:rotate(5deg); transform-origin:bottom right; transition:.25s}
+.cart-wrap:hover{transform:rotate(2deg) translateY(-8px) scale(1.03)}
+.cart-wrap img{width:100%; display:block; filter:drop-shadow(0 18px 30px rgba(0,0,0,.85))}
+.cart-wrap .vlabel{position:absolute; left:50%; bottom:8%; transform:translateX(-50%);
+  background:rgba(10,12,20,.9); border:1px solid rgba(255,255,255,.28); color:#fff;
+  border-radius:999px; padding:6px 14px; font-size:12px; font-weight:700; white-space:nowrap;
   opacity:0; transition:.2s; pointer-events:none}
-.stage:hover .flip .hint{opacity:1}
-
-.stage .cart{position:absolute; right:-20%; bottom:6px; width:52%; cursor:pointer;
-  transform:rotate(5deg); transform-origin:bottom right; z-index:2;
-  filter:drop-shadow(0 16px 28px rgba(0,0,0,.85)); transition:.25s}
-.stage .cart:hover{transform:rotate(2deg) translateY(-8px) scale(1.04)}
-.stage .cart-wrap{position:absolute; right:-20%; bottom:6px; width:52%; z-index:2}
-.stage .cart-wrap .cart{position:static; width:100%}
-.stage .play{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-  width:42px; height:42px; border-radius:50%; background:rgba(10,12,20,.72);
-  border:1px solid rgba(255,255,255,.35); color:#fff; display:flex; align-items:center;
-  justify-content:center; font-size:15px; pointer-events:none; opacity:.9}
-.stage.solo{width:78%}
-
-/* 영상 — 자동재생, 크게 */
-.vid{margin:44px 0 0; border-radius:var(--radius); overflow:hidden;
-  border:1px solid var(--border); background:#000; box-shadow:var(--shadow)}
-.vid video{width:100%; display:block; max-height:min(66vh,720px); background:#000}
+.cart-wrap:hover .vlabel{opacity:1}
+.stage.solo{width:76%}
+.stage.wide .cart-wrap{opacity:0; pointer-events:none; transition:.3s}
 
 /* 스크린샷 — 갤러리처럼 크게 */
 .sec-t{display:flex; align-items:baseline; gap:12px; margin:44px 0 16px}

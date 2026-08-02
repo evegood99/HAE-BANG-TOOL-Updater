@@ -123,23 +123,29 @@ function renderMedia() {
       <img src="${THUMB_BASE}/${g.sys_id}/${g.game_id}.webp" alt="" /></div></div>` : '');
 
   const cartHtml = (cart && main !== cart) ? `
-    <div class="cart-wrap" id="cart-wrap" title="${vid ? '눌러서 영상 보기' : ''}">
-      <img class="cart" src="${mediaUrl(g.sys_id, cart)}" alt="" />
-      ${vid ? '<div class="play">▶</div>' : ''}
+    <div class="cart-wrap" id="cart-wrap">
+      <img src="${mediaUrl(g.sys_id, cart)}" alt="" />
+      ${vid ? '<div class="vlabel">▶ 영상 보기</div>' : ''}
     </div>` : '';
 
   document.getElementById('stage-box').innerHTML = face
-    ? `<div class="stage${cartHtml ? '' : ' solo'}">${face}${cartHtml}</div>` : '';
+    ? `<div class="stage${cartHtml ? '' : ' solo'}" id="stage">${face}${cartHtml}</div>` : '';
 
-  // 로고는 제목 바로 위
+  // 로고 — 가로세로비와 제목 길이를 보고 '제목 옆' 또는 '제목 위'를 고른다
   const wheel = pick(IDX, 'wheel', curRegion);
-  document.getElementById('logo-box').innerHTML = wheel
+  const logoBox = document.getElementById('logo-box');
+  logoBox.innerHTML = wheel
     ? `<img src="${mediaUrl(g.sys_id, wheel)}" alt="${esc(g.name_kor || g.name || '')}" />` : '';
-
-  // 영상 — 자동재생(음소거 필수), 반복
-  document.getElementById('vid-box').innerHTML = vid
-    ? `<div class="vid"><video id="gvid" src="${mediaUrl(g.sys_id, vid)}"
-         autoplay muted loop playsinline controls preload="metadata"></video></div>` : '';
+  if (wheel) {
+    const im = logoBox.querySelector('img');
+    im.onload = () => {
+      const wideLogo = (im.naturalWidth / im.naturalHeight) > 3.2;
+      const longTitle = (G.name_kor || G.name || '').length > 14;
+      // 둘 다 짧을 때만 한 줄에 나란히 — 그 외에는 제목 위에 얹는다
+      document.getElementById('titlerow')
+        .classList.toggle('inline', !wideLogo && !longTitle);
+    };
+  }
 
   // 타이틀 화면 · 스크린샷 — 양옆으로 크게
   const shots = [...all(IDX, 'titlescreens'), ...all(IDX, 'screenshots')];
@@ -148,9 +154,9 @@ function renderMedia() {
        <div class="shots">${shots.map((m) =>
          `<figure data-src="${mediaUrl(g.sys_id, m.filename)}"><img src="${mediaUrl(g.sys_id, m.filename)}" alt="" loading="lazy" /></figure>`).join('')}</div>` : '';
 
-  // 부가 자료 — 케이스는 뒤집기로 보므로 여기선 앞표지 정도만
+  // 부가 자료 — 케이스는 뒤집기로, 앞표지는 위 무대에서 이미 보이므로 생략.
+  //   카트리지가 메인으로 쓰인(케이스가 없는) 게임만 따로 보여준다.
   const extras = [];
-  if (cover && main !== cover) extras.push([cover, '박스 앞표지']);
   if (cart && main === cart) extras.push([cart, '카트리지 · 디스크']);
   document.getElementById('extra-box').innerHTML = extras.length
     ? `<div class="sec-t"><h2>패키지</h2><span>실물 자료</span></div>
@@ -170,9 +176,33 @@ function renderMedia() {
          <div class="cap"><b>원본 설명서</b>스캔본 · ${esc(regionName(curRegion))}</div>
        </div>` : '';
 
-  // 케이스 뒤집기 — 전개도가 있을 때만
+  // 케이스 뒤집기 — 뒤집으면서 무대 폭을 넓히고 높이를 전개도 비율에 맞춰
+  // 키운다. 전개도는 가로로 길어서, 앞면 높이에 갇히면 아주 작게 보이기 때문이다.
+  const stage = document.getElementById('stage');
   const flip = document.getElementById('flip');
-  if (flip && bt) flip.onclick = () => flip.classList.toggle('on');
+  if (flip) {
+    const frontImg = flip.querySelector('.front img');
+    const backImg = flip.querySelector('.back img');
+    // 면이 absolute 라 높이를 직접 지정해야 한다. 앞면 비율로 초기 높이를 잡는다.
+    const setH = () => {
+      const w = stage.clientWidth || 1;
+      const im = flip.classList.contains('on') ? backImg : frontImg;
+      const r = (im && im.naturalWidth) ? im.naturalHeight / im.naturalWidth : 1.35;
+      flip.style.height = Math.round(w * r) + 'px';
+    };
+    const ready = (im) => im && (im.complete ? Promise.resolve() : new Promise((r) => { im.onload = r; im.onerror = r; }));
+    Promise.all([ready(frontImg), ready(backImg)]).then(setH);
+    window.addEventListener('resize', setH);
+
+    if (bt) {
+      flip.onclick = () => {
+        const on = !flip.classList.contains('on');
+        flip.classList.toggle('on', on);
+        stage.classList.toggle('wide', on);      // 폭 확대(전개도를 크게)
+        requestAnimationFrame(() => requestAnimationFrame(setH));
+      };
+    }
+  }
 
   // 카트리지 클릭 → 영상 재생(영상이 없으면 카트리지를 크게)
   const cw = document.getElementById('cart-wrap');
@@ -180,7 +210,7 @@ function renderMedia() {
     cw.onclick = () => {
       if (vid) {
         openLb(`<video src="${mediaUrl(g.sys_id, vid)}" autoplay controls playsinline
-                  style="max-width:96vw;max-height:92vh;border-radius:10px;background:#000"></video>`);
+                  style="width:min(1600px,97vw);max-height:94vh;border-radius:10px;background:#000"></video>`);
       } else if (cart) {
         openLb(`<img src="${mediaUrl(g.sys_id, cart)}" alt="" />`);
       }
@@ -226,16 +256,17 @@ function render(d) {
       <div class="gd-top">
         <div id="stage-box"></div>
         <div>
-          <div class="gd-logo" id="logo-box"></div>
           <div class="eyebrow">${esc(g.slug)}</div>
-          <h1>${esc(title)}</h1>
+          <div class="titlerow" id="titlerow">
+            <h1>${esc(title)}</h1>
+            <span class="lg" id="logo-box"></span>
+          </div>
           ${g.name && g.name !== title ? `<div class="en">${esc(g.name)}</div>` : ''}
           <div class="meta">${meta}</div>
           <div class="desc">${esc(g.description_kor || g.description || '등록된 설명이 없습니다.')}</div>
         </div>
       </div>
 
-      <div id="vid-box"></div>
       <div id="shot-box"></div>
       <div id="extra-box"></div>
       <div id="man-box"></div>
