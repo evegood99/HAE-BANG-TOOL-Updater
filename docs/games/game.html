@@ -121,7 +121,7 @@ function renderMedia() {
         <div class="face front"><img src="${caseSrc}" alt="" /></div>
         ${bt ? `<div class="face back"><img src="${mediaUrl(g.sys_id, bt)}" alt="" /></div>` : ''}
       </div>
-      ${bt ? '<div class="hint" id="hint">케이스 돌려보기 ↻</div>' : ''}` : '';
+      ${bt ? '<div class="hint" id="hint">↻ 케이스 펴보기</div>' : ''}` : '';
 
   const cartHtml = (cart && main !== cart) ? `
     <div class="cart-wrap" id="cart-wrap">
@@ -142,7 +142,7 @@ function renderMedia() {
   document.getElementById('shot-box').innerHTML = shots.length
     ? `<div class="sec-t"><h2>화면</h2><span>${shots.length}장 · 누르면 크게</span></div>
        <div class="shots">${shots.map((m) =>
-         `<figure data-src="${mediaUrl(g.sys_id, m.filename)}"><img src="${mediaUrl(g.sys_id, m.filename)}" alt="" loading="lazy" /></figure>`).join('')}</div>` : '';
+         `<figure><img src="${mediaUrl(g.sys_id, m.filename)}" alt="" loading="lazy" /></figure>`).join('')}</div>` : '';
 
   // 부가 자료 — 케이스는 뒤집기로, 앞표지는 위 무대에서 이미 보이므로 생략.
   //   카트리지가 메인으로 쓰인(케이스가 없는) 게임만 따로 보여준다.
@@ -196,7 +196,7 @@ function renderMedia() {
         flip.classList.toggle('on', on);          // 3D 회전
         stage.classList.toggle('flipped', on);    // 카트리지 비켜주기
         unfold.classList.toggle('on', on);        // 아래로 펼치기
-        if (hint) hint.textContent = on ? '원래대로 ↩' : '케이스 돌려보기 ↻';
+        if (hint) hint.textContent = on ? '↩ 원래대로' : '↻ 케이스 펴보기';
         if (on) setTimeout(() => unfold.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 320);
       };
     }
@@ -225,8 +225,8 @@ function renderMedia() {
     };
   }
 
-  // 클릭 → 라이트박스
-  document.querySelectorAll('[data-src]').forEach((el) => {
+  // 클릭 → 라이트박스 (화면 캡처는 제외 — 아래 '패키지' 실물 자료만 크게 본다)
+  document.querySelectorAll('.extras [data-src]').forEach((el) => {
     el.onclick = () => openLb(`<img src="${el.dataset.src}" alt="" />`);
   });
   const mc = document.querySelector('[data-pdf]');
@@ -244,7 +244,8 @@ function render(d) {
   IDX = m.idx; REGIONS = m.regions;
   curRegion = REGIONS.find((r) => REGION_ORDER.includes(r)) || REGIONS[0] || '';
 
-  const meta = [['기종', g.slug], ['발매', g.year], ['장르', g.genre],
+  // 기종은 제목 위 eyebrow 에 이미 있으므로 사양에서는 뺀다.
+  const meta = [['발매', g.year], ['장르', g.genre],
                 ['개발사', g.developer], ['플레이어', g.players]]
     .filter(([, v]) => v)
     .map(([k, v]) => `<div><span class="k">${k}</span><span class="v">${esc(v)}</span></div>`).join('');

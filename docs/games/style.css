@@ -148,8 +148,8 @@ footer a{color:var(--muted)}
 .meta{display:flex; flex-wrap:wrap; gap:6px 22px; margin:14px 0 22px;
   padding:13px 0; border-top:1px solid var(--border); border-bottom:1px solid var(--border)}
 .meta div{display:flex; align-items:baseline; gap:7px}
-.meta .k{font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--faint)}
-.meta .v{font-size:13.5px; font-weight:700; color:var(--text)}
+.meta .k{font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--faint)}
+.meta .v{font-size:15.5px; font-weight:700; color:var(--text)}
 
 /* 케이스 무대 — 3D 로 돌아가고, 큰 그림은 아래 패널에서 펼쳐진다 */
 .stage{position:relative; width:66%; padding:6px 0 30px; perspective:1500px}
@@ -162,11 +162,15 @@ footer a{color:var(--muted)}
 .flip .face img{max-width:100%; max-height:100%; object-fit:contain; border-radius:8px;
   filter:drop-shadow(0 24px 42px rgba(0,0,0,.72))}
 .flip .back{transform:rotateY(180deg)}
-/* 힌트와 카트리지는 회전체 밖에 둔다 — 같이 뒤집혀 글씨가 반전되지 않도록 */
-.stage .hint{position:absolute; left:0; bottom:2px; background:rgba(10,12,20,.88);
-  border:1px solid var(--border2); border-radius:999px; padding:5px 13px; font-size:11.5px;
-  color:var(--muted); white-space:nowrap; opacity:0; transition:.2s; pointer-events:none; z-index:4}
-.stage:hover .hint{opacity:1}
+/* 힌트는 회전체 밖에 둔다 — 같이 뒤집혀 글씨가 반전되지 않도록.
+   카트리지의 '영상 보기'와 같은 형태로 케이스 가운데에 얹는다. */
+.stage .hint{position:absolute; left:33%; top:46%; transform:translate(-50%,-50%);
+  background:rgba(10,12,20,.9); border:1px solid rgba(255,255,255,.28); color:#fff;
+  border-radius:999px; padding:6px 14px; font-size:12px; font-weight:700; white-space:nowrap;
+  opacity:0; transition:.2s; pointer-events:none; z-index:4}
+.flip:hover ~ .hint{opacity:1}
+/* 마우스를 올리면 케이스가 살짝 들리고 기울어진다(카트리지와 같은 반응) */
+.flip:not(.on):hover{transform:translateY(-6px) rotateY(-7deg)}
 
 /* 카트리지 — 케이스 위에 크게 겹친다 */
 .cart-wrap{position:absolute; right:-24%; bottom:6%; width:80%; z-index:2; cursor:pointer;
@@ -197,8 +201,7 @@ footer a{color:var(--muted)}
 .sec-t span{font-size:12.5px; color:var(--faint)}
 .shots{display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:18px}
 .shots figure{margin:0; border-radius:12px; overflow:hidden; border:1px solid var(--border);
-  background:var(--surface2); cursor:zoom-in; transition:.18s}
-.shots figure:hover{border-color:var(--indigo); transform:translateY(-2px)}
+  background:var(--surface2)}
 .shots img{width:100%; display:block}
 
 /* 부가 자료(케이스 전개도·측면·타이틀 화면 등) */
