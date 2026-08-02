@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>연도별 타임라인 — 레트로 게임 아카이브</title>
+<meta name="description" content="1971년부터 2024년까지, 연도별 레트로 게임을 시대순으로 둘러보세요." />
+<link rel="icon" href="../assets/favicon.ico" />
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="../index.html">
+      <img src="../assets/icon.png" alt="" />
+      <span><span class="bt">HAE-BANG</span><br /><span class="bs">Rom Setting Tools</span></span>
+    </a>
+    <nav class="nav-links">
+      <a href="../index.html">홈</a>
+      <a href="./">게임 아카이브</a>
+      <a href="timeline.html" class="on">연도별</a>
+    </nav>
+  </div>
+</header>
+
+<section class="sec wrap" style="padding-top:34px">
+  <div class="eyebrow">Timeline</div>
+  <h2 style="margin:8px 0 6px; font-size:26px">연도별로 둘러보기</h2>
+  <p class="muted" style="margin-top:0">막대를 누르면 그해에 나온 게임을 볼 수 있습니다.</p>
+
+  <div class="toolbar" style="margin-top:18px">
+    <select id="sys"><option value="">모든 기종</option></select>
+  </div>
+
+  <div class="tl">
+    <div class="tl-bars" id="bars"><div class="loading">불러오는 중…</div></div>
+    <div class="tl-legend"><span id="lg-from"></span><span id="lg-peak"></span><span id="lg-to"></span></div>
+  </div>
+</section>
+
+<section class="sec wrap" style="padding-top:0">
+  <div class="sec-head">
+    <h2 id="y-title">연도를 선택하세요</h2>
+    <span class="muted" id="y-count"></span>
+  </div>
+  <div id="grid"></div>
+  <div id="pager"></div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>© HAE-BANG Rom Setting Tools</div>
+    <div class="credit">
+      게임 정보·이미지 출처
+      <a href="https://www.screenscraper.fr/" target="_blank" rel="noopener">ScreenScraper</a>
+      (CC BY-NC-SA 4.0). 각 이미지의 저작권은 해당 퍼블리셔에 있습니다.
+    </div>
+  </div>
+</footer>
+
+<script>
+const THUMB_BASE = 'https://pub-ce7fb67413a8472b9d565037b8fbd5ef.r2.dev';
+const nf = new Intl.NumberFormat('ko-KR');
+const P = new URLSearchParams(location.search);
+let sys = P.get('sys') || '';
+let year = parseInt(P.get('year') || '', 10) || null;
+let page = 1;
+
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+async function api(p) {
+  const r = await fetch(p); const j = await r.json();
+  if (!j.ok) throw new Error(j.error || 'API error');
+  return j;
+}
+
+function syncUrl() {
+  const p = new URLSearchParams();
+  if (sys) p.set('sys', sys);
+  if (year) p.set('year', year);
+  history.replaceState(null, '', '?' + p.toString());
+}
+
+async function loadSystems() {
+  const { systems } = await api('/api/systems');
+  const sel = document.getElementById('sys');
+  sel.innerHTML = '<option value="">모든 기종</option>' +
+    systems.map((s) => `<option value="${esc(s.slug)}"${s.slug === sys ? ' selected' : ''}>${esc(s.name)}</option>`).join('');
+  sel.onchange = () => { sys = sel.value; year = null; loadYears(); document.getElementById('grid').innerHTML = ''; document.getElementById('y-title').textContent = '연도를 선택하세요'; document.getElementById('y-count').textContent = ''; };
+}
+
+async function loadYears() {
+  syncUrl();
+  const box = document.getElementById('bars');
+  box.innerHTML = '<div class="loading">불러오는 중…</div>';
+  try {
+    const { years } = await api('/api/years' + (sys ? `?sys=${encodeURIComponent(sys)}` : ''));
+    const rows = years.filter((y) => y.year >= 1971 && y.year <= 2030);
+    if (!rows.length) { box.innerHTML = '<div class="loading">연도 정보가 없습니다.</div>'; return; }
+    const max = Math.max(...rows.map((r) => r.n));
+    const peak = rows.find((r) => r.n === max);
+    box.innerHTML = rows.map((r) => `
+      <div class="b${r.year === year ? ' on' : ''}" data-y="${r.year}" title="${r.year}년 ${nf.format(r.n)}개">
+        <div class="tip">${r.year}년 · ${nf.format(r.n)}개</div>
+        <i style="height:${Math.max(2, r.n / max * 148)}px"></i>
+        <span>${r.year % 5 === 0 ? r.year : ''}</span>
+      </div>`).join('');
+    document.getElementById('lg-from').textContent = `${rows[0].year}년`;
+    document.getElementById('lg-peak').textContent = `가장 많은 해 ${peak.year}년 · ${nf.format(peak.n)}개`;
+    document.getElementById('lg-to').textContent = `${rows[rows.length - 1].year}년`;
+    box.querySelectorAll('.b').forEach((el) => {
+      el.onclick = () => {
+        box.querySelectorAll('.b').forEach((x) => x.classList.remove('on'));
+        el.classList.add('on');
+        year = +el.dataset.y; page = 1; loadGames();
+      };
+    });
+    if (year) loadGames();
+  } catch (e) {
+    box.innerHTML = `<div class="error">${esc(e.message)}</div>`;
+  }
+}
+
+function renderPager(cur, pages) {
+  const box = document.getElementById('pager');
+  if (pages <= 1) { box.innerHTML = ''; return; }
+  const around = 2, set = new Set([1, pages]);
+  for (let i = cur - around; i <= cur + around; i++) if (i >= 1 && i <= pages) set.add(i);
+  let html = '', last = 0;
+  if (cur > 1) html += `<div class="pg" data-p="${cur - 1}">←</div>`;
+  for (const n of [...set].sort((a, b) => a - b)) {
+    if (last && n - last > 1) html += '<span class="gap">…</span>';
+    html += `<div class="pg${n === cur ? ' on' : ''}" data-p="${n}">${n}</div>`;
+    last = n;
+  }
+  if (cur < pages) html += `<div class="pg" data-p="${cur + 1}">→</div>`;
+  box.className = 'pager'; box.innerHTML = html;
+  box.querySelectorAll('.pg[data-p]').forEach((el) => {
+    el.onclick = () => { page = +el.dataset.p; loadGames(); window.scrollTo({ top: 260, behavior: 'smooth' }); };
+  });
+}
+
+async function loadGames() {
+  syncUrl();
+  const grid = document.getElementById('grid');
+  grid.className = ''; grid.innerHTML = '<div class="loading">불러오는 중…</div>';
+  try {
+    const p = new URLSearchParams({ year, page });
+    if (sys) p.set('sys', sys);
+    const d = await api('/api/games?' + p);
+    document.getElementById('y-title').textContent = `${year}년의 게임`;
+    document.getElementById('y-count').textContent =
+      `${nf.format(d.total)}개` + (d.pages > 1 ? ` · ${d.page}/${d.pages} 페이지` : '');
+    grid.className = 'grid';
+    grid.innerHTML = d.games.map((g) => {
+      const t = g.name_kor || g.name || '(제목 없음)';
+      const img = g.thumb
+        ? `<img src="${THUMB_BASE}/${g.sys_id}/${g.game_id}.webp" alt="${esc(t)}" loading="lazy" />`
+        : `<div class="noimg">이미지 없음</div>`;
+      return `<a class="g" href="game.html?sys=${encodeURIComponent(g.slug)}&id=${g.game_id}">
+                <div class="ph">${img}</div><div class="t">${esc(t)}</div>
+                <div class="y">${esc(g.slug)}${g.genre ? ' · ' + esc(g.genre) : ''}</div></a>`;
+    }).join('');
+    renderPager(d.page, d.pages);
+  } catch (e) {
+    grid.innerHTML = `<div class="error">${esc(e.message)}</div>`;
+  }
+}
+
+loadSystems().then(loadYears);
+</script>
+</body>
+</html>

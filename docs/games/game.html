@@ -24,6 +24,7 @@
       <a href="../index.html">홈</a>
       <a href="../guide.html">가이드</a>
       <a href="./" class="on">게임 아카이브</a>
+      <a href="timeline.html">연도별</a>
     </nav>
     <div class="nav-right">
       <a class="btn" id="back">← 목록</a>
@@ -53,7 +54,7 @@ const P = new URLSearchParams(location.search);
 const SYS = P.get('sys') || '';
 const ID = P.get('id') || '';
 
-// 미디어 종류 표시명 + 갤러리 노출 순서
+// 미디어 종류 표시명 + 갤러리 노출 순서 (manuals 는 아래 전용 뷰어에서 따로 다룬다)
 const KIND = [
   ['screenshots', '스크린샷'],
   ['titlescreens', '타이틀 화면'],
@@ -66,11 +67,83 @@ const KIND = [
   ['videos', '영상'],
 ];
 
+// 리전 코드 → 표시명. 표지 비교에서 어느 나라 판본인지 바로 알 수 있게.
+const REGION_NAME = {
+  jp: '🇯🇵 일본판', us: '🇺🇸 북미판', eu: '🇪🇺 유럽판', kr: '🇰🇷 한국판',
+  wor: '🌏 월드판', ss: '🌐 공통', fr: '🇫🇷 프랑스판', de: '🇩🇪 독일판',
+  sp: '🇪🇸 스페인판', it: '🇮🇹 이탈리아판', au: '🇦🇺 호주판', br: '🇧🇷 브라질판',
+  cn: '🇨🇳 중국판', asi: '🌏 아시아판',
+};
+const regionName = (r) => REGION_NAME[r] || (r ? r.toUpperCase() : '기타');
+
 function esc(s) {
   return String(s ?? '').replace(/[&<>"]/g, (c) =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 }
 const mediaUrl = (sysId, fn) => `${MEDIA_BASE}/${sysId}/${encodeURIComponent(fn)}`;
+
+/**
+ * 리전별 표지 비교 — 같은 게임의 일본판/북미판/유럽판 박스를 나란히.
+ * 표지가 2개 이상 있을 때만 의미가 있어 그때만 노출한다.
+ */
+function regionSection(g, byKind) {
+  const covers = byKind.cover || [];
+  if (covers.length < 2) return '';
+  return `<section class="gallery">
+    <div class="sec-head" style="margin-bottom:14px">
+      <h2 style="font-size:20px">리전별 표지</h2>
+      <span class="muted">같은 게임도 발매 지역에 따라 표지가 다릅니다</span>
+    </div>
+    <div class="regions">
+      ${covers.map((m) => `
+        <figure class="rg" style="margin:0">
+          <img src="${mediaUrl(g.sys_id, m.filename)}" alt="" loading="lazy" />
+          <div class="flag"><b>${esc(regionName(m.region))}</b></div>
+        </figure>`).join('')}
+    </div>
+  </section>`;
+}
+
+/** 설명서 뷰어 — 스캔 PDF 를 브라우저 내장 뷰어로 바로 넘겨본다. */
+function manualSection(g, byKind) {
+  const mans = byKind.manuals || [];
+  if (!mans.length) return '';
+  return `<section class="gallery">
+    <div class="sec-head" style="margin-bottom:14px">
+      <h2 style="font-size:20px">설명서</h2>
+      <span class="muted">스캔된 원본 설명서를 그대로 볼 수 있습니다</span>
+    </div>
+    <div class="manual">
+      <div class="manual-bar">
+        ${mans.map((m, i) => `<button class="btn man-btn${i === 0 ? ' btn-primary' : ''}"
+            data-f="${esc(m.filename)}">${esc(regionName(m.region))}</button>`).join('')}
+        <span class="sp"></span>
+        <a class="btn" id="man-dl" target="_blank" rel="noopener">새 창에서 열기 ↗</a>
+      </div>
+      <iframe id="man-frame" title="설명서" loading="lazy"></iframe>
+    </div>
+  </section>`;
+}
+
+function bindManual(g, byKind) {
+  const mans = byKind.manuals || [];
+  if (!mans.length) return;
+  const frame = document.getElementById('man-frame');
+  const dl = document.getElementById('man-dl');
+  const show = (fn) => {
+    const url = mediaUrl(g.sys_id, fn);
+    frame.src = url;
+    dl.href = url;
+  };
+  document.querySelectorAll('.man-btn').forEach((b) => {
+    b.onclick = () => {
+      document.querySelectorAll('.man-btn').forEach((x) => x.classList.remove('btn-primary'));
+      b.classList.add('btn-primary');
+      show(b.dataset.f);
+    };
+  });
+  show(mans[0].filename);
+}
 
 function render(d) {
   const g = d.game;
@@ -115,6 +188,9 @@ function render(d) {
       </div>
     </article>
 
+    ${regionSection(g, byKind)}
+    ${manualSection(g, byKind)}
+
     ${tabs.length ? `<section class="gallery">
       <div class="gal-tabs">
         ${tabs.map(([k, label], i) =>
@@ -124,6 +200,8 @@ function render(d) {
     </section>` : ''}
 
     <div class="navrow">${nav.join('')}</div>`;
+
+  bindManual(g, byKind);
 
   if (!tabs.length) return;
   const showKind = (k) => {

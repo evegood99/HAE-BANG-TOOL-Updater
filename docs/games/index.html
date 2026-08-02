@@ -28,6 +28,7 @@
       <a href="../index.html">홈</a>
       <a href="../guide.html">가이드</a>
       <a href="./" class="on">게임 아카이브</a>
+      <a href="timeline.html">연도별</a>
     </nav>
     <div class="nav-right">
       <button class="btn" id="btn-random">🎲 무작위</button>
@@ -100,7 +101,7 @@ function renderToday(g) {
   const sub = [g.name_kor && g.name, g.year, g.developer].filter(Boolean).join(' · ');
   document.getElementById('today').innerHTML = `
     <article class="today">
-      <a href="game.html?sys=${g.sys_id}&id=${g.game_id}">
+      <a href="game.html?sys=${encodeURIComponent(g.slug)}&id=${g.game_id}">
         <img src="${thumbUrl(g.sys_id, g.game_id)}" alt="${esc(title)}" loading="lazy" />
       </a>
       <div>
@@ -109,7 +110,7 @@ function renderToday(g) {
         <div class="sub">${esc(sub)}</div>
         <p>${esc(g.description_kor || '등록된 설명이 없습니다.')}</p>
         <div class="acts">
-          <a class="btn btn-primary" href="game.html?sys=${g.sys_id}&id=${g.game_id}">자세히 보기</a>
+          <a class="btn btn-primary" href="game.html?sys=${encodeURIComponent(g.slug)}&id=${g.game_id}">자세히 보기</a>
           <button class="btn" id="btn-another">다른 게임 보기</button>
         </div>
       </div>
@@ -135,7 +136,7 @@ async function loadSystems() {
     const total = systems.reduce((a, s) => a + s.game_count, 0);
     document.getElementById('s-games').textContent = nf.format(total);
     document.getElementById('s-plats').textContent = systems.length;
-    document.getElementById('plat-note').textContent = `게임이 많은 순`;
+    document.getElementById('plat-note').textContent = `이름순 · 막대는 수록 게임 수`;
     box.className = 'plats';
     box.innerHTML = systems.map((s) => `
       <a class="plat" href="platform.html?sys=${encodeURIComponent(s.slug)}">

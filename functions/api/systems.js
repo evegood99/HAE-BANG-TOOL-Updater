@@ -10,7 +10,7 @@ export async function onRequestGet({ env }) {
       `SELECT slug, sys_id, name, game_count
          FROM systems
         WHERE game_count > 0
-        ORDER BY game_count DESC`
+        ORDER BY name COLLATE NOCASE ASC`
     ).all();
 
     return json({ ok: true, systems: results }, 86400);
