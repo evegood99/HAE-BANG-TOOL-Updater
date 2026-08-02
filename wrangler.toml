@@ -1,0 +1,8 @@
+name = "haebang-db"
+compatibility_date = "2026-08-01"
+pages_build_output_dir = "docs"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "haebang-db"
+database_id = "8b633950-a9b9-4a06-b0e8-66da1dafa192"
