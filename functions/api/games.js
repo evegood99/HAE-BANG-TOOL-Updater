@@ -15,13 +15,15 @@ import { cached, json } from './_cache.js';
 
 const PAGE_SIZE = 60;
 const MIN_Q = 2;        // 한 글자 검색은 전체를 훑게 되므로 막는다
-const COUNT_CAP = 2000; // 검색은 인덱스를 못 타므로 총계 세는 것도 여기서 끊는다
 
 export async function onRequestGet(context) {
   const u = new URL(context.request.url);
   const slug = (u.searchParams.get('sys') || '').trim();
   const qRaw = (u.searchParams.get('q') || '').trim();
-  const q = qRaw.length >= MIN_Q ? qRaw : '';
+  // 검색은 LIKE '%…%' 라 인덱스를 못 타고 조건에 걸린 범위를 전부 훑는다.
+  // 기종을 지정하면 그 기종 것만(sfc 2,254행) 보면 되지만, 지정하지 않으면 7만 행이다.
+  // 화면에도 기종 없는 검색은 없으므로 기종이 없으면 검색어를 무시한다.
+  const q = (qRaw.length >= MIN_Q && slug) ? qRaw : '';
   const year = parseInt(u.searchParams.get('year') || '', 10);
   const page = Math.max(1, parseInt(u.searchParams.get('page') || '1', 10) || 1);
   const sort = u.searchParams.get('sort') || 'name';
@@ -49,14 +51,20 @@ export async function onRequestGet(context) {
       staff: `(topstaff IS NOT 1), (note IS NULL), note DESC, ${T}, name_kor`,
     }[sort] || `${T}, name_kor`;
 
+    // 검색일 때는 총계를 세지 않는다. 세려면 조건에 걸린 범위를 끝까지 훑어야 해서
+    // 목록 조회와 맞먹는 비용이 한 번 더 든다(sfc 기준 2,254행이 두 번).
+    // 대신 한 건 더 받아 다음 쪽이 있는지만 판단한다 — 정렬 인덱스 덕에 필요한 만큼만
+    // 읽고 멈출 수 있어, dos 에서 8,081행이 4,055행으로 줄어든다.
+    const take = q ? PAGE_SIZE + 1 : PAGE_SIZE;
+
     try {
       const [count, list] = await Promise.all([
-        countOf(context.env, slug, q, year, cond, bind),
+        q ? Promise.resolve(null) : countOf(context.env, slug, year, cond, bind),
         context.env.DB.prepare(
           `SELECT slug, sys_id, game_id, name, name_kor, year, genre, thumb, note, topstaff
              FROM web_games ${cond} ORDER BY ${order}
             LIMIT ? OFFSET ?`
-        ).bind(...bind, PAGE_SIZE, (page - 1) * PAGE_SIZE).all(),
+        ).bind(...bind, take, (page - 1) * PAGE_SIZE).all(),
       ]);
 
       let system = null;
@@ -66,12 +74,19 @@ export async function onRequestGet(context) {
         ).bind(slug).first();
       }
 
+      const rows = list.results || [];
+      const hasMore = q ? rows.length > PAGE_SIZE : (count > page * PAGE_SIZE);
+      if (q && hasMore) rows.length = PAGE_SIZE;
+
       return json({
         ok: true, system, page, pageSize: PAGE_SIZE,
-        total: count.total, capped: count.capped,
-        pages: Math.max(1, Math.ceil(count.total / PAGE_SIZE)),
-        minQ: qRaw && !q ? MIN_Q : undefined,
-        games: list.results,
+        total: q ? null : count,                       // 검색은 총계를 세지 않는다
+        pages: q ? null : Math.max(1, Math.ceil(count / PAGE_SIZE)),
+        hasMore,
+        // 검색이 무시된 이유를 화면에서 알려줄 수 있게 함께 준다
+        minQ: qRaw && qRaw.length < MIN_Q ? MIN_Q : undefined,
+        needSys: qRaw && qRaw.length >= MIN_Q && !slug ? true : undefined,
+        games: rows,
       });
     } catch (e) {
       return json({ ok: false, error: String(e && e.message || e) }, 500);
@@ -80,22 +95,14 @@ export async function onRequestGet(context) {
 }
 
 /** 총 개수 — 굳이 세지 않아도 되는 경우를 먼저 걸러낸다. */
-async function countOf(env, slug, q, year, cond, bind) {
-  // ① 기종만 볼 때는 systems 에 이미 총계가 있다(7만 행 세는 대신 1행).
-  if (slug && !q && !year) {
+async function countOf(env, slug, year, cond, bind) {
+  // 기종만 볼 때는 systems 에 이미 총계가 있다(그 기종 전체를 세는 대신 1행).
+  if (slug && !year) {
     const r = await env.DB.prepare('SELECT game_count AS total FROM systems WHERE slug = ?')
       .bind(slug).first();
-    if (r) return { total: r.total, capped: false };
-  }
-  // ② 검색은 LIKE '%…%' 라 인덱스를 못 탄다. 전부 세면 기종 전체(또는 7만 행)를 훑으므로
-  //    상한을 두고 끊는다. 화면에는 '2,000+' 로 표시한다.
-  if (q) {
-    const r = await env.DB.prepare(
-      `SELECT COUNT(*) AS total FROM (SELECT 1 FROM web_games ${cond} LIMIT ${COUNT_CAP})`
-    ).bind(...bind).first();
-    return { total: r.total, capped: r.total >= COUNT_CAP };
+    if (r) return r.total;
   }
   const r = await env.DB.prepare(`SELECT COUNT(*) AS total FROM web_games ${cond}`)
     .bind(...bind).first();
-  return { total: r.total, capped: false };
+  return r.total;
 }

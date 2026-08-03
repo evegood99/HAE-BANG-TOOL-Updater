@@ -116,6 +116,21 @@ function syncUrl() {
   history.replaceState(null, '', '?' + p.toString());
 }
 
+/** 검색 결과용 — 총 쪽수를 모르므로 이전/다음만 낸다(총계를 세면 목록만큼 또 읽는다) */
+function renderPagerSimple(page, hasMore) {
+  const box = document.getElementById('pager');
+  if (page <= 1 && !hasMore) { box.innerHTML = ''; return; }
+  let html = '';
+  if (page > 1) html += `<div class="pg" data-p="${page - 1}">←</div>`;
+  html += `<div class="pg on">${page}</div>`;
+  if (hasMore) html += `<div class="pg" data-p="${page + 1}">→</div>`;
+  box.className = 'pager';
+  box.innerHTML = html;
+  box.querySelectorAll('.pg[data-p]').forEach((el) => {
+    el.onclick = () => { state.page = +el.dataset.p; load(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  });
+}
+
 function renderPager(page, pages) {
   if (pages <= 1) { document.getElementById('pager').innerHTML = ''; return; }
   // 현재 페이지 주변만 노출 — 7만 개라 전체 번호를 다 그릴 수 없다.
@@ -156,12 +171,14 @@ async function load() {
     document.title = `${name} — 레트로 게임 아카이브`;
     document.getElementById('title').textContent = name;
     document.getElementById('eyebrow').textContent = d.system ? d.system.slug : 'All Platforms';
-    // 검색은 총 개수를 끝까지 세지 않는다(인덱스를 못 타서 전체를 훑게 된다).
-    // 상한에 걸리면 '2,000+' 로 표시한다.
+    // 검색일 때는 총 개수를 세지 않는다(세려면 목록만큼 한 번 더 읽어야 한다).
+    const hint = d.minQ ? ` · 검색은 ${d.minQ}글자 이상`
+               : d.needSys ? ' · 검색은 기종을 고른 뒤에 됩니다' : '';
     document.getElementById('count').textContent =
-      `${nf.format(d.total)}${d.capped ? '+' : ''}개`
-      + (d.pages > 1 ? ` · ${d.page}/${d.pages} 페이지` : '')
-      + (d.minQ ? ` · 검색은 ${d.minQ}글자 이상` : '');
+      (d.total === null
+        ? `${nf.format(d.games.length)}개${d.hasMore ? ' 이상' : ''} 찾음 · ${d.page}쪽`
+        : `${nf.format(d.total)}개` + (d.pages > 1 ? ` · ${d.page}/${d.pages} 페이지` : ''))
+      + hint;
 
     if (!d.games.length) {
       grid.innerHTML = '<div class="loading">조건에 맞는 게임이 없습니다.</div>';
@@ -181,7 +198,8 @@ async function load() {
                 <div class="y">${[g.year, g.genre].filter(Boolean).join(' · ')}</div>
               </a>`;
     }).join('');
-    renderPager(d.page, d.pages);
+    if (d.total === null) renderPagerSimple(d.page, d.hasMore);
+    else renderPager(d.page, d.pages);
   } catch (e) {
     grid.innerHTML = `<div class="error">목록을 불러오지 못했습니다 — ${esc(e.message)}</div>`;
   }
