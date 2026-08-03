@@ -245,7 +245,7 @@ function renderMedia() {
               <div class="win"><img data-src="${texSrc}" alt="" /></div><figcaption>뒷면</figcaption>
             </figure>
           </div>
-          <div class="cap">케이스 전개도 · ${esc(regionName(curRegion))} · 누르면 크게</div>
+          <div class="cap">케이스 전개도 · ${esc(regionName(curRegion))} · 누르면 접힙니다</div>
         </div>`;
       const texBox = unfold.querySelector('.tex');
       const texImg = texBox.querySelector('img');
@@ -308,26 +308,23 @@ function renderMedia() {
           win.style.width = st.winW + 'px'; win.style.height = st.winH + 'px';
           im.style.width = st.imgW + 'px'; im.style.height = st.imgH + 'px';
           im.style.transform = st.tf;
-          win.onclick = () => {
-            const ls = Math.min(window.innerWidth * 0.94 / nh, window.innerHeight * 0.9 / p);
-            const l = paneStyle(front, nw, nh, p, ls);
-            openLb(`<div class="panebox" style="width:${l.winW}px;height:${l.winH}px">
-                      <img src="${texSrc}" alt=""
-                           style="width:${l.imgW}px;height:${l.imgH}px;transform:${l.tf}" /></div>`);
-          };
+          win.onclick = () => setFlip(false, true);   // 펼쳐진 그림을 누르면 도로 접는다
         });
       };
-      texImg.onclick = () => openLb(`<img src="${texSrc}" alt="" />`);
+      texImg.onclick = () => setFlip(false, true);
 
-      flip.onclick = () => {
-        const on = !flip.classList.contains('on');
+      /** 케이스 펴기/접기. backFromPanel 이면 접은 뒤 케이스 자리로 되돌아간다
+          — 펼친 그림을 눌러 접었을 때 화면이 텅 빈 곳에 머무르지 않도록. */
+      const setFlip = (on, backFromPanel) => {
         if (on) ensureTex();                      // 이때 전개도를 받는다
         flip.classList.toggle('on', on);          // 3D 회전
         stage.classList.toggle('flipped', on);    // 카트리지 비켜주기
         unfold.classList.toggle('on', on);        // 아래로 펼치기
         if (hint) hint.textContent = on ? '↩ 원래대로' : '↻ 케이스 펴보기';
         if (on) setTimeout(() => unfold.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 320);
+        else if (backFromPanel) stage.scrollIntoView({ behavior: 'smooth', block: 'center' });
       };
+      flip.onclick = () => setFlip(!flip.classList.contains('on'));
     }
   }
 

@@ -259,22 +259,20 @@ footer a{color:var(--muted)}
 .unfold > .in{overflow:hidden; min-height:0}
 .unfold img{width:100%; display:block; border-radius:12px; border:1px solid var(--border);
   background:var(--surface2); box-shadow:var(--shadow)}
+.unfold .tex img{cursor:zoom-out}      /* 펼친 그림을 누르면 도로 접힌다 */
 .unfold .cap{margin-top:9px; font-size:12px; color:var(--faint)}
 /* 가로형 케이스는 전개도 원본이 90도 돌아가 있고 앞/뒷면이 서로 180도 뒤집혀 있어,
    한 번의 회전으로는 둘 다 세울 수 없다. 패널을 창으로 잘라내고 안에서 각각
    반대 방향으로 세운 뒤 나란히 놓는다. */
 .unfold .panes{display:flex; flex-wrap:wrap; gap:18px; justify-content:center}
 .unfold .pan{margin:0}
-.unfold .pan .win{position:relative; overflow:hidden; border-radius:12px; cursor:zoom-in;
+.unfold .pan .win{position:relative; overflow:hidden; border-radius:12px; cursor:zoom-out;
   border:1px solid var(--border); background:var(--surface2); box-shadow:var(--shadow);
   transition:border-color .18s}
 .unfold .pan .win:hover{border-color:var(--indigo)}
 .unfold .pan .win img{position:absolute; left:0; top:0; max-width:none;
   border:0; border-radius:0; box-shadow:none; background:none; transform-origin:0 0}
 .unfold .pan figcaption{margin-top:8px; font-size:12px; color:var(--faint); text-align:center}
-.panebox{position:relative; overflow:hidden; border-radius:8px; flex:none}
-.lb .panebox img{position:absolute; left:0; top:0; max-width:none; max-height:none;
-  border-radius:0; transform-origin:0 0}
 
 /* 스크린샷 — 갤러리처럼 크게 */
 .sec-t{display:flex; align-items:baseline; gap:12px; margin:44px 0 16px}
