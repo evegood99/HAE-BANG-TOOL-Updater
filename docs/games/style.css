@@ -338,3 +338,19 @@ footer a{color:var(--muted)}
 .lb-head img{max-height:52px; max-width:200px; object-fit:contain}
 .lb-head .t{font-size:19px; font-weight:800; letter-spacing:-.01em; color:#fff}
 .lb-head .s{font-size:12.5px; color:#9aa1b6; margin-top:2px}
+/* 모바일 메뉴 — 좁은 화면에서 상단 메뉴가 숨겨지므로 햄버거로 같은 항목을 낸다 */
+.menu-btn{display:none; align-items:center; justify-content:center; padding:0;
+  width:38px; height:38px; border-radius:10px; border:1px solid var(--border2);
+  background:var(--surface); color:var(--text); font-size:17px; line-height:1;
+  cursor:pointer; font-family:inherit; transition:.18s}
+.menu-btn:hover{border-color:var(--cyan)}
+.mnav{display:none; position:absolute; top:100%; left:0; right:0;
+  background:rgba(8,9,15,.98); backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border); max-height:0; overflow:hidden;
+  transition:max-height .28s ease}
+.mnav.on{max-height:78vh; overflow:auto}
+.mnav .in{padding:8px 22px 16px; display:flex; flex-direction:column; gap:2px}
+.mnav a{display:block; padding:12px; border-radius:10px; font-size:15px;
+  font-weight:600; color:var(--muted)}
+.mnav a:hover,.mnav a.on,.mnav a.active{color:var(--text); background:var(--surface)}
+@media (max-width:920px){ .menu-btn{display:inline-flex} .mnav{display:block} }
