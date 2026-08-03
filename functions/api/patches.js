@@ -129,8 +129,11 @@ function groupShots(tree) {
 }
 
 function gh(url, fresh) {
-  // 캐시는 요청 URL 로 구분되므로, 새로 받으려면 주소를 달리해 준다.
-  const u = fresh ? url + (url.indexOf('?') < 0 ? '?' : '&') + '_=' + Date.now() : url;
+  // 캐시는 요청 URL 로 구분된다. cacheTtl 만 줄이면 이미 저장된 항목은 남은 시간만큼
+  // 그대로 쓰여서(6시간짜리가 남아 있었다) 저장소를 고쳐도 반영이 늦다.
+  // 그래서 주소에 10분 단위 번호를 붙여, 10분마다 새 주소 = 새로 받기가 되게 한다.
+  const bucket = fresh ? Date.now() : Math.floor(Date.now() / (TTL * 1000));
+  const u = url + (url.indexOf('?') < 0 ? '?' : '&') + '_=' + bucket;
   return fetch(u, {
     headers: { 'User-Agent': 'haebang-homepage', Accept: 'application/vnd.github+json' },
     cf: { cacheTtl: fresh ? 0 : TTL, cacheEverything: !fresh },
