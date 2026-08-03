@@ -39,9 +39,14 @@ const FALLBACK = [
     path: 'psp/Minna-no-Golf-Portable2/', shot: 'psp/Minna-no-Golf-Portable2/screenshots/title.png', tag: '' },
 ];
 
-export async function onRequestGet() {
+export async function onRequestGet({ request }) {
+  // ?fresh=1 — 캐시를 건너뛰고 저장소를 지금 다시 읽는다.
+  // 저장소를 고친 직후 바로 확인하고 싶을 때 쓴다(평소에는 쓰지 않는다).
+  const fresh = new URL(request.url).searchParams.get('fresh') === '1';
   try {
-    const [md, releases, tree] = await Promise.all([getReadme(), getReleases(), getTree()]);
+    const [md, releases, tree] = await Promise.all([
+      getReadme(fresh), getReleases(fresh), getTree(fresh),
+    ]);
     const shotsBy = groupShots(tree);
     let items = parseTable(md);
     const parsed = items.length > 0;
@@ -87,21 +92,21 @@ export async function onRequestGet() {
   }
 }
 
-async function getReadme() {
-  const r = await gh(`${RAW}/README.md`);
+async function getReadme(fresh) {
+  const r = await gh(`${RAW}/README.md`, fresh);
   return r.ok ? await r.text() : '';
 }
 
-async function getReleases() {
-  const r = await gh(`https://api.github.com/repos/${REPO}/releases?per_page=100`);
+async function getReleases(fresh) {
+  const r = await gh(`https://api.github.com/repos/${REPO}/releases?per_page=100`, fresh);
   if (!r.ok) return [];
   const v = await r.json();
   return Array.isArray(v) ? v : [];
 }
 
 /** 저장소 전체 파일 목록 — 게임마다 폴더를 조회하면 6번 부를 것을 한 번에 끝낸다. */
-async function getTree() {
-  const r = await gh(`https://api.github.com/repos/${REPO}/git/trees/main?recursive=1`);
+async function getTree(fresh) {
+  const r = await gh(`https://api.github.com/repos/${REPO}/git/trees/main?recursive=1`, fresh);
   if (!r.ok) return [];
   const j = await r.json();
   return Array.isArray(j.tree) ? j.tree : [];
@@ -123,10 +128,12 @@ function groupShots(tree) {
   return m;
 }
 
-function gh(url) {
-  return fetch(url, {
+function gh(url, fresh) {
+  // 캐시는 요청 URL 로 구분되므로, 새로 받으려면 주소를 달리해 준다.
+  const u = fresh ? url + (url.indexOf('?') < 0 ? '?' : '&') + '_=' + Date.now() : url;
+  return fetch(u, {
     headers: { 'User-Agent': 'haebang-homepage', Accept: 'application/vnd.github+json' },
-    cf: { cacheTtl: TTL, cacheEverything: true },
+    cf: { cacheTtl: fresh ? 0 : TTL, cacheEverything: !fresh },
   });
 }
 
