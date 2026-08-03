@@ -30,19 +30,19 @@ export async function onRequestGet({ request, env }) {
   }
   const cond = where.length ? `WHERE ${where.join(' AND ')}` : '';
 
-  // 평점은 NULL 이 많다. SQLite 는 NULL 을 가장 작게 보므로 DESC 면 NULL 이 앞으로 온다
-  // — (note IS NULL) 을 먼저 걸어 점수 없는 게임을 뒤로 보낸다.
+  // 감상용이라 그림 없는 항목이 먼저 나오면 허전하다. 그래서 썸네일 있는 것을 앞에 두되,
+  // 평점·추천 정렬에서는 그 순서가 곧 목적이므로 '같은 순위 안에서의 동점 처리'로만 쓴다
+  // — 앞세우면 그림 없는 20점 게임이 그림 있는 1점 게임보다 뒤로 밀린다.
+  // 평점은 NULL 이 많은데 SQLite 는 NULL 을 가장 작게 보므로 DESC 면 NULL 이 앞으로 온다.
+  // (note IS NULL) 을 먼저 걸어 점수 없는 게임을 뒤로 보낸다.
+  const T = '(thumb IS NULL)';
   const order = {
-    year: 'year DESC, name_kor',
-    year_asc: 'year ASC, name_kor',
-    note: '(note IS NULL), note DESC, name_kor',
-    staff: '(topstaff IS NOT 1), (note IS NULL), note DESC, name_kor',
-  }[sort] || 'name_kor';
-  // 기본 정렬에서는 썸네일 있는 것을 앞에 둔다(감상용이라 그림 없는 항목이 먼저 나오면 허전하다).
-  // 다만 평점·추천으로 정렬할 때는 그 순서가 곧 목적이라 썸네일 유무를 앞세우지 않는다
-  // — 안 그러면 그림 없는 20점 게임이 그림 있는 1점 게임보다 뒤로 밀린다.
-  const thumbFirst = sort !== 'note' && sort !== 'staff';
-  const orderBy = `ORDER BY ${thumbFirst ? '(thumb IS NULL), ' : ''}${order}`;
+    year: `${T}, year DESC, name_kor`,
+    year_asc: `${T}, year ASC, name_kor`,
+    note: `(note IS NULL), note DESC, ${T}, name_kor`,
+    staff: `(topstaff IS NOT 1), (note IS NULL), note DESC, ${T}, name_kor`,
+  }[sort] || `${T}, name_kor`;
+  const orderBy = `ORDER BY ${order}`;
 
   try {
     const [{ total }, list] = await Promise.all([

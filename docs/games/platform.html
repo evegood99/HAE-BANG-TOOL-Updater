@@ -60,10 +60,11 @@
 
   <div class="toolbar">
     <input type="search" id="q" placeholder="게임 이름 검색 (한글·영문)" />
+    <!-- 기본은 추천작 먼저 — 처음 들어왔을 때 그 기종의 대표작이 먼저 보이도록 -->
     <select id="sort">
-      <option value="name">이름순</option>
-      <option value="note">평점 높은순</option>
       <option value="staff">추천작 먼저</option>
+      <option value="note">평점 높은순</option>
+      <option value="name">이름순</option>
       <option value="year">최신순</option>
       <option value="year_asc">오래된순</option>
     </select>
@@ -91,7 +92,7 @@ const P = new URLSearchParams(location.search);
 let state = {
   sys: P.get('sys') || '',
   q: P.get('q') || '',
-  sort: P.get('sort') || 'name',
+  sort: P.get('sort') || 'staff',
   page: parseInt(P.get('page') || '1', 10) || 1,
 };
 
@@ -110,7 +111,7 @@ function syncUrl() {
   const p = new URLSearchParams();
   if (state.sys) p.set('sys', state.sys);
   if (state.q) p.set('q', state.q);
-  if (state.sort !== 'name') p.set('sort', state.sort);
+  if (state.sort !== 'staff') p.set('sort', state.sort);
   if (state.page > 1) p.set('page', state.page);
   history.replaceState(null, '', '?' + p.toString());
 }
