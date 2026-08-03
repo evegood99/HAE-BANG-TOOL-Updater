@@ -28,18 +28,37 @@ a{color:inherit; text-decoration:none}
 .muted{color:var(--muted)}
 .eyebrow{font-size:12.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--cyan); font-weight:700}
 
-/* ---------- Header ---------- */
+/* ---------- Header ----------
+   홈페이지(docs/index.html)의 헤더와 같은 값으로 맞춘다 — 한 사이트로 보이도록.
+   아카이브 전용 이동(기종별·연도별 등)은 상단 메뉴 대신 아래 subbar 에 둔다. */
 header{position:sticky; top:0; z-index:50; backdrop-filter:blur(14px);
   background:rgba(8,9,15,.72); border-bottom:1px solid var(--border)}
 .nav{display:flex; align-items:center; gap:18px; height:66px}
-.brand{display:flex; align-items:center; gap:11px; font-weight:800}
-.brand img{width:34px; height:34px; border-radius:9px}
+.brand{display:flex; align-items:center; gap:11px; font-weight:800; letter-spacing:.2px}
+.brand img{width:34px; height:34px; border-radius:9px;
+  box-shadow:0 0 0 1px var(--border2), 0 6px 18px -6px rgba(34,211,238,.5)}
 .brand .bt{font-size:15.5px}
-.brand .bs{font-size:10.5px; color:var(--muted); font-weight:600}
+.brand .bs{font-size:10.5px; color:var(--muted); font-weight:600; letter-spacing:.04em}
 .nav-links{display:flex; gap:6px; margin-left:18px}
 .nav-links a{padding:8px 12px; border-radius:9px; font-size:14px; color:var(--muted); font-weight:600; transition:.18s}
 .nav-links a:hover,.nav-links a.on{color:var(--text); background:var(--surface)}
 .nav-right{margin-left:auto; display:flex; align-items:center; gap:10px}
+
+/* 아카이브 안에서만 쓰는 이동 줄 */
+.subbar{position:sticky; top:66px; z-index:49; backdrop-filter:blur(10px);
+  background:rgba(10,12,20,.62); border-bottom:1px solid var(--border)}
+.subbar .wrap{display:flex; align-items:center; gap:4px; height:46px}
+.subbar a{padding:6px 12px; border-radius:8px; font-size:13.5px; font-weight:600;
+  color:var(--faint); transition:.18s}
+.subbar a:hover,.subbar a.on{color:var(--text); background:var(--surface)}
+.subbar .sb-right{margin-left:auto; display:flex; align-items:center; gap:8px}
+.subbar .sb-right .btn{padding:7px 13px; font-size:13px}
+.subbar .sb-right a{color:var(--text)}
+.subbar .sb-right a:hover{background:var(--surface2)}
+
+/* 홈페이지와 같은 지점에서 접는다 */
+@media(max-width:920px){ .nav-links{display:none} }
+@media(max-width:560px){ .hide-s{display:none} }
 
 /* ---------- 공통 ---------- */
 .btn{display:inline-flex; align-items:center; gap:7px; padding:9px 16px; border-radius:11px;
