@@ -146,7 +146,7 @@ function renderMedia() {
   const face = caseSrc ? `
       <div class="flip" id="flip">
         <div class="face front"><img src="${caseSrc}" alt="" /></div>
-        ${bt ? `<div class="face back"><img src="${mediaUrl(g.sys_id, bt)}" alt="" /></div>` : ''}
+        ${bt ? `<div class="face back"><img data-src="${mediaUrl(g.sys_id, bt)}" alt="" /></div>` : ''}
       </div>
       ${bt ? '<div class="hint" id="hint">↻ 케이스 펴보기</div>' : ''}` : '';
 
@@ -231,15 +231,17 @@ function renderMedia() {
 
     if (bt) {
       // 전개도는 아래 패널에 미리 담아두고, 열 때 grid-template-rows 로 부드럽게 펼친다.
+      // 전개도 원본은 30만~140만 바이트로 이 화면에서 가장 무겁다. '케이스 펴보기'를
+      // 누르지 않으면 볼 일이 없으므로 주소만 담아 두고 처음 펼칠 때 받는다.
       const texSrc = mediaUrl(g.sys_id, bt);
       unfold.innerHTML = `<div class="in">
-          <div class="tex"><img src="${texSrc}" alt="" /></div>
+          <div class="tex"><img data-src="${texSrc}" alt="" /></div>
           <div class="panes" style="display:none">
             <figure class="pan" data-front="1">
-              <div class="win"><img src="${texSrc}" alt="" /></div><figcaption>앞면</figcaption>
+              <div class="win"><img data-src="${texSrc}" alt="" /></div><figcaption>앞면</figcaption>
             </figure>
             <figure class="pan">
-              <div class="win"><img src="${texSrc}" alt="" /></div><figcaption>뒷면</figcaption>
+              <div class="win"><img data-src="${texSrc}" alt="" /></div><figcaption>뒷면</figcaption>
             </figure>
           </div>
           <div class="cap">케이스 전개도 · ${esc(regionName(curRegion))} · 누르면 크게</div>
@@ -254,18 +256,21 @@ function renderMedia() {
       //
       //   텍스처 = [뒷면 p][책등][앞면 p],  p = 텍스처높이 × (표지세로/표지가로)
       //   앞면은 -90도(반시계), 뒷면은 +90도(시계)로 세우면 둘 다 똑바로 선다.
-      const baseRatio = ROT_TEX_SYS[g.slug] || 0;   // 패널폭/텍스처폭 기종 기본값(0 = 대상 아님)
-      let coverR = 0, coverProbe = null;            // 표지 세로/가로 — 패널 폭을 정확히 잡는 데 쓴다
-      const probeCover = () => {
-        if (coverProbe || !cover) return;
-        coverProbe = new Image();
-        coverProbe.onload = () => {
-          if (coverProbe.naturalWidth) {
-            coverR = coverProbe.naturalHeight / coverProbe.naturalWidth;
-            layoutTex();
-          }
-        };
-        coverProbe.src = mediaUrl(g.sys_id, cover);
+      // 패널 폭은 기종 기본값으로 잡는다. 예전에는 표지를 따로 받아 비율을 쟀는데,
+      // 실측 15건 모두 기본값과 0px 차이여서 표지 한 장(약 16만 바이트)만 낭비였다.
+      const baseRatio = ROT_TEX_SYS[g.slug] || 0;   // 패널폭/텍스처폭 (0 = 회전 대상 아님)
+
+      /** 처음 펼칠 때 전개도 원본을 받는다. 크기를 알아야 잘라낼 위치를 계산할 수 있다. */
+      let texAsked = false;
+      const ensureTex = () => {
+        if (texAsked) return;
+        texAsked = true;
+        // 케이스 뒷면(회전했을 때 보이는 면)도 같은 그림이라 함께 받는다.
+        document.querySelectorAll('#flip img[data-src], #unfold img[data-src]').forEach((im) => {
+          im.onload = layoutTex;
+          im.src = im.dataset.src;
+          im.removeAttribute('data-src');
+        });
       };
 
       /** 텍스처 안의 잘라낼 위치를 화면 크기로 옮겨 창(win)과 이미지에 적용한다.
@@ -281,14 +286,10 @@ function renderMedia() {
 
       layoutTex = () => {
         const nw = texImg.naturalWidth, nh = texImg.naturalHeight;
+        if (!nw) return;                           // 아직 안 받았다(처음 펼칠 때 받는다)
         // 같은 기종 안에서도 세로 케이스 판(회전 없음)이 섞여 있어 케이스 방향도 함께 본다.
         const target = baseRatio > 0 && wide && nw >= nh * 1.2;
-        if (target && !coverR) probeCover();
-        // 패널 폭은 표지에서 정확히 얻되, 스캔이 어긋난 표지를 따라가지 않도록
-        // 기종 기본값에서 8% 넘게 벗어나면 기본값을 쓴다.
-        const pBase = Math.round(nw * baseRatio);
-        const pCover = coverR ? Math.round(nh * coverR) : 0;
-        const p = (pCover && Math.abs(pCover - pBase) <= pBase * 0.08) ? pCover : pBase;
+        const p = Math.round(nw * baseRatio);
         const splittable = target && p > 0 && p * 2 <= nw * 0.98;
 
         texBox.style.display = splittable ? 'none' : '';
@@ -315,12 +316,11 @@ function renderMedia() {
           };
         });
       };
-      if (!texImg.complete) texImg.onload = layoutTex; else layoutTex();
-
       texImg.onclick = () => openLb(`<img src="${texSrc}" alt="" />`);
 
       flip.onclick = () => {
         const on = !flip.classList.contains('on');
+        if (on) ensureTex();                      // 이때 전개도를 받는다
         flip.classList.toggle('on', on);          // 3D 회전
         stage.classList.toggle('flipped', on);    // 카트리지 비켜주기
         unfold.classList.toggle('on', on);        // 아래로 펼치기
