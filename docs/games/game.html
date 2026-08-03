@@ -201,7 +201,11 @@ function renderMedia() {
       wide = nw > 0 && nw > nh * 1.05;
       stage.classList.toggle('wide', wide);
       const w = stage.clientWidth || 1;
-      flip.style.height = Math.round(w * (nw ? nh / nw : 1.35)) + 'px';
+      const h = Math.round(w * (nw ? nh / nw : 1.35));
+      flip.style.height = h + 'px';
+      // 힌트는 케이스 한가운데에. 가로형은 카트리지가 아래에 붙어 무대가 더 길어지므로
+      // 무대 비율(%)이 아니라 케이스 높이로 잡아야 자리가 맞는다.
+      if (hint) hint.style.top = (6 + h / 2) + 'px';
       layoutTex();
     };
     if (frontImg && !frontImg.complete) frontImg.onload = setH; else setH();

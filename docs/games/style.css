@@ -187,27 +187,31 @@ footer a{color:var(--muted)}
 /* 돌아간 동안엔 카트리지를 비켜 준다 */
 .stage.flipped .cart-wrap{opacity:0; pointer-events:none; transform:rotate(5deg) translateX(20%)}
 
-/* 가로형 케이스(슈퍼패미컴·N64 등) — 케이스가 납작해서 세로형과 같은 비율을 쓰면
-   카트리지가 케이스보다 커 보인다. 무대를 넓히고 카트리지는 줄여 균형을 맞춘다. */
-.stage.wide{width:72%}
-.stage.wide.solo{width:84%}
-.stage.wide .cart-wrap{right:-38%; width:60%; bottom:-4%}
-.stage.wide .hint{left:40%}
+/* 가로형 케이스(슈퍼패미컴·N64 등) — 납작해서 옆에 겹치면 케이스가 가려진다.
+   케이스를 칸 가득 넓히고, 카트리지는 겹치지 않게 아래로 내려 흐름에 넣는다. */
+.stage.wide, .stage.wide.solo{width:98%}
+.stage.wide .cart-wrap{position:relative; right:auto; bottom:auto; width:44%;
+  margin:20px 0 0 auto; transform:rotate(4deg); transform-origin:center}
+.stage.wide .cart-wrap:hover{transform:rotate(1deg) translateY(-7px) scale(1.04)}
+.stage.wide .hint{left:50%}
 
-/* 영상만 있고 카트리지·디스크 이미지가 없는 게임 — 같은 자리에 영상 카드를 둔다 */
-.cart-wrap.vid-only{width:64%; right:-40%; bottom:2%; transform:rotate(3deg)}
-.stage.wide .cart-wrap.vid-only{width:54%; right:-32%}
-.cart-wrap.vid-only:hover{transform:rotate(1deg) translateY(-8px) scale(1.03)}
-.cart-wrap.vid-only img{border-radius:10px; border:1px solid rgba(255,255,255,.18)}
-.cart-wrap.vid-only .ph{aspect-ratio:4/3; border-radius:10px; background:var(--surface2);
+/* 영상만 있고 카트리지·디스크 이미지가 없는 게임 —
+   카트리지보다 작은 영상 조각을 케이스 바깥에 두고 모서리만 살짝 걸친다. */
+.cart-wrap.vid-only{width:40%; right:-34%; bottom:4%; transform:rotate(2deg)}
+.stage.wide .cart-wrap.vid-only{width:30%; margin-top:16px}
+.cart-wrap.vid-only:hover{transform:rotate(0deg) translateY(-6px) scale(1.06)}
+.cart-wrap.vid-only img{border-radius:9px; border:1px solid rgba(255,255,255,.18)}
+.cart-wrap.vid-only .ph{aspect-ratio:4/3; border-radius:9px; background:var(--surface2);
   border:1px solid var(--border)}
-.cart-wrap .play{position:absolute; left:50%; top:50%; margin-top:-4px;
-  width:52px; height:52px; border-radius:50%; transform:translate(-50%,-50%);
+/* 조각이 작아 안내는 아래에 붙인다 */
+.cart-wrap.vid-only .vlabel{bottom:-31px; font-size:11px; padding:4px 10px}
+.cart-wrap .play{position:absolute; left:50%; top:50%; margin-top:-3px;
+  width:40px; height:40px; border-radius:50%; transform:translate(-50%,-50%);
   background:rgba(10,12,20,.74); border:1px solid rgba(255,255,255,.34); color:#fff;
-  display:flex; align-items:center; justify-content:center; font-size:18px; padding-left:3px;
+  display:flex; align-items:center; justify-content:center; font-size:14px; padding-left:2px;
   box-shadow:0 8px 22px rgba(0,0,0,.5); transition:.2s}
 .cart-wrap:hover .play{background:var(--indigo); border-color:transparent;
-  transform:translate(-50%,-50%) scale(1.1)}
+  transform:translate(-50%,-50%) scale(1.12)}
 
 /* 케이스 전개도 — 제목/설명 아래에서 가로 전체로 펼쳐진다.
    3D 회전 대신 '펼침'으로 처리해 글씨 반전이나 복귀 시 배치 흐트러짐이 없다. */
