@@ -298,8 +298,19 @@ footer a{color:var(--muted)}
   background:var(--surface); cursor:pointer; transition:.18s}
 .man-card:hover{border-color:var(--indigo); transform:translateY(-2px)}
 .man-cover{position:relative; height:300px; background:var(--surface2); overflow:hidden}
-.man-cover iframe{position:absolute; inset:0; width:100%; height:420px; border:0;
-  pointer-events:none; transform:scale(1.02); transform-origin:top center}
+/* 표지 대신 종이 모양 카드 — PDF 는 눌렀을 때만 받는다. 미리 보여주려고 iframe 을 걸면
+   원본(700만 바이트대)을 통째로 받게 되어 상세 화면에서 가장 무거운 요청이 된다. */
+.man-cover .doc{position:absolute; inset:12px; border-radius:8px; overflow:hidden;
+  background:linear-gradient(160deg,#f7f5ef 0%,#e9e5da 60%,#dcd7c9 100%);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.14), 0 10px 24px -12px rgba(0,0,0,.8);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+  color:#4a4437; text-align:center; padding:14px; transition:.18s}
+.man-cover .doc::before{content:""; position:absolute; left:0; top:0; bottom:0; width:10px;
+  background:linear-gradient(90deg,rgba(120,112,96,.45),rgba(120,112,96,0))}
+.man-cover .doc b{font-size:17px; font-weight:800; letter-spacing:-.01em}
+.man-cover .doc span{font-size:12.5px; color:#6b6455}
+.man-cover .doc i{font-style:normal; font-size:11.5px; color:#8a8271; margin-top:8px}
+.man-card:hover .man-cover .doc{transform:translateY(-2px); box-shadow:inset 0 0 0 1px rgba(0,0,0,.14), 0 16px 30px -14px rgba(0,0,0,.9)}
 .man-card .cap{padding:9px 12px; font-size:12.5px; color:var(--muted)}
 .man-card .cap b{display:block; color:var(--text); font-size:13px; margin-bottom:2px}
 
