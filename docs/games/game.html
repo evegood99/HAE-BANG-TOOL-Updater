@@ -57,6 +57,11 @@ const REGION_NAME = {
 const regionName = (r) => REGION_NAME[r] || (r ? r.toUpperCase() : '기타');
 // 리전 선택 시 선호 순서(그 판본에 없는 자료는 이 순서로 대체한다)
 const REGION_ORDER = ['kr', 'jp', 'us', 'eu', 'wor', 'ss'];
+/* 전개도 원본이 90도 돌아간 채 저장되는 기종과, 그때 앞/뒷면 패널이 차지하는 폭의 비율.
+   실측 — 슈퍼패미컴 497/1090, N64 498/1090, GBA(가로 케이스) 423/947.
+   기종을 명시하는 이유: box3d 가 가로라는 것만으로는 게임&워치처럼 표지가 본체 사진이라
+   케이스와 무관한 경우를 걸러내지 못한다(전개도는 이미 반듯한데 돌려버리게 된다). */
+const ROT_TEX_SYS = { sfc: 0.456, n64: 0.457, gba: 0.447 };
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -65,15 +70,6 @@ const mediaUrl = (sysId, fn) => `${MEDIA_BASE}/${sysId}/${encodeURIComponent(fn)
 /* ---------- 라이트박스 ---------- */
 const lb = document.getElementById('lb'), lbBody = document.getElementById('lb-body');
 function openLb(html) { lbBody.innerHTML = html; lb.classList.add('on'); }
-/** 90도 돌려 세운 이미지를 화면에 맞춰 감싼다 — transform 은 레이아웃 크기를 바꾸지 않아
-    돌린 뒤의 크기(nh × nw)를 상자에 직접 잡아 줘야 한다. */
-function rotBox(src, nw, nh) {
-  if (!nw || !nh) return `<img src="${src}" alt="" />`;
-  const s = Math.min(window.innerWidth * 0.94 / nh, window.innerHeight * 0.92 / nw);
-  return `<div class="rotbox" style="width:${Math.round(nh * s)}px;height:${Math.round(nw * s)}px">
-            <img src="${src}" style="width:${Math.round(nw * s)}px;height:${Math.round(nh * s)}px" alt="" />
-          </div>`;
-}
 function closeLb() { lb.classList.remove('on'); lbBody.innerHTML = ''; }
 document.getElementById('lb-x').onclick = closeLb;
 lb.onclick = (e) => { if (e.target === lb) closeLb(); };
@@ -216,35 +212,90 @@ function renderMedia() {
       const texSrc = mediaUrl(g.sys_id, bt);
       unfold.innerHTML = `<div class="in">
           <div class="tex"><img src="${texSrc}" alt="" /></div>
+          <div class="panes" style="display:none">
+            <figure class="pan" data-front="1">
+              <div class="win"><img src="${texSrc}" alt="" /></div><figcaption>앞면</figcaption>
+            </figure>
+            <figure class="pan">
+              <div class="win"><img src="${texSrc}" alt="" /></div><figcaption>뒷면</figcaption>
+            </figure>
+          </div>
           <div class="cap">케이스 전개도 · ${esc(regionName(curRegion))} · 누르면 크게</div>
         </div>`;
       const texBox = unfold.querySelector('.tex');
       const texImg = texBox.querySelector('img');
+      const panes = unfold.querySelector('.panes');
 
-      // 가로형 케이스의 전개도는 원본이 90도 돌아간 채 저장돼 있다(텍스처 높이 = 표지 가로).
-      // 그대로 두면 글씨가 옆으로 누우므로 되돌려 세우고, 돌린 뒤의 크기를 상자에 잡아 준다.
+      // 가로형 케이스의 전개도는 원본이 90도 돌아가 있고, 게다가 앞면과 뒷면이
+      // 서로 180도 뒤집혀 있다(실물 박스 전개도라 그렇다). 한 번의 회전으로는
+      // 둘 다 세울 수 없으므로 앞/뒷면을 잘라 각각 반대 방향으로 세운다.
+      //
+      //   텍스처 = [뒷면 p][책등][앞면 p],  p = 텍스처높이 × (표지세로/표지가로)
+      //   앞면은 -90도(반시계), 뒷면은 +90도(시계)로 세우면 둘 다 똑바로 선다.
+      const baseRatio = ROT_TEX_SYS[g.slug] || 0;   // 패널폭/텍스처폭 기종 기본값(0 = 대상 아님)
+      let coverR = 0, coverProbe = null;            // 표지 세로/가로 — 패널 폭을 정확히 잡는 데 쓴다
+      const probeCover = () => {
+        if (coverProbe || !cover) return;
+        coverProbe = new Image();
+        coverProbe.onload = () => {
+          if (coverProbe.naturalWidth) {
+            coverR = coverProbe.naturalHeight / coverProbe.naturalWidth;
+            layoutTex();
+          }
+        };
+        coverProbe.src = mediaUrl(g.sys_id, cover);
+      };
+
+      /** 텍스처 안의 잘라낼 위치를 화면 크기로 옮겨 창(win)과 이미지에 적용한다.
+          rotate 는 배치 크기를 바꾸지 않으므로 창 크기·이동량을 직접 계산해야 한다. */
+      const paneStyle = (front, nw, nh, p, s) => {
+        const iw = Math.round(nw * s), ih = Math.round(nh * s), ph = Math.round(p * s);
+        // 앞면: 오른쪽 p 를 반시계로 → (0, iw) 만큼 내려 맞춘다
+        // 뒷면: 왼쪽 p 를 시계로   → (ih, 0) 만큼 밀어 맞춘다
+        const tf = front ? `translate(0px,${iw}px) rotate(-90deg)`
+                         : `translate(${ih}px,0px) rotate(90deg)`;
+        return { winW: ih, winH: ph, imgW: iw, imgH: ih, tf };
+      };
+
       layoutTex = () => {
         const nw = texImg.naturalWidth, nh = texImg.naturalHeight;
-        if (!wide || !nw) {
-          texBox.classList.remove('rot');
-          texBox.style.width = texBox.style.height = '';
-          texImg.style.width = texImg.style.height = '';
-          return;
-        }
-        texBox.classList.add('rot');
-        const pw = unfold.clientWidth || 900;
-        const mh = Math.min(window.innerHeight * 0.78, 1000);
-        const s = Math.min(pw / nh, mh / nw);   // 돌리면 (nh × nw) 가 된다
-        texImg.style.width = Math.round(nw * s) + 'px';
-        texImg.style.height = Math.round(nh * s) + 'px';
-        texBox.style.width = Math.round(nh * s) + 'px';
-        texBox.style.height = Math.round(nw * s) + 'px';
+        // 같은 기종 안에서도 세로 케이스 판(회전 없음)이 섞여 있어 케이스 방향도 함께 본다.
+        const target = baseRatio > 0 && wide && nw >= nh * 1.2;
+        if (target && !coverR) probeCover();
+        // 패널 폭은 표지에서 정확히 얻되, 스캔이 어긋난 표지를 따라가지 않도록
+        // 기종 기본값에서 8% 넘게 벗어나면 기본값을 쓴다.
+        const pBase = Math.round(nw * baseRatio);
+        const pCover = coverR ? Math.round(nh * coverR) : 0;
+        const p = (pCover && Math.abs(pCover - pBase) <= pBase * 0.08) ? pCover : pBase;
+        const splittable = target && p > 0 && p * 2 <= nw * 0.98;
+
+        texBox.style.display = splittable ? 'none' : '';
+        panes.style.display = splittable ? 'flex' : 'none';
+        if (!splittable) return;                 // 반듯한 전개도는 원본 그대로 한 장
+
+        const avail = unfold.clientWidth || 900, gap = 18;
+        const cols = avail >= 760 ? 2 : 1;       // 좁은 화면에선 위아래로
+        const s = Math.min((avail - gap * (cols - 1)) / cols / nh,
+                           Math.min(window.innerHeight * 0.62, 620) / p);
+        panes.querySelectorAll('.pan').forEach((fig) => {
+          const front = fig.dataset.front === '1';
+          const st = paneStyle(front, nw, nh, p, s);
+          const win = fig.querySelector('.win'), im = fig.querySelector('img');
+          win.style.width = st.winW + 'px'; win.style.height = st.winH + 'px';
+          im.style.width = st.imgW + 'px'; im.style.height = st.imgH + 'px';
+          im.style.transform = st.tf;
+          win.onclick = () => {
+            const ls = Math.min(window.innerWidth * 0.94 / nh, window.innerHeight * 0.9 / p);
+            const l = paneStyle(front, nw, nh, p, ls);
+            openLb(`<div class="panebox" style="width:${l.winW}px;height:${l.winH}px">
+                      <img src="${texSrc}" alt=""
+                           style="width:${l.imgW}px;height:${l.imgH}px;transform:${l.tf}" /></div>`);
+          };
+        });
       };
       if (!texImg.complete) texImg.onload = layoutTex; else layoutTex();
 
-      texImg.onclick = () => openLb(
-        wide ? rotBox(texSrc, texImg.naturalWidth, texImg.naturalHeight)
-             : `<img src="${texSrc}" alt="" />`);
+      texImg.onclick = () => openLb(`<img src="${texSrc}" alt="" />`);
 
       flip.onclick = () => {
         const on = !flip.classList.contains('on');
