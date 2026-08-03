@@ -22,7 +22,7 @@ export async function onRequestGet({ request, env }) {
 }
 
 const COLS = `slug, sys_id, game_id, name, name_kor, description_kor,
-              genre, year, developer, thumb`;
+              genre, year, developer, thumb, note, topstaff`;
 
 function pickRandom(env) {
   return env.DB.prepare(

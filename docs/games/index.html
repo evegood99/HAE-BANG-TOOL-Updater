@@ -121,6 +121,10 @@ function renderToday(g) {
       </a>
       <div>
         <div class="eyebrow">${esc(g.slug)}</div>
+        ${(Number(g.topstaff) === 1 || g.note) ? `<div class="badges">
+          ${Number(g.topstaff) === 1 ? '<span class="pick" title="스탭 추천작">스탭 추천</span>' : ''}
+          ${g.note ? `<span class="score" title="20점 만점"><i>★</i>${Number(g.note)}<s>/20</s></span>` : ''}
+        </div>` : ''}
         <h3>${esc(title)}</h3>
         <div class="sub">${esc(sub)}</div>
         <p>${esc(g.description_kor || '등록된 설명이 없습니다.')}</p>

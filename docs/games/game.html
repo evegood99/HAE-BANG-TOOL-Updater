@@ -372,10 +372,12 @@ function render(d) {
   curRegion = REGIONS.find((r) => REGION_ORDER.includes(r)) || REGIONS[0] || '';
 
   // 기종은 제목 위 eyebrow 에 이미 있으므로 사양에서는 뺀다.
-  const meta = [['발매', g.year], ['장르', g.genre],
-                ['개발사', g.developer], ['플레이어', g.players]]
-    .filter(([, v]) => v)
-    .map(([k, v]) => `<div><span class="k">${k}</span><span class="v">${esc(v)}</span></div>`).join('');
+  // 평점만 별·만점 표기가 붙어 HTML 을 그대로 넣는다(세 번째 값 true = 이스케이프 안 함).
+  const meta = [
+    g.note ? ['평점', `<b class="sv">★ ${Number(g.note)}</b><span class="of">/ 20</span>`, true] : null,
+    ['발매', g.year], ['장르', g.genre], ['개발사', g.developer], ['플레이어', g.players],
+  ].filter((x) => x && x[1])
+    .map(([k, v, raw]) => `<div><span class="k">${k}</span><span class="v">${raw ? v : esc(v)}</span></div>`).join('');
 
   const nav = [];
   nav.push(d.prev
@@ -393,7 +395,8 @@ function render(d) {
       <div class="gd-top">
         <div id="stage-box"></div>
         <div>
-          <div class="eyebrow">${esc(g.slug)}</div>
+          <div class="eyebrow">${esc(g.slug)}${Number(g.topstaff) === 1
+            ? '<span class="pick" title="ScreenScraper 스탭 추천작">스탭 추천</span>' : ''}</div>
           <div class="titlerow" id="titlerow">
             <h1>${esc(title)}</h1>
             <span class="lg" id="logo-box"></span>

@@ -94,6 +94,12 @@ let page = 1;
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
+/** 표지 위에 얹는 평점(20점 만점)·스탭 추천 배지 */
+function badges(g) {
+  return (Number(g.topstaff) === 1 ? '<span class="pick" title="스탭 추천작">추천</span>' : '')
+       + (g.note ? `<span class="score" title="20점 만점"><i>★</i>${g.note}<s>/20</s></span>` : '');
+}
+
 async function api(p) {
   const r = await fetch(p); const j = await r.json();
   if (!j.ok) throw new Error(j.error || 'API error');
@@ -184,7 +190,7 @@ async function loadGames() {
         ? `<img src="${THUMB_BASE}/${g.sys_id}/${g.game_id}.webp" alt="${esc(t)}" loading="lazy" />`
         : `<div class="noimg">이미지 없음</div>`;
       return `<a class="g" href="game.html?sys=${encodeURIComponent(g.slug)}&id=${g.game_id}">
-                <div class="ph">${img}</div><div class="t">${esc(t)}</div>
+                <div class="ph">${img}${badges(g)}</div><div class="t">${esc(t)}</div>
                 <div class="y">${esc(g.slug)}${g.genre ? ' · ' + esc(g.genre) : ''}</div></a>`;
     }).join('');
     renderPager(d.page, d.pages);
