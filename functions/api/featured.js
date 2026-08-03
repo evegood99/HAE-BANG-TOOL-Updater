@@ -4,26 +4,34 @@
  *
  * 고르는 범위: 스탭 추천작이면서 20점 만점에 15점 이상, 그리고 썸네일이 있는 게임.
  * 7만 개 전체에서 뽑으면 이름 없는 항목이 대문에 걸리기 쉬워, 대표작만 후보로 둔다.
- * (43개 기종 2,700여 개)
  *
- * 오늘의 게임은 날짜가 바뀔 때까지 값이 같으므로 엣지에 그날치를 담아 둔다.
- * 무작위는 매번 달라야 하므로 캐시하지 않는다.
+ * 후보를 그때그때 골라내면(WHERE topstaff=1 AND note BETWEEN …) 조건에 맞는 2,700여 개를
+ * 전부 훑게 되고, ORDER BY RANDOM() 은 거기에 줄 세우기까지 얹어 5,463행을 읽었다.
+ * 기종만 좁혀도 3,207행 — 플래너가 추천작 인덱스를 먼저 타서 후보 전체를 보기 때문이다.
+ * 그래서 후보에 미리 번호를 매겨 둔 작은 표 두 개를 두고 번호로 바로 집는다(5행).
+ *
+ *   featured_sys  (i 0..42, slug, cnt)      기종과 그 기종의 후보 수
+ *   featured_pool (slug, k 0..cnt-1, game_id)  기종 안에서의 번호
+ *
+ * 기종을 먼저 고르고 그 안에서 하나를 뽑으므로, 후보가 많은 기종(ps2 439개)이
+ * 대문을 독차지하지 않고 기종이 골고루 나온다.
  */
 import { cached, json, untilNextDay } from './_cache.js';
 
-const COLS = `slug, sys_id, game_id, name, name_kor, description_kor,
-              genre, year, developer, thumb, note, topstaff`;
-const POOL = 'topstaff = 1 AND note BETWEEN 15 AND 20 AND thumb IS NOT NULL';
-// 날짜마다 후보 목록을 성큼성큼 건너뛰기 위한 보폭. 소수라 후보 수와 서로소가 되어
-// 결국 모든 후보를 한 번씩 거친다. 1씩 늘리면 같은 기종이 몇 달씩 이어진다
-// (기종·ID 순으로 늘어놓기 때문에 PS2 만 439일 연속으로 나오는 식).
-const STRIDE = 7919;
+const COLS = ['slug', 'sys_id', 'game_id', 'name', 'name_kor', 'description_kor',
+              'genre', 'year', 'developer', 'thumb', 'note', 'topstaff']
+  .map((c) => 'g.' + c).join(', ');
+
+// 날짜마다 성큼성큼 건너뛰기 위한 보폭. 소수라 개수와 서로소가 되어 결국 전부 거친다.
+// 기종과 게임에 서로 다른 값을 써서 같은 조합이 반복되지 않게 한다.
+const STRIDE_SYS = 7919;
+const STRIDE_GAME = 104729;
 
 export async function onRequestGet(context) {
   const isRandom = new URL(context.request.url).searchParams.get('random') === '1';
   const build = async () => {
     try {
-      const row = isRandom ? await pickRandom(context.env) : await pickOfTheDay(context.env);
+      const row = await pick(context.env, isRandom);
       if (!row) return json({ ok: false, error: 'no game' }, 404);
       return json({ ok: true, game: row });
     } catch (e) {
@@ -33,25 +41,24 @@ export async function onRequestGet(context) {
   return isRandom ? build() : cached(context, untilNextDay(), build);
 }
 
-function pickRandom(env) {
-  return env.DB.prepare(
-    `SELECT ${COLS} FROM web_games WHERE ${POOL} ORDER BY RANDOM() LIMIT 1`
-  ).first();
-}
-
-async function pickOfTheDay(env) {
-  // 날짜(UTC 기준 일수)로 OFFSET 을 정해 하루 동안 같은 게임이 나오게 한다.
+async function pick(env, isRandom) {
+  // ① 기종 수 — 기본키 최댓값이라 1행
+  const { mx } = await env.DB.prepare('SELECT MAX(i) AS mx FROM featured_sys').first();
+  if (mx === null || mx === undefined) return null;
+  const nSys = mx + 1;
   const day = Math.floor(Date.now() / 86400000);
-  const { total } = await env.DB.prepare(
-    `SELECT COUNT(*) AS total FROM web_games WHERE ${POOL}`
-  ).first();
-  if (!total) return null;
-  const offset = (day * STRIDE) % total;
-  // idx_games_pick(topstaff, note, sys_id, game_id) 와 같은 차례로 정렬해
-  // 따로 줄 세우지 않고 인덱스를 그대로 훑게 한다.
+
+  // ② 기종 하나 — 기본키로 바로 집어 1행
+  const si = isRandom ? Math.floor(Math.random() * nSys) : (day * STRIDE_SYS) % nSys;
+  const sys = await env.DB.prepare('SELECT slug, cnt FROM featured_sys WHERE i = ?')
+    .bind(si).first();
+  if (!sys || !sys.cnt) return null;
+
+  // ③ 그 기종 안에서 하나 — (slug, k) 기본키로 바로 집어 3행
+  const k = isRandom ? Math.floor(Math.random() * sys.cnt) : (day * STRIDE_GAME) % sys.cnt;
   return env.DB.prepare(
-    `SELECT ${COLS} FROM web_games WHERE ${POOL}
-      ORDER BY note, sys_id, game_id
-      LIMIT 1 OFFSET ?`
-  ).bind(offset).first();
+    `SELECT ${COLS} FROM featured_pool p
+       JOIN web_games g ON g.slug = p.slug AND g.game_id = p.game_id
+      WHERE p.slug = ? AND p.k = ?`
+  ).bind(sys.slug, k).first();
 }
