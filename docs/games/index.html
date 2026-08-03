@@ -48,7 +48,7 @@
   <div class="wrap">
     <a href="./" class="on">기종별</a>
     <a href="timeline.html">연도별</a>
-    <div class="sb-right"><button class="btn" id="btn-random">🎲 무작위</button></div>
+    <div class="sb-right"><button class="btn btn-donate" data-donate>♥ 후원</button></div>
   </div>
 </div>
 
@@ -123,7 +123,7 @@ function renderToday(g) {
       <div>
         <div class="eyebrow">${esc(g.slug)}</div>
         ${(Number(g.topstaff) === 1 || g.note) ? `<div class="badges">
-          ${Number(g.topstaff) === 1 ? '<span class="pick" title="스탭 추천작">스탭 추천</span>' : ''}
+          ${Number(g.topstaff) === 1 ? '<span class="pick" title="추천작">추천</span>' : ''}
           ${g.note ? `<span class="score" title="20점 만점"><i>★</i>${Number(g.note)}<s>/20</s></span>` : ''}
         </div>` : ''}
         <h3>${esc(title)}</h3>
@@ -172,8 +172,6 @@ async function loadSystems() {
     box.innerHTML = `<div class="error">기종 목록을 불러오지 못했습니다 — ${esc(e.message)}</div>`;
   }
 }
-
-document.getElementById('btn-random').onclick = loadRandom;
 loadToday();
 loadSystems();
 </script>
@@ -196,5 +194,6 @@ loadSystems();
   window.addEventListener('resize', function () { if (window.innerWidth > 1040) setOpen(false); });
 })();
 </script>
+<script src="donate.js"></script>
 </body>
 </html>

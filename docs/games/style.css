@@ -135,7 +135,7 @@ footer a{color:var(--muted)}
   display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
 .g .y{font-size:11.5px; color:var(--faint); margin-top:2px}
 
-/* ---------- 평점(20점 만점) · 스탭 추천 ----------
+/* ---------- 평점(20점 만점) · 추천 ----------
    ScreenScraper 원본의 note / topstaff 를 그대로 쓴다. 표지를 가리지 않게 모서리에만 얹는다. */
 .pick{background:linear-gradient(120deg,#fbbf24,#f59e0b); color:#3a2503;
   font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:7px; white-space:nowrap;
@@ -373,3 +373,42 @@ footer a{color:var(--muted)}
   font-weight:600; color:var(--muted)}
 .mnav a:hover,.mnav a.on,.mnav a.active{color:var(--text); background:var(--surface)}
 @media (max-width:1040px){ .menu-btn{display:inline-flex} .mnav{display:block} }
+
+/* ---------- 후원 모달 (donate.js 가 만들어 붙인다) ---------- */
+.btn-donate{border-color:rgba(244,63,94,.45); color:#ffd7de;
+  background:linear-gradient(120deg,rgba(244,63,94,.22),rgba(244,63,94,.10))}
+.btn-donate:hover{border-color:#fb7185; color:#fff;
+  background:linear-gradient(120deg,rgba(244,63,94,.34),rgba(244,63,94,.18))}
+.dm{position:fixed; inset:0; z-index:210; display:flex; align-items:center; justify-content:center;
+  padding:24px; background:rgba(4,5,10,.86); backdrop-filter:blur(6px);
+  opacity:0; pointer-events:none; transition:.2s}
+.dm.open{opacity:1; pointer-events:auto}
+.dm-card{width:480px; max-width:94vw; max-height:92vh; overflow:auto;
+  background:var(--surface); border:1px solid var(--border2); border-radius:16px;
+  padding:22px 24px 20px; box-shadow:var(--shadow); transform:translateY(10px); transition:.2s}
+.dm.open .dm-card{transform:none}
+.dm-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:12px}
+.dm-head h3{margin:0; font-size:18px; font-weight:800; color:var(--text)}
+.dm-x{background:none; border:0; color:var(--faint); font-size:26px; line-height:1; cursor:pointer;
+  transition:.15s; font-family:inherit}
+.dm-x:hover{color:var(--text)}
+.dm-desc{font-size:13.5px; line-height:1.6; color:var(--muted); margin:0 0 12px}
+.dm-use{list-style:none; margin:0 0 18px; padding:0; display:flex; flex-direction:column; gap:10px}
+.dm-use li{border:1px solid var(--border); border-radius:12px; background:var(--surface2); padding:11px 13px}
+.dm-use b{display:block; font-size:13.5px; color:var(--text); margin-bottom:3px}
+.dm-use span{display:block; font-size:12.5px; line-height:1.6; color:var(--muted)}
+.dm-qr{display:flex; gap:14px; justify-content:center; margin:4px 0 2px}
+.dm-qr figure{margin:0; display:flex; flex-direction:column; align-items:center; gap:8px}
+.dm-qr img{width:100%; max-width:186px; height:auto; max-height:262px; object-fit:contain;
+  border-radius:10px; background:#fff; padding:6px}
+.dm-qr figcaption{font-size:12.5px; font-weight:700; color:var(--muted)}
+.dm-scan{font-size:12px; color:var(--faint); text-align:center; margin:14px 0 4px}
+.dm-code{margin:16px 0 6px; padding:13px 14px; border-radius:12px;
+  border:1px solid rgba(34,211,238,.28); background:rgba(34,211,238,.07)}
+.dm-code > b{display:block; font-size:13px; color:var(--cyan); margin-bottom:6px}
+.dm-code p{margin:0 0 11px; font-size:12.5px; line-height:1.7; color:var(--muted)}
+.dm-code p b{color:var(--text)}
+.dm-code .btn{padding:8px 14px; font-size:13px}
+.dm-mail{display:block; text-align:center; font-size:14px; font-weight:700; color:var(--cyan);
+  margin-top:12px}
+.dm-mail:hover{text-decoration:underline}

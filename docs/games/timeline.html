@@ -45,7 +45,7 @@
   <div class="wrap">
     <a href="./">기종별</a>
     <a href="timeline.html" class="on">연도별</a>
-    <div class="sb-right"></div>
+    <div class="sb-right"><button class="btn btn-donate" data-donate>♥ 후원</button></div>
   </div>
 </div>
 
@@ -95,9 +95,9 @@ let page = 1;
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
-/** 표지 위에 얹는 평점(20점 만점)·스탭 추천 배지 */
+/** 표지 위에 얹는 평점(20점 만점)·추천 배지 */
 function badges(g) {
-  return (Number(g.topstaff) === 1 ? '<span class="pick" title="스탭 추천작">추천</span>' : '')
+  return (Number(g.topstaff) === 1 ? '<span class="pick" title="추천작">추천</span>' : '')
        + (g.note ? `<span class="score" title="20점 만점"><i>★</i>${g.note}<s>/20</s></span>` : '');
 }
 
@@ -221,5 +221,6 @@ loadSystems().then(loadYears);
   window.addEventListener('resize', function () { if (window.innerWidth > 1040) setOpen(false); });
 })();
 </script>
+<script src="donate.js"></script>
 </body>
 </html>
