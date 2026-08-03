@@ -171,6 +171,18 @@
   /* 상단 메뉴가 8개가 되어 접히는 지점을 1040px 로 올린다(모든 페이지 공통).
      기존 미디어쿼리에는 다른 규칙이 섞여 있어 값을 바꾸지 않고 여기서 덧쓴다. */
   @media (max-width:1040px){ .nav-links{display:none} .menu-btn{display:inline-flex} }
+  /* 소식 안에서 실제 아카이브 표지를 몇 장 보여줄 때 */
+  .tl-shots{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:14px 0 4px}
+  .tl-shots a{display:block; border-radius:10px; overflow:hidden; border:1px solid var(--border2);
+    background:#0c0e16; transition:.2s}
+  .tl-shots a:hover{border-color:var(--cyan); transform:translateY(-4px)}
+  .tl-shots img{width:100%; aspect-ratio:3/4; object-fit:contain; display:block}
+  .tl-shots .cap{padding:5px 7px 7px; font-size:10.5px; color:var(--faint); text-align:center;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .tl-shots .cap i{font-style:normal; color:var(--gold); font-weight:800}
+  .tl-cta{display:flex; gap:9px; flex-wrap:wrap; margin-top:14px}
+  .tl-cta .btn{padding:9px 15px; font-size:13.5px}
+  @media (max-width:640px){ .tl-shots{grid-template-columns:repeat(2,1fr)} }
 </style>
 </head>
 <body>
@@ -191,7 +203,7 @@
       <a href="guide.html" data-ko="가이드" data-en="Guide">가이드</a>
       <a href="story.html" data-ko="읽을거리" data-en="Read">읽을거리</a>
       <a href="https://rom-settings-hae-bang-tool.pages.dev/games/" data-ko="게임 아카이브" data-en="Game Archive">게임 아카이브</a>
-      <a href="patches/" data-ko="한글화 패치" data-en="KR Patches">한글화 패치</a>
+      <a href="https://rom-settings-hae-bang-tool.pages.dev/patches/" data-ko="한글화 패치" data-en="KR Patches">한글화 패치</a>
     </nav>
     <div class="nav-right">
       <button class="icon-btn lang" id="langBtn" title="Language" aria-label="Language">EN</button>
@@ -262,6 +274,72 @@
       </div>
 
       <div class="tl">
+
+        <!-- 2026-08-03 -->
+        <article class="tl-item reveal">
+          <div class="tl-dot"><i></i></div>
+          <div class="tl-date">2026.08.03</div>
+          <h3 class="tl-title" data-ko="홈페이지에 '한글화 패치' 추가 — 대한글화시대" data-en="Homepage adds “KR Patches” — KR Patch Ages">홈페이지에 '한글화 패치' 추가 — 대한글화시대</h3>
+          <div class="tags">
+            <span class="tag new" data-ko="신규" data-en="New">신규</span>
+          </div>
+          <div class="tl-body">
+            <ul>
+              <li data-ko="직접 만든 레트로 게임 한글화 패치를 홈페이지에서 바로 받을 수 있습니다. 메가드라이브·DOS·PSP 6종(배포 완료 4종), 누적 1,700회 넘게 내려받았습니다."
+                  data-en="Our own Korean translation patches are now downloadable straight from the homepage — 6 titles across Mega Drive, DOS and PSP (4 released), with over 1,700 downloads so far.">직접 만든 레트로 게임 한글화 패치를 홈페이지에서 바로 받을 수 있습니다. 메가드라이브·DOS·PSP 6종(배포 완료 4종), 누적 1,700회 넘게 내려받았습니다.</li>
+              <li data-ko="버전·검수 상태·내려받은 횟수를 카드로 보여주고, xdelta 적용 방법도 함께 안내합니다. 패치 파일만 배포하며 게임 롬은 포함하지 않습니다."
+                  data-en="Each card shows version, review status and download count, with a short xdelta how-to. Patches only — no game ROMs included.">버전·검수 상태·내려받은 횟수를 카드로 보여주고, xdelta 적용 방법도 함께 안내합니다. 패치 파일만 배포하며 게임 롬은 포함하지 않습니다.</li>
+            </ul>
+            <div class="tl-cta">
+              <a class="btn btn-primary" href="https://rom-settings-hae-bang-tool.pages.dev/patches/" data-ko="한글화 패치 보기 →" data-en="View KR patches →">한글화 패치 보기 →</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- 2026-08-01 -->
+        <article class="tl-item hl reveal">
+          <div class="tl-dot"><i></i></div>
+          <div class="tl-date">2026.08.01</div>
+          <h3 class="tl-title" data-ko="게임 아카이브 공개 — 레트로 게임 71,473개를 웹에서 감상하다" data-en="Game Archive is live — 71,473 retro games to browse on the web">게임 아카이브 공개 — 레트로 게임 71,473개를 웹에서 감상하다</h3>
+          <div class="tags">
+            <span class="tag new" data-ko="신규" data-en="New">신규</span>
+            <span class="tag imp" data-ko="개선" data-en="Improved">개선</span>
+          </div>
+          <div class="tl-body">
+            <ul>
+              <li data-ko="해방툴이 쌓아 온 메타데이터를 누구나 볼 수 있는 감상용 아카이브로 열었습니다. 49개 기종·71,473개 게임을 한국어 제목과 설명 그대로 담았습니다. 설치도 로그인도 필요 없습니다."
+                  data-en="The metadata HAE-BANG has built up is now an open archive to browse — 49 platforms and 71,473 games, with Korean titles and descriptions. No install, no login.">해방툴이 쌓아 온 메타데이터를 누구나 볼 수 있는 감상용 아카이브로 열었습니다. 49개 기종·71,473개 게임을 한국어 제목과 설명 그대로 담았습니다. 설치도 로그인도 필요 없습니다.</li>
+              <li data-ko="3D 케이스를 눌러 펼쳐 보세요. 앞면이 회전하며 아래로 전개도가 펼쳐져, 실물 패키지를 손에 들고 뒷면을 넘겨 보는 느낌으로 앞·뒷면을 모두 읽을 수 있습니다."
+                  data-en="Click the 3D case to unfold it. The front rotates and the full package spread opens below — like picking up the real box and turning it over."><b>3D 케이스를 눌러 펼쳐 보세요.</b> 앞면이 회전하며 아래로 전개도가 펼쳐져, 실물 패키지를 손에 들고 뒷면을 넘겨 보는 느낌으로 앞·뒷면을 모두 읽을 수 있습니다.</li>
+              <li data-ko="카트리지를 누르면 플레이 영상이 재생됩니다. 원본 설명서 스캔도 표지를 눌러 전체 화면으로 넘겨볼 수 있습니다."
+                  data-en="Click the cartridge and the gameplay video plays. Original scanned manuals open full-screen from their cover."><b>카트리지를 누르면 플레이 영상이 재생됩니다.</b> 원본 설명서 스캔도 표지를 눌러 전체 화면으로 넘겨볼 수 있습니다.</li>
+              <li data-ko="판본(리전)을 바꾸면 표지·카트리지·설명서가 한꺼번에 바뀝니다. 일본판과 북미판 패키지를 나란히 비교해 보세요."
+                  data-en="Switch the region and the cover, cartridge and manual all change together — compare the Japanese and North American packaging side by side."><b>판본(리전)을 바꾸면 표지·카트리지·설명서가 한꺼번에 바뀝니다.</b> 일본판과 북미판 패키지를 나란히 비교해 보세요.</li>
+              <li data-ko="1971년부터 2024년까지 연도별 타임라인, 기종별 목록, 한글·영문 제목 검색을 제공합니다. 매일 바뀌는 '오늘의 게임'과 '무작위' 버튼으로 우연한 발견도 즐겨 보세요."
+                  data-en="A year-by-year timeline from 1971 to 2024, per-platform lists and Korean/English title search — plus a daily featured game and a random button for happy accidents.">1971년부터 2024년까지 <b>연도별 타임라인</b>, 기종별 목록, 한글·영문 제목 검색을 제공합니다. 매일 바뀌는 '오늘의 게임'과 '무작위' 버튼으로 우연한 발견도 즐겨 보세요.</li>
+              <li data-ko="20점 만점 평점과 스탭 추천작 표시를 더했습니다(평점 30,234개·추천 2,965개). 기종별로 평점 높은 순 정렬도 됩니다."
+                  data-en="Added 20-point scores and staff-pick badges (30,234 rated, 2,965 picks), with per-platform sorting by score."><b>20점 만점 평점과 스탭 추천작</b> 표시를 더했습니다(평점 30,234개·추천 2,965개). 기종별로 평점 높은 순 정렬도 됩니다.</li>
+            </ul>
+            <div class="tl-shots">
+              <a href="https://rom-settings-hae-bang-tool.pages.dev/games/game.html?sys=sfc&amp;id=2143">
+                <img src="https://pub-ce7fb67413a8472b9d565037b8fbd5ef.r2.dev/4/2143.webp" alt="크로노 트리거" loading="lazy" />
+                <div class="cap"><i>★19</i> 크로노 트리거</div></a>
+              <a href="https://rom-settings-hae-bang-tool.pages.dev/games/game.html?sys=psx&amp;id=19249">
+                <img src="https://pub-ce7fb67413a8472b9d565037b8fbd5ef.r2.dev/57/19249.webp" alt="파이널 판타지 VII" loading="lazy" />
+                <div class="cap"><i>★18</i> 파이널 판타지 VII</div></a>
+              <a href="https://rom-settings-hae-bang-tool.pages.dev/games/game.html?sys=sfc&amp;id=2176">
+                <img src="https://pub-ce7fb67413a8472b9d565037b8fbd5ef.r2.dev/4/2176.webp" alt="스트리트 파이터 2" loading="lazy" />
+                <div class="cap"><i>★19</i> 스트리트 파이터 2</div></a>
+              <a href="https://rom-settings-hae-bang-tool.pages.dev/games/game.html?sys=n64&amp;id=5396">
+                <img src="https://pub-ce7fb67413a8472b9d565037b8fbd5ef.r2.dev/14/5396.webp" alt="슈퍼 마리오 64" loading="lazy" />
+                <div class="cap"><i>★18</i> 슈퍼 마리오 64</div></a>
+            </div>
+            <div class="tl-cta">
+              <a class="btn btn-primary" href="https://rom-settings-hae-bang-tool.pages.dev/games/" data-ko="게임 아카이브 열기 →" data-en="Open the Game Archive →">게임 아카이브 열기 →</a>
+              <a class="btn btn-ghost" href="https://rom-settings-hae-bang-tool.pages.dev/games/timeline.html" data-ko="연도별로 둘러보기" data-en="Browse by year">연도별로 둘러보기</a>
+            </div>
+          </div>
+        </article>
 
         <!-- 2026-07-30 -->
         <article class="tl-item hl reveal">
