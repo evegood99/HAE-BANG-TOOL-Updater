@@ -10,7 +10,10 @@
  */
 const REPO = 'evegood99/KR_PATCH_AGES';
 const RAW = `https://raw.githubusercontent.com/${REPO}/main`;
-const TTL = 21600;   // 6시간
+// 저장소를 고치면 곧 반영되어야 해서 짧게 잡는다(10분).
+// GitHub API 는 미인증이면 IP당 시간 60회인데, 한 번 새로 받을 때 3회(README·릴리스·파일목록)
+// 이므로 시간당 18회 — 여유가 있다.
+const TTL = 600;
 
 // README 표 한 줄:
 // | [<img src="경로" width="240"><br>**제목**](폴더/) | 시스템 | 버전 | 상태 | [Release](주소) |
@@ -38,7 +41,8 @@ const FALLBACK = [
 
 export async function onRequestGet() {
   try {
-    const [md, releases] = await Promise.all([getReadme(), getReleases()]);
+    const [md, releases, tree] = await Promise.all([getReadme(), getReleases(), getTree()]);
+    const shotsBy = groupShots(tree);
     let items = parseTable(md);
     const parsed = items.length > 0;
     if (!parsed) items = FALLBACK.slice();
@@ -47,6 +51,13 @@ export async function onRequestGet() {
     const games = items.map((it) => {
       const rel = it.tag ? byTag.get(it.tag.toLowerCase()) : null;
       const asset = rel && (rel.assets || [])[0];
+      // 게임 폴더의 screenshots/ 전체. 카드에 쓰는 대표 이미지를 맨 앞에 둔다.
+      const dir = trimSlash(it.path);
+      const all = shotsBy.get(dir) || [];
+      const main = trimSlash(it.shot || '');
+      const ordered = main && all.indexOf(main) >= 0
+        ? [main].concat(all.filter(function (x) { return x !== main; }))
+        : all;
       return {
         title: it.title,
         system: it.system,
@@ -54,6 +65,7 @@ export async function onRequestGet() {
         status: it.status,
         repoUrl: `https://github.com/${REPO}/tree/main/${trimSlash(it.path)}`,
         shot: it.shot ? `${RAW}/${encodePath(it.shot)}` : null,
+        shots: ordered.map((x) => `${RAW}/${encodePath(x)}`),
         release: rel ? `https://github.com/${REPO}/releases/tag/${rel.tag_name}` : null,
         download: asset ? asset.browser_download_url : null,
         file: asset ? asset.name : null,
@@ -69,7 +81,7 @@ export async function onRequestGet() {
       downloads: games.reduce((a, g) => a + g.downloads, 0),
       released: games.filter((g) => g.download).length,
       games,
-    }, 3600);
+    }, 300);
   } catch (e) {
     return json({ ok: false, error: String(e && e.message || e) }, 0, 500);
   }
@@ -85,6 +97,30 @@ async function getReleases() {
   if (!r.ok) return [];
   const v = await r.json();
   return Array.isArray(v) ? v : [];
+}
+
+/** 저장소 전체 파일 목록 — 게임마다 폴더를 조회하면 6번 부를 것을 한 번에 끝낸다. */
+async function getTree() {
+  const r = await gh(`https://api.github.com/repos/${REPO}/git/trees/main?recursive=1`);
+  if (!r.ok) return [];
+  const j = await r.json();
+  return Array.isArray(j.tree) ? j.tree : [];
+}
+
+const IMG = /\.(png|jpe?g|gif|webp)$/i;
+/** '<게임폴더>/screenshots/<파일>' 을 게임 폴더별로 묶는다. */
+function groupShots(tree) {
+  const m = new Map();
+  for (const t of tree) {
+    if (t.type !== 'blob' || !IMG.test(t.path)) continue;
+    const i = t.path.indexOf('/screenshots/');
+    if (i < 0) continue;
+    const dir = t.path.slice(0, i);
+    if (!m.has(dir)) m.set(dir, []);
+    m.get(dir).push(t.path);
+  }
+  for (const v of m.values()) v.sort();
+  return m;
 }
 
 function gh(url) {

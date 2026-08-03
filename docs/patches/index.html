@@ -24,6 +24,12 @@
     border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; transition:.18s}
   .card:hover{border-color:var(--indigo); transform:translateY(-3px); box-shadow:var(--shadow)}
   .card .shot{position:relative; aspect-ratio:4/3; background:var(--surface2); overflow:hidden}
+  .card .shot.more{cursor:zoom-in}
+  /* 스크린샷이 더 있으면 눌러 볼 수 있다는 표시 */
+  .shot .cnt{position:absolute; right:9px; bottom:9px; z-index:2; display:flex; align-items:center; gap:5px;
+    background:rgba(7,8,13,.86); border:1px solid var(--border2); border-radius:999px;
+    padding:4px 10px; font-size:11.5px; font-weight:700; color:var(--text); transition:.18s}
+  .card .shot.more:hover .cnt{background:var(--indigo); border-color:transparent; color:#0a0c14}
   .card .shot img{width:100%; height:100%; object-fit:cover; display:block;
     image-rendering:pixelated}      /* 레트로 타이틀 화면이라 뭉개지지 않게 */
   .card .shot .noimg{display:flex; height:100%; align-items:center; justify-content:center;
@@ -55,6 +61,24 @@
     padding:13px 15px; overflow-x:auto; margin:10px 0 0; font-size:13px; color:var(--text)}
   .note{margin-top:18px; font-size:13px; color:var(--faint); line-height:1.85}
   .note b{color:var(--muted)}
+
+  /* 스크린샷 갤러리 — 화면 가운데에 세로로 나열한다(가로/세로 비율이 제각각이라 한 줄씩) */
+  .gal{position:fixed; inset:0; z-index:200; background:rgba(4,5,10,.94); backdrop-filter:blur(6px);
+    display:none; overflow:auto; padding:0 0 40px}
+  .gal.on{display:block}
+  .gal-top{position:sticky; top:0; z-index:2; display:flex; align-items:center; gap:14px;
+    padding:14px 22px; background:rgba(7,8,13,.92); border-bottom:1px solid var(--border);
+    backdrop-filter:blur(10px)}
+  .gal-top h3{margin:0; font-size:16.5px; font-weight:800; color:#fff}
+  .gal-top .n{font-size:12.5px; color:var(--faint)}
+  .gal-top .x{margin-left:auto; background:none; border:0; color:#fff; font-size:26px; line-height:1;
+    cursor:pointer; opacity:.75; font-family:inherit}
+  .gal-top .x:hover{opacity:1}
+  .gal-in{max-width:1000px; margin:0 auto; padding:22px; display:flex; flex-direction:column; gap:18px}
+  .gal-in figure{margin:0}
+  .gal-in img{width:100%; display:block; border-radius:12px; border:1px solid var(--border2);
+    background:#0c0e16}
+  .gal-in figcaption{margin-top:7px; font-size:12px; color:var(--faint); text-align:center}
 </style>
 </head>
 <body>
@@ -124,6 +148,15 @@
   </div>
 </section>
 
+<!-- 스크린샷 갤러리 (카드의 화면을 누르면 열린다) -->
+<div class="gal" id="gal" aria-hidden="true">
+  <div class="gal-top">
+    <h3 id="gal-title"></h3><span class="n" id="gal-n"></span>
+    <button class="x" id="gal-x" aria-label="닫기">&times;</button>
+  </div>
+  <div class="gal-in" id="gal-in"></div>
+</div>
+
 <footer>
   <div class="wrap">
     <div>© HAE-BANG Rom Setting Tools</div>
@@ -149,11 +182,38 @@ function statusClass(s) {
 }
 const kb = (n) => !n ? '' : (n >= 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.round(n / 1024) + ' KB');
 
-function card(g) {
+/* 게임별 스크린샷 목록 — 카드에서 갤러리를 열 때 쓴다 */
+const SHOTS = new Map();
+
+function openGallery(key) {
+  const g = SHOTS.get(key);
+  if (!g || !g.shots.length) return;
+  document.getElementById('gal-title').textContent = g.title;
+  document.getElementById('gal-n').textContent = `${g.shots.length}장`;
+  document.getElementById('gal-in').innerHTML = g.shots.map((u, i) => {
+    const name = decodeURIComponent(u.split('/').pop()).replace(/\.[a-z]+$/i, '');
+    return `<figure><img src="${esc(u)}" alt="${esc(g.title)} 화면 ${i + 1}" loading="lazy" />
+              <figcaption>${esc(name)}</figcaption></figure>`;
+  }).join('');
+  const gal = document.getElementById('gal');
+  gal.classList.add('on');
+  gal.scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+}
+function closeGallery() {
+  document.getElementById('gal').classList.remove('on');
+  document.getElementById('gal-in').innerHTML = '';   // 큰 이미지를 붙잡아 두지 않는다
+  document.body.style.overflow = '';
+}
+
+function card(g, key) {
+  const shots = g.shots || [];
   const shot = g.shot
     ? `<img src="${esc(g.shot)}" alt="${esc(g.title)} 타이틀 화면" loading="lazy"
             onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'noimg',textContent:'이미지 없음'}))" />`
     : '<div class="noimg">이미지 없음</div>';
+  const more = shots.length > 1
+    ? `<span class="cnt">🖼 ${shots.length}장 보기</span>` : '';
   // 버전 칸이 '-' 로 비어 있는 준비 중 항목이 있어 그대로 칩을 만들지 않는다.
   const ver = g.version && g.version !== '-' ? `<span class="chip ver">${esc(g.version)}</span>` : '';
   const stat = g.download
@@ -163,7 +223,8 @@ function card(g) {
     ? `<a class="btn btn-primary" href="${esc(g.download)}">내려받기</a>`
     : '';
   return `<article class="card">
-      <div class="shot">${shot}<span class="st ${statusClass(g.status)}">${esc(g.status || '준비 중')}</span></div>
+      <div class="shot${shots.length > 1 ? ' more' : ''}"${shots.length > 1 ? ` data-gal="${key}"` : ''}>
+        ${shot}<span class="st ${statusClass(g.status)}">${esc(g.status || '준비 중')}</span>${more}</div>
       <div class="body">
         <h3>${esc(g.title)}</h3>
         <div class="chips"><span class="chip">${esc(g.system || '기타')}</span>${ver}</div>
@@ -190,14 +251,22 @@ async function load() {
     document.getElementById('src-note').textContent =
       d.parsed ? '저장소 README 기준' : '저장소를 읽지 못해 저장된 목록을 보여줍니다';
 
+    SHOTS.clear();
+    d.games.forEach((g, i) => SHOTS.set(String(i), g));
     box.className = 'cards';
-    box.innerHTML = d.games.map(card).join('');
+    box.innerHTML = d.games.map((g, i) => card(g, String(i))).join('');
+    box.querySelectorAll('[data-gal]').forEach((el) => {
+      el.onclick = () => openGallery(el.dataset.gal);
+    });
   } catch (e) {
     box.className = '';
     box.innerHTML = `<div class="error">패치 목록을 불러오지 못했습니다 — ${esc(e.message)}<br />
       <a class="btn" style="margin-top:12px" href="https://github.com/evegood99/KR_PATCH_AGES" target="_blank" rel="noopener">저장소에서 직접 보기 ↗</a></div>`;
   }
 }
+document.getElementById('gal-x').onclick = closeGallery;
+document.getElementById('gal').onclick = (e) => { if (e.target.id === 'gal') closeGallery(); };
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeGallery(); });
 load();
 </script>
 <script>
