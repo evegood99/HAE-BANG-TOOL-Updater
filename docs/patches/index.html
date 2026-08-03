@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>대한글화시대 — 레트로 게임 한글화 패치</title>
+<meta name="description" content="미번역의 바다를 항해하며, 레트로 게임 한글화의 신항로를 개척합니다. 메가드라이브·DOS·PSP 한글화 패치 모음." />
+<meta property="og:title" content="대한글화시대 — 레트로 게임 한글화 패치" />
+<meta property="og:description" content="레트로 게임 한글화 패치 모음집. 패치 파일만 배포하며 게임 롬은 포함하지 않습니다." />
+<link rel="icon" href="../assets/favicon.ico" />
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<!-- 헤더·버튼·푸터 등 공통 셸은 아카이브와 같은 것을 쓴다(디자인 토큰이 한 곳에 있도록) -->
+<link rel="stylesheet" href="../games/style.css" />
+<style>
+  /* ---------- 패치 목록 전용 ---------- */
+  .ph-hero{padding:54px 0 6px}
+  .ph-hero h1{margin:10px 0 12px; font-size:clamp(28px,4.4vw,44px); line-height:1.18; letter-spacing:-.02em}
+  .ph-hero .lead{margin:0; font-size:16px; color:var(--muted); max-width:58ch}
+  .ph-hero .repo{margin-top:16px; display:flex; gap:10px; flex-wrap:wrap}
+
+  .cards{display:grid; grid-template-columns:repeat(auto-fill,minmax(310px,1fr)); gap:18px}
+  .card{display:flex; flex-direction:column; background:var(--surface);
+    border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; transition:.18s}
+  .card:hover{border-color:var(--indigo); transform:translateY(-3px); box-shadow:var(--shadow)}
+  .card .shot{position:relative; aspect-ratio:4/3; background:var(--surface2); overflow:hidden}
+  .card .shot img{width:100%; height:100%; object-fit:cover; display:block;
+    image-rendering:pixelated}      /* 레트로 타이틀 화면이라 뭉개지지 않게 */
+  .card .shot .noimg{display:flex; height:100%; align-items:center; justify-content:center;
+    color:var(--faint); font-size:12.5px}
+  .st{position:absolute; top:10px; left:10px; z-index:2; font-size:11px; font-weight:800;
+    padding:4px 9px; border-radius:7px; white-space:nowrap; box-shadow:0 4px 14px -4px rgba(0,0,0,.7)}
+  .st.done{background:linear-gradient(120deg,#34d399,#10b981); color:#04241a}
+  .st.check{background:linear-gradient(120deg,#fbbf24,#f59e0b); color:#3a2503}
+  .st.wip{background:var(--surface2); color:var(--muted); border:1px solid var(--border2)}
+  .card .body{padding:16px 17px 17px; display:flex; flex-direction:column; flex:1}
+  .card h3{margin:0 0 8px; font-size:17px; letter-spacing:-.01em; line-height:1.35}
+  .card .chips{display:flex; gap:7px; flex-wrap:wrap; margin-bottom:10px}
+  .chip{font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:999px;
+    background:var(--surface2); border:1px solid var(--border2); color:var(--muted)}
+  .chip.ver{color:var(--cyan); border-color:rgba(34,211,238,.35)}
+  .card .stat{font-size:12.5px; color:var(--faint); margin-bottom:14px}
+  .card .stat b{color:var(--text); font-weight:800}
+  .card .acts{margin-top:auto; display:flex; gap:8px; flex-wrap:wrap}
+  .card .acts .btn{padding:8px 14px; font-size:13px}
+
+  .how{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:22px 24px}
+  .how ol{margin:0; padding-left:20px}
+  .how li{margin:9px 0; font-size:14.5px; color:var(--muted)}
+  .how li b{color:var(--text)}
+  .how code{background:var(--bg2); border:1px solid var(--border2); border-radius:7px;
+    padding:2px 7px; font-size:13px; color:var(--cyan)}
+  .how pre{background:var(--bg2); border:1px solid var(--border2); border-radius:10px;
+    padding:13px 15px; overflow-x:auto; margin:10px 0 0; font-size:13px; color:var(--text)}
+  .note{margin-top:18px; font-size:13px; color:var(--faint); line-height:1.85}
+  .note b{color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="../index.html">
+      <img src="../assets/icon.png" alt="HAE-BANG logo" />
+      <span>
+        <span class="bt">HAE-BANG</span>
+        <div class="bs">롬 세팅 툴</div>
+      </span>
+    </a>
+    <nav class="nav-links">
+      <a href="../news.html">새로운 소식</a>
+      <a href="../index.html#features">기능</a>
+      <a href="../index.html#how">작동 방식</a>
+      <a href="../index.html#targets">지원 대상</a>
+      <a href="../guide.html">가이드</a>
+      <a href="../story.html">읽을거리</a>
+      <a href="../games/">게임 아카이브</a>
+      <a href="./" class="on">한글화 패치</a>
+    </nav>
+    <div class="nav-right">
+      <a class="btn btn-primary hide-s" href="../index.html#download">다운로드</a>
+    </div>
+      <button class="menu-btn" id="menuBtn" aria-label="메뉴" aria-expanded="false">☰</button>
+    </div>
+  <div class="mnav" id="mnav"><div class="in"></div></div>
+</header>
+
+<section class="ph-hero wrap">
+  <div class="eyebrow">KR Patch Ages</div>
+  <h1>대한글화시대 <span class="grad-text">大한글化時代</span></h1>
+  <p class="lead">미번역의 바다를 항해하며, 레트로 게임 한글화의 신항로를 개척합니다.</p>
+  <div class="stats" id="stats"></div>
+  <div class="repo">
+    <a class="btn" id="repo-link" href="https://github.com/evegood99/KR_PATCH_AGES" target="_blank" rel="noopener">저장소 보기 ↗</a>
+  </div>
+</section>
+
+<section class="sec wrap" style="padding-top:26px">
+  <div class="sec-head">
+    <h2>패치 목록</h2>
+    <span class="muted" id="src-note"></span>
+  </div>
+  <div id="list"><div class="loading">불러오는 중…</div></div>
+</section>
+
+<section class="sec wrap" style="padding-top:0">
+  <div class="sec-head"><h2>적용 방법</h2><span class="muted">xdelta 형식 공통</span></div>
+  <div class="how">
+    <ol>
+      <li><b>패처 준비</b> —
+        <a href="https://github.com/marco-calautti/DeltaPatcher/releases" target="_blank" rel="noopener">Delta Patcher</a>(GUI)
+        또는 <code>xdelta3</code>(CLI)</li>
+      <li><b>원본 확인</b> — 각 게임 설명서에 적힌 <b>원본 해시(MD5)</b> 와 내 파일이 같은지 대조</li>
+      <li><b>패치 적용</b>
+        <pre>xdelta3 -d -s &lt;원본&gt; &lt;패치.xdelta&gt; &lt;출력&gt;</pre>
+      </li>
+    </ol>
+    <div class="note">
+      게임별 형식이 다르면 해당 게임 설명서의 적용법을 따르세요.<br />
+      <b>이 저장소는 패치 파일만 제공합니다.</b> 게임은 직접 소유한 원본을 사용하세요.
+      각 게임의 저작권은 원 저작권자에게 있으며, 패치는 비영리 팬 번역입니다.
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>© HAE-BANG Rom Setting Tools</div>
+    <div class="credit">
+      한글화 패치 저장소
+      <a href="https://github.com/evegood99/KR_PATCH_AGES" target="_blank" rel="noopener">대한글화시대</a>
+      · 패치 파일만 배포하며 게임 롬/원본 파일은 포함하지 않습니다.
+    </div>
+  </div>
+</footer>
+
+<script>
+const nf = new Intl.NumberFormat('ko-KR');
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+/** 상태 문구 → 배지 색. 표현이 늘어도 화면이 깨지지 않게 키워드로 고른다. */
+function statusClass(s) {
+  const t = String(s || '');
+  if (/완료|배포|테스트/.test(t)) return 'done';
+  if (/검수/.test(t)) return 'check';
+  return 'wip';
+}
+const kb = (n) => !n ? '' : (n >= 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.round(n / 1024) + ' KB');
+
+function card(g) {
+  const shot = g.shot
+    ? `<img src="${esc(g.shot)}" alt="${esc(g.title)} 타이틀 화면" loading="lazy"
+            onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'noimg',textContent:'이미지 없음'}))" />`
+    : '<div class="noimg">이미지 없음</div>';
+  // 버전 칸이 '-' 로 비어 있는 준비 중 항목이 있어 그대로 칩을 만들지 않는다.
+  const ver = g.version && g.version !== '-' ? `<span class="chip ver">${esc(g.version)}</span>` : '';
+  const stat = g.download
+    ? `<b>${nf.format(g.downloads)}</b>회 내려받음${g.date ? ' · ' + esc(g.date) : ''}${g.size ? ' · ' + kb(g.size) : ''}`
+    : '아직 공개 전입니다';
+  const dl = g.download
+    ? `<a class="btn btn-primary" href="${esc(g.download)}">내려받기</a>`
+    : '';
+  return `<article class="card">
+      <div class="shot">${shot}<span class="st ${statusClass(g.status)}">${esc(g.status || '준비 중')}</span></div>
+      <div class="body">
+        <h3>${esc(g.title)}</h3>
+        <div class="chips"><span class="chip">${esc(g.system || '기타')}</span>${ver}</div>
+        <div class="stat">${stat}</div>
+        <div class="acts">${dl}
+          <a class="btn" href="${esc(g.repoUrl)}" target="_blank" rel="noopener">설명서 ↗</a>
+        </div>
+      </div>
+    </article>`;
+}
+
+async function load() {
+  const box = document.getElementById('list');
+  try {
+    const r = await fetch('/api/patches');
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.error || 'API error');
+
+    document.getElementById('stats').innerHTML = [
+      ['패치', d.total + '종'], ['배포 완료', d.released + '종'],
+      ['누적 내려받기', nf.format(d.downloads) + '회'],
+    ].map(([k, v]) => `<div class="stat"><b>${esc(v)}</b><span>${esc(k)}</span></div>`).join('');
+    if (d.repo) document.getElementById('repo-link').href = d.repo;
+    document.getElementById('src-note').textContent =
+      d.parsed ? '저장소 README 기준' : '저장소를 읽지 못해 저장된 목록을 보여줍니다';
+
+    box.className = 'cards';
+    box.innerHTML = d.games.map(card).join('');
+  } catch (e) {
+    box.className = '';
+    box.innerHTML = `<div class="error">패치 목록을 불러오지 못했습니다 — ${esc(e.message)}<br />
+      <a class="btn" style="margin-top:12px" href="https://github.com/evegood99/KR_PATCH_AGES" target="_blank" rel="noopener">저장소에서 직접 보기 ↗</a></div>`;
+  }
+}
+load();
+</script>
+<script>
+/* 모바일 메뉴 — 상단 메뉴가 숨겨지는 폭에서 같은 항목을 펼쳐 보여준다.
+   항목을 따로 적지 않고 .nav-links 를 복제해 두 곳이 어긋날 일이 없게 한다. */
+(function () {
+  var btn = document.getElementById('menuBtn'), mn = document.getElementById('mnav');
+  if (!btn || !mn) return;
+  var box = mn.querySelector('.in');
+  document.querySelectorAll('.nav-links a').forEach(function (a) { box.appendChild(a.cloneNode(true)); });
+  document.querySelectorAll('.subbar .wrap > a').forEach(function (a) { box.appendChild(a.cloneNode(true)); });
+  function setOpen(on) {
+    mn.classList.toggle('on', on);
+    btn.textContent = on ? '✕' : '☰';
+    btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+  }
+  btn.addEventListener('click', function () { setOpen(!mn.classList.contains('on')); });
+  box.addEventListener('click', function (e) { if (e.target.closest('a')) setOpen(false); });
+  window.addEventListener('resize', function () { if (window.innerWidth > 1040) setOpen(false); });
+})();
+</script>
+</body>
+</html>

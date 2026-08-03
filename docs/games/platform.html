@@ -29,6 +29,7 @@
       <a href="../guide.html">가이드</a>
       <a href="../story.html">읽을거리</a>
       <a href="./" class="on">게임 아카이브</a>
+      <a href="../patches/">한글화 패치</a>
     </nav>
     <div class="nav-right">
       <a class="btn btn-primary hide-s" href="../index.html#download">다운로드</a>
@@ -211,7 +212,7 @@ load();
   }
   btn.addEventListener('click', function () { setOpen(!mn.classList.contains('on')); });
   box.addEventListener('click', function (e) { if (e.target.closest('a')) setOpen(false); });
-  window.addEventListener('resize', function () { if (window.innerWidth > 920) setOpen(false); });
+  window.addEventListener('resize', function () { if (window.innerWidth > 1040) setOpen(false); });
 })();
 </script>
 </body>

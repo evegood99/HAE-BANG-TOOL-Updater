@@ -57,7 +57,7 @@ header{position:sticky; top:0; z-index:50; backdrop-filter:blur(14px);
 .subbar .sb-right a:hover{background:var(--surface2)}
 
 /* 홈페이지와 같은 지점에서 접는다 */
-@media(max-width:920px){ .nav-links{display:none} }
+@media(max-width:1040px){ .nav-links{display:none} }
 @media(max-width:560px){ .hide-s{display:none} }
 
 /* ---------- 공통 ---------- */
@@ -372,4 +372,4 @@ footer a{color:var(--muted)}
 .mnav a{display:block; padding:12px; border-radius:10px; font-size:15px;
   font-weight:600; color:var(--muted)}
 .mnav a:hover,.mnav a.on,.mnav a.active{color:var(--text); background:var(--surface)}
-@media (max-width:920px){ .menu-btn{display:inline-flex} .mnav{display:block} }
+@media (max-width:1040px){ .menu-btn{display:inline-flex} .mnav{display:block} }
