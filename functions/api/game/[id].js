@@ -7,7 +7,14 @@
  * 미디어는 media/<sys_id>/<filename> 규약이라, 응답에는 파일명만 담고
  * 실제 URL 조립은 프론트에서 한다(나중에 도메인이 바뀌어도 API 는 그대로).
  */
-export async function onRequestGet({ params, request, env }) {
+import { cached } from '../_cache.js';
+
+export async function onRequestGet(context) {
+  // 게임 한 건은 DB 를 다시 적재할 때만 바뀐다 — 엣지에 하루 담아 둔다.
+  return cached(context, 86400, () => build(context));
+}
+
+async function build({ params, request, env }) {
   const gameId = parseInt(params.id, 10);
   const slug = (new URL(request.url).searchParams.get('sys') || '').trim();
   if (!gameId) return json({ ok: false, error: 'bad id' }, 0, 400);

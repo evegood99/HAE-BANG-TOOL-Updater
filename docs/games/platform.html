@@ -156,8 +156,12 @@ async function load() {
     document.title = `${name} — 레트로 게임 아카이브`;
     document.getElementById('title').textContent = name;
     document.getElementById('eyebrow').textContent = d.system ? d.system.slug : 'All Platforms';
+    // 검색은 총 개수를 끝까지 세지 않는다(인덱스를 못 타서 전체를 훑게 된다).
+    // 상한에 걸리면 '2,000+' 로 표시한다.
     document.getElementById('count').textContent =
-      `${nf.format(d.total)}개` + (d.pages > 1 ? ` · ${d.page}/${d.pages} 페이지` : '');
+      `${nf.format(d.total)}${d.capped ? '+' : ''}개`
+      + (d.pages > 1 ? ` · ${d.page}/${d.pages} 페이지` : '')
+      + (d.minQ ? ` · 검색은 ${d.minQ}글자 이상` : '');
 
     if (!d.games.length) {
       grid.innerHTML = '<div class="loading">조건에 맞는 게임이 없습니다.</div>';
@@ -189,7 +193,12 @@ const qi = document.getElementById('q');
 qi.value = state.q;
 qi.oninput = () => {
   clearTimeout(timer);
-  timer = setTimeout(() => { state.q = qi.value.trim(); state.page = 1; load(); }, 350);
+  timer = setTimeout(() => {
+    const v = qi.value.trim();
+    // 한 글자는 목록 전체를 훑게 되어 서버에서 무시한다 — 아예 보내지 않는다.
+    if (v.length === 1) return;
+    state.q = v; state.page = 1; load();
+  }, 350);
 };
 const si = document.getElementById('sort');
 si.value = state.sort;

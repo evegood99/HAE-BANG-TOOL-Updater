@@ -39,10 +39,16 @@ const FALLBACK = [
     path: 'psp/Minna-no-Golf-Portable2/', shot: 'psp/Minna-no-Golf-Portable2/screenshots/title.png', tag: '' },
 ];
 
-export async function onRequestGet({ request }) {
+import { cached } from './_cache.js';
+
+export async function onRequestGet(context) {
   // ?fresh=1 — 캐시를 건너뛰고 저장소를 지금 다시 읽는다.
   // 저장소를 고친 직후 바로 확인하고 싶을 때 쓴다(평소에는 쓰지 않는다).
-  const fresh = new URL(request.url).searchParams.get('fresh') === '1';
+  const fresh = new URL(context.request.url).searchParams.get('fresh') === '1';
+  return fresh ? build(true) : cached(context, 300, () => build(false));
+}
+
+async function build(fresh) {
   try {
     const [md, releases, tree] = await Promise.all([
       getReadme(fresh), getReleases(fresh), getTree(fresh),
