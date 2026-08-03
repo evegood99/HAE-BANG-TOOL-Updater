@@ -176,7 +176,7 @@ function renderMedia() {
   // 타이틀 화면 · 스크린샷 — 양옆으로 크게
   const shots = [...all(IDX, 'titlescreens'), ...all(IDX, 'screenshots')];
   document.getElementById('shot-box').innerHTML = shots.length
-    ? `<div class="sec-t"><h2>화면</h2><span>${shots.length}장 · 누르면 크게</span></div>
+    ? `<div class="sec-t"><h2>화면</h2><span>${shots.length}장</span></div>
        <div class="shots">${shots.map((m) =>
          `<figure><img src="${mediaUrl(g.sys_id, m.filename)}" alt="" loading="lazy" /></figure>`).join('')}</div>` : '';
 
