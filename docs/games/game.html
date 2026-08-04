@@ -276,11 +276,17 @@ function renderMedia() {
         도중(폭 전환이 끝나기 전에) 잰 값이 남아 크기와 자리가 어긋난다. */
     const frontRatio = () => (frontImg && frontImg.naturalWidth && frontImg.naturalHeight)
       ? frontImg.naturalWidth + ' / ' + frontImg.naturalHeight : '3 / 4';
+    /** 무대 폭 상한 = 표지 원본 폭. 그림은 원본보다 커지지 않으므로
+        무대만 넓히면 카트리지가 그림에서 떨어져 나간다(style.css .stage 참고). */
+    const artW = () => (frontImg && frontImg.naturalWidth)
+      ? frontImg.naturalWidth + 'px' : 'none';
+    const setArtW = (v) => stage.style.setProperty('--art-w', v);
     const setH = () => {
       const nw = (frontImg && frontImg.naturalWidth) || 0;
       const nh = (frontImg && frontImg.naturalHeight) || 0;
       wide = nw > 0 && nw > nh * 1.05;
       stage.classList.toggle('wide', wide);
+      if (!stage.classList.contains('growing')) setArtW(artW());
       if (!flip.classList.contains('on')) {
         flip.style.height = '';
         flip.style.aspectRatio = frontRatio();
@@ -387,10 +393,13 @@ function renderMedia() {
           // 접힘이 끝났을 때 처음과 똑같은 크기·자리로 돌아온다.
           flip.style.height = '';
           flip.style.aspectRatio = frontRatio();
+          setArtW(artW());                         // 상한도 원래대로 — 폭과 함께 되돌아온다
           return;
         }
         ensureTex();
         if (gdTop) gdTop.classList.add('spread');  // 칸이 가로 전체로 — 커질 자리를 만든다
+        // 펼칠 때는 상한을 칸 폭까지 열어 준다. none 으로 두면 전환이 안 걸려 툭 뛴다.
+        setArtW((((gdTop && gdTop.clientWidth) || stage.clientWidth || 900)) + 'px');
         stage.classList.add('growing');            // 케이스가 그 자리까지 커지면서
         flip.classList.add('on');                  // 함께 돈다
         // 비율로 두던 높이를 지금 크기(px)로 고정한 뒤 목표 높이로 옮겨야 전환이 걸린다.
