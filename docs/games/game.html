@@ -169,13 +169,27 @@ function renderMedia() {
   // 힌트와 판본 표시는 회전체(.flip) 밖에 두어 글씨가 함께 뒤집히지 않게 한다.
   const caseSrc = main ? mediaUrl(g.sys_id, main)
                        : (g.thumb ? `${THUMB_BASE}/${g.sys_id}/${g.game_id}.webp` : '');
+  // 전개도는 '케이스의 뒷면' 그 자체다. 예전에는 뒷면에 한 번 보여 주고 아래 패널에
+  // 또 펼쳐, 같은 그림이 두 번 나왔다. 이제 뒤집히면 그것이 최종 화면이다.
   const face = caseSrc ? `
       <div class="case" id="case">
         <div class="flip" id="flip">
           <div class="face front"><img src="${caseSrc}" alt="" /></div>
-          ${bt ? `<div class="face back"><img data-src="${mediaUrl(g.sys_id, bt)}" alt="" /></div>` : ''}
+          ${bt ? `<div class="face back" id="spread">
+            <div class="uload"><span class="spin"></span>케이스를 열심히 펼치는 중…</div>
+            <div class="tex"><img data-src="${mediaUrl(g.sys_id, bt)}" alt="" /></div>
+            <div class="panes" style="display:none">
+              <figure class="pan" data-front="1">
+                <div class="win"><img data-src="${mediaUrl(g.sys_id, bt)}" alt="" /></div><figcaption>앞면</figcaption>
+              </figure>
+              <figure class="pan">
+                <div class="win"><img data-src="${mediaUrl(g.sys_id, bt)}" alt="" /></div><figcaption>뒷면</figcaption>
+              </figure>
+            </div>
+          </div>` : ''}
         </div>
         ${bt ? '<div class="hint" id="hint">↻ 케이스 펴보기</div>' : ''}
+        ${bt ? `<div class="spreadcap">케이스 전개도 · ${esc(regionName(btR.region))} · 누르면 접힙니다</div>` : ''}
         ${mainR ? markHtml(mainR.region, 'on-case') : ''}
       </div>` : '';
 
@@ -250,154 +264,125 @@ function renderMedia() {
   const stage = document.getElementById('stage');
   const flip = document.getElementById('flip');
   const hint = document.getElementById('hint');
-  const unfold = document.getElementById('unfold');
   if (flip) {
     const frontImg = flip.querySelector('.front img');
+    const back = document.getElementById('spread');   // 케이스 뒷면 = 전개도
+    const gdTop = document.getElementById('gd-top');
     let wide = false;              // 가로형 케이스(슈퍼패미컴·N64 등)인가
     let layoutTex = () => {};      // 전개도 크기 계산 — 전개도가 있을 때만 채워진다
 
+    /** 케이스 높이. 앞면일 때는 표지 비율, 뒤집힌 뒤에는 전개도 비율을 쓴다.
+        회전하는 0.9초 동안 폭과 높이가 함께 변해, 케이스가 전개도 모양으로 '펴진다'. */
     const setH = () => {
       const nw = (frontImg && frontImg.naturalWidth) || 0;
       const nh = (frontImg && frontImg.naturalHeight) || 0;
       wide = nw > 0 && nw > nh * 1.05;
       stage.classList.toggle('wide', wide);
-      // 높이를 px 로 박지 않고 비율로 준다. 무대가 커질 때 높이가 폭을 따라
-      // 매 프레임 함께 자라므로, 확대가 끊기지 않고 이어진다.
-      flip.style.aspectRatio = nw && nh ? (nw + ' / ' + nh) : '3 / 4';
-      // 자리를 다 잡은 뒤에 보여 준다. 그리기 전에는 높이·폭이 정해지지 않아
-      // 케이스와 카트리지가 엉뚱한 곳에 잠깐 놓였다가 제자리를 찾는 것처럼 보인다.
+      if (!flip.classList.contains('on')) {
+        const w = stage.clientWidth || 1;
+        flip.style.height = Math.round(w * (nw ? nh / nw : 1.35)) + 'px';
+      }
       stage.classList.add('ready');
       layoutTex();
     };
     if (frontImg && !frontImg.complete) frontImg.onload = setH; else setH();
     window.addEventListener('resize', setH);
 
-    if (bt) {
-      // 전개도는 아래 패널에 미리 담아두고, 열 때 grid-template-rows 로 부드럽게 펼친다.
-      // 전개도 원본은 30만~140만 바이트로 이 화면에서 가장 무겁다. '케이스 펴보기'를
-      // 누르지 않으면 볼 일이 없으므로 주소만 담아 두고 처음 펼칠 때 받는다.
+    if (bt && back) {
       const texSrc = mediaUrl(g.sys_id, bt);
-      unfold.innerHTML = `<div class="in">
-          <div class="tex"><img data-src="${texSrc}" alt="" /></div>
-          <div class="panes" style="display:none">
-            <figure class="pan" data-front="1">
-              <div class="win"><img data-src="${texSrc}" alt="" /></div><figcaption>앞면</figcaption>
-            </figure>
-            <figure class="pan">
-              <div class="win"><img data-src="${texSrc}" alt="" /></div><figcaption>뒷면</figcaption>
-            </figure>
-          </div>
-          <div class="uload"><span class="spin"></span>케이스를 열심히 펼치는 중…</div>
-          <div class="cap">케이스 전개도 · ${esc(regionName(btR.region))} · 누르면 접힙니다</div>
-        </div>`;
-      const texBox = unfold.querySelector('.tex');
+      const texBox = back.querySelector('.tex');
       const texImg = texBox.querySelector('img');
-      const panes = unfold.querySelector('.panes');
-      const inBox = unfold.querySelector('.in');
+      const panes = back.querySelector('.panes');
 
       // 가로형 케이스의 전개도는 원본이 90도 돌아가 있고, 게다가 앞면과 뒷면이
       // 서로 180도 뒤집혀 있다(실물 박스 전개도라 그렇다). 한 번의 회전으로는
       // 둘 다 세울 수 없으므로 앞/뒷면을 잘라 각각 반대 방향으로 세운다.
-      //
-      //   텍스처 = [뒷면 p][책등][앞면 p],  p = 텍스처높이 × (표지세로/표지가로)
-      //   앞면은 -90도(반시계), 뒷면은 +90도(시계)로 세우면 둘 다 똑바로 선다.
-      // 패널 폭은 기종 기본값으로 잡는다. 예전에는 표지를 따로 받아 비율을 쟀는데,
-      // 실측 15건 모두 기본값과 0px 차이여서 표지 한 장(약 16만 바이트)만 낭비였다.
-      const baseRatio = ROT_TEX_SYS[g.slug] || 0;   // 패널폭/텍스처폭 (0 = 회전 대상 아님)
+      //   텍스처 = [뒷면 p][책등][앞면 p],  p = 텍스처폭 × 기종 기본값
+      const baseRatio = ROT_TEX_SYS[g.slug] || 0;   // 0 이면 회전 대상 아님
 
-      /** 처음 펼칠 때 전개도 원본을 받는다. 크기를 알아야 잘라낼 위치를 계산할 수 있다. */
+      /** 누르기 전에 미리 받아 둔다. 누른 뒤에 받으면 회전은 끝났는데 그림이 없다. */
       let texAsked = false;
       const ensureTex = () => {
         if (texAsked) return;
         texAsked = true;
-        // 케이스 뒷면(회전했을 때 보이는 면)도 같은 그림이라 함께 받는다.
-        document.querySelectorAll('#flip img[data-src], #unfold img[data-src]').forEach((im) => {
+        back.querySelectorAll('img[data-src]').forEach((im) => {
           im.onload = layoutTex;
           im.src = im.dataset.src;
           im.removeAttribute('data-src');
         });
       };
 
-      /** 텍스처 안의 잘라낼 위치를 화면 크기로 옮겨 창(win)과 이미지에 적용한다.
+      /** 잘라낼 위치를 화면 크기로 옮겨 창(win)과 이미지에 적용한다.
           rotate 는 배치 크기를 바꾸지 않으므로 창 크기·이동량을 직접 계산해야 한다. */
-      const paneStyle = (front, nw, nh, p, s) => {
-        const iw = Math.round(nw * s), ih = Math.round(nh * s), ph = Math.round(p * s);
-        // 앞면: 오른쪽 p 를 반시계로 → (0, iw) 만큼 내려 맞춘다
-        // 뒷면: 왼쪽 p 를 시계로   → (ih, 0) 만큼 밀어 맞춘다
+      const paneStyle = (front, nw, nh, p, sc) => {
+        const iw = Math.round(nw * sc), ih = Math.round(nh * sc), ph = Math.round(p * sc);
         const tf = front ? `translate(0px,${iw}px) rotate(-90deg)`
                          : `translate(${ih}px,0px) rotate(90deg)`;
         return { winW: ih, winH: ph, imgW: iw, imgH: ih, tf };
       };
 
+      const GAP = 18, CAPH = 30;
       layoutTex = () => {
         const nw = texImg.naturalWidth, nh = texImg.naturalHeight;
-        // 아직 안 받았으면 '펼치는 중' 표시만 남긴다. 크기를 모르는 채로 그리면
-        // 빈 자리로 있다가 다 받는 순간 툭 튀어나온다.
-        if (!nw) { inBox.classList.remove('loaded'); return; }
-        inBox.classList.add('loaded');             // 안내를 감추고 그림을 서서히 드러낸다
-        // 같은 기종 안에서도 세로 케이스 판(회전 없음)이 섞여 있어 케이스 방향도 함께 본다.
+        if (!nw) { back.classList.remove('loaded'); return; }
+        back.classList.add('loaded');
         const target = baseRatio > 0 && wide && nw >= nh * 1.2;
         const p = Math.round(nw * baseRatio);
         const splittable = target && p > 0 && p * 2 <= nw * 0.98;
 
         texBox.style.display = splittable ? 'none' : '';
         panes.style.display = splittable ? 'flex' : 'none';
-        if (!splittable) return;                 // 반듯한 전개도는 원본 그대로 한 장
 
-        const avail = unfold.clientWidth || 900, gap = 18;
-        const cols = avail >= 760 ? 2 : 1;       // 좁은 화면에선 위아래로
-        const s = Math.min((avail - gap * (cols - 1)) / cols / nh,
-                           Math.min(window.innerHeight * 0.62, 620) / p);
-        panes.querySelectorAll('.pan').forEach((fig) => {
-          const front = fig.dataset.front === '1';
-          const st = paneStyle(front, nw, nh, p, s);
-          const win = fig.querySelector('.win'), im = fig.querySelector('img');
-          win.style.width = st.winW + 'px'; win.style.height = st.winH + 'px';
-          im.style.width = st.imgW + 'px'; im.style.height = st.imgH + 'px';
-          im.style.transform = st.tf;
-          win.onclick = () => setFlip(false);   // 펼쳐진 그림을 누르면 도로 접는다
-        });
+        // 뒤집힌 뒤 케이스가 가질 크기 — 폭은 칸 전체, 높이는 전개도 모양대로.
+        const W = (gdTop && gdTop.clientWidth) || stage.clientWidth || 900;
+        const cap = Math.min(window.innerHeight * 0.62, 620);
+        let h;
+        if (!splittable) {
+          h = Math.min(W * nh / nw, cap);
+        } else {
+          const cols = W >= 760 ? 2 : 1;
+          const sc = Math.min((W - GAP * (cols - 1)) / cols / nh, cap / p);
+          panes.querySelectorAll('.pan').forEach((fig) => {
+            const fr = fig.dataset.front === '1';
+            const st = paneStyle(fr, nw, nh, p, sc);
+            const win = fig.querySelector('.win'), im = fig.querySelector('img');
+            win.style.width = st.winW + 'px'; win.style.height = st.winH + 'px';
+            im.style.width = st.imgW + 'px'; im.style.height = st.imgH + 'px';
+            im.style.transform = st.tf;
+          });
+          // 넓으면 두 장을 나란히(1줄), 좁으면 위아래로(2줄) 놓는다.
+          const rows = cols === 2 ? 1 : 2;
+          h = (Math.round(p * sc) + CAPH) * rows + GAP * (rows - 1);
+        }
+        if (flip.classList.contains('on')) flip.style.height = Math.round(h) + 'px';
+        flip.dataset.spreadH = Math.round(h);
       };
-      texImg.onclick = () => setFlip(false);
 
-      /** 케이스 펴기/접기 — 두 박자로 나눈다.
-          ① 케이스가 전개도 자리까지 커지면서 동시에 3D 로 돌아간다(GROW 동안)
-          ② 다 돌아간 뒤 그 자리에서 전개도가 펼쳐진다
-          한꺼번에 하면 회전이 눈에 안 들어오고, 순서를 지키면 실제로 케이스를
-          집어 들어 펼치는 것처럼 읽힌다. */
-      const gdTop = document.getElementById('gd-top');
-      const GROW = 900;                            // 확대+회전에 쓰는 시간(CSS 와 맞춘다)
-      let phase = null;                            // 진행 중인 예약(중간에 다시 누르면 취소)
-
+      /** 펴기/접기 — 확대와 회전이 한 동작으로 일어나고 거기서 끝난다.
+          뒤집힌 뒤 보이는 것이 곧 전개도이므로, 따로 또 펼치는 단계가 없다. */
       const setFlip = (on) => {
-        clearTimeout(phase);
         if (hint) hint.textContent = on ? '↩ 원래대로' : '↻ 케이스 펴보기';
-        if (!on) {                                 // 접기 — 펼친 것을 먼저 닫고 되돌린다
-          unfold.classList.remove('on');
-          stage.classList.remove('gone', 'growing');
+        if (!on) {
           flip.classList.remove('on');
+          stage.classList.remove('growing');
           if (gdTop) {
             gdTop.classList.remove('spread');
             gdTop.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
+          setTimeout(setH, 30);                    // 표지 비율로 되돌린다
           return;
         }
-        ensureTex();                               // 이때 전개도를 받는다(보통은 이미 받아 둠)
+        ensureTex();
         if (gdTop) gdTop.classList.add('spread');  // 칸이 가로 전체로 — 커질 자리를 만든다
         stage.classList.add('growing');            // 케이스가 그 자리까지 커지면서
-        flip.classList.add('on');                  // 함께 돈다 (높이는 CSS 에서 묶어 둔다)
-        phase = setTimeout(() => {
-          stage.classList.add('gone');             // 다 돌면 케이스는 물러나고
-          unfold.classList.add('on');              // 그 자리를 전개도가 이어받는다
-          layoutTex();
-          setTimeout(layoutTex, 320);              // 펼침 전환이 끝난 뒤 크기 재확정
-          setTimeout(layoutTex, 620);
-        }, GROW);
+        flip.classList.add('on');                  // 함께 돈다
+        // 전개도 모양으로 높이가 함께 변한다(폭 전환과 같은 0.9초).
+        const h = parseInt(flip.dataset.spreadH || '0', 10);
+        if (h) flip.style.height = h + 'px';
+        setTimeout(layoutTex, 60);                 // 칸이 넓어진 뒤 크기 재확정
+        setTimeout(layoutTex, 620);
       };
       flip.onclick = () => setFlip(!flip.classList.contains('on'));
-      // 누르기 전에 미리 받아 둔다. 누른 뒤에 받기 시작하면 회전은 끝났는데
-      // 그림이 없어 빈 자리로 있다가 툭 나타난다. 마우스를 올리거나(데스크톱)
-      // 손이 닿는 순간(모바일) 시작하면 대개 회전이 끝나기 전에 준비된다.
       flip.addEventListener('mouseenter', ensureTex, { once: true });
       flip.addEventListener('touchstart', ensureTex, { once: true, passive: true });
     }
@@ -469,9 +454,6 @@ function render(d) {
       <div class="gd-top" id="gd-top">
         <div class="stage-col">
           <div id="stage-box"></div>
-          <!-- 전개도는 케이스가 있던 자리에서 펼쳐진다(아래에 또 보여주지 않는다).
-               펼치면 gd-top 이 한 칸이 되어 이 칸이 가로를 다 쓴다. -->
-          <div class="unfold" id="unfold"></div>
         </div>
         <div>
           <div class="eyebrow">${esc(g.slug)}${Number(g.topstaff) === 1

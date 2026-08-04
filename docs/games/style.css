@@ -211,9 +211,6 @@ footer a{color:var(--muted)}
 .stage.growing .flip{max-height:min(56vh, 520px)}
 .stage.growing .cart-wrap{opacity:0; transform:translateX(24%) rotate(6deg); pointer-events:none}
 /* ② 다 돌아간 뒤 케이스는 물러나고 그 자리를 전개도가 이어받는다 */
-.stage.gone{max-height:0; opacity:0; padding:0; pointer-events:none; overflow:hidden;
-  transition:opacity .45s ease, max-height .55s cubic-bezier(.2,.75,.2,1) .12s,
-    padding .55s .12s}
 .case{position:relative; width:100%}
 .flip{position:relative; width:100%; transform-style:preserve-3d; cursor:pointer;
   transition:transform .9s cubic-bezier(.22,.8,.24,1), max-height .9s cubic-bezier(.22,.8,.24,1)}
@@ -277,30 +274,22 @@ footer a{color:var(--muted)}
 
 /* 케이스 전개도 — 제목/설명 아래에서 가로 전체로 펼쳐진다.
    3D 회전 대신 '펼침'으로 처리해 글씨 반전이나 복귀 시 배치 흐트러짐이 없다. */
-.unfold{display:grid; grid-template-rows:0fr; opacity:0;
-  transition:grid-template-rows .7s cubic-bezier(.2,.75,.2,1), opacity .5s ease, margin .5s}
-.unfold.on{grid-template-rows:1fr; opacity:1; margin:6px 0 30px}
-/* 케이스가 물러나는 동안 전개도가 서서히 겹쳐 들어온다.
-   자리만 늘어나면 툭 바뀌어 보여, 살짝 작은 상태에서 제 크기로 앉히며 드러낸다. */
-.unfold > .in{overflow:hidden; min-height:0; opacity:0; transform:scale(.965) translateY(8px);
-  transition:opacity .6s ease .1s, transform .7s cubic-bezier(.22,.8,.24,1) .1s}
-.unfold.on > .in{opacity:1; transform:none}
-.unfold img{width:100%; display:block; border-radius:12px; border:1px solid var(--border);
+.flip .back .tex img, .flip .back .pan img{width:100%; display:block; border-radius:12px; border:1px solid var(--border);
   background:var(--surface2); box-shadow:var(--shadow)}
-.unfold .tex img{cursor:zoom-out}      /* 펼친 그림을 누르면 도로 접힌다 */
-.unfold .cap{margin-top:9px; font-size:12px; color:var(--faint)}
+.flip .back .tex img{cursor:zoom-out}      /* 펼친 그림을 누르면 도로 접힌다 */
+
 /* 가로형 케이스는 전개도 원본이 90도 돌아가 있고 앞/뒷면이 서로 180도 뒤집혀 있어,
    한 번의 회전으로는 둘 다 세울 수 없다. 패널을 창으로 잘라내고 안에서 각각
    반대 방향으로 세운 뒤 나란히 놓는다. */
-.unfold .panes{display:flex; flex-wrap:wrap; gap:18px; justify-content:center}
-.unfold .pan{margin:0}
-.unfold .pan .win{position:relative; overflow:hidden; border-radius:12px; cursor:zoom-out;
+.flip .back .panes{display:flex; flex-wrap:wrap; gap:18px; justify-content:center}
+.flip .back .pan{margin:0}
+.flip .back .pan .win{position:relative; overflow:hidden; border-radius:12px; cursor:zoom-out;
   border:1px solid var(--border); background:var(--surface2); box-shadow:var(--shadow);
   transition:border-color .18s}
-.unfold .pan .win:hover{border-color:var(--indigo)}
-.unfold .pan .win img{position:absolute; left:0; top:0; max-width:none;
+.flip .back .pan .win:hover{border-color:var(--indigo)}
+.flip .back .pan .win img{position:absolute; left:0; top:0; max-width:none;
   border:0; border-radius:0; box-shadow:none; background:none; transform-origin:0 0}
-.unfold .pan figcaption{margin-top:8px; font-size:12px; color:var(--faint); text-align:center}
+.flip .back .pan figcaption{margin-top:8px; font-size:12px; color:var(--faint); text-align:center}
 
 /* 스크린샷 — 갤러리처럼 크게 */
 .sec-t{display:flex; align-items:baseline; gap:12px; margin:44px 0 16px}
@@ -465,17 +454,16 @@ footer a{color:var(--muted)}
 /* ---------- 전개도 불러오는 동안 ----------
    원본이 30만~140만 바이트라 누른 뒤에야 받으면 빈 자리로 있다가 툭 나타난다.
    회전하는 동안 '펼치는 중'을 보여 주고, 다 받으면 그림을 서서히 드러낸다. */
-.unfold .uload{display:flex; align-items:center; justify-content:center; gap:10px;
+.flip .back .uload{display:flex; align-items:center; justify-content:center; gap:10px;
   min-height:180px; color:var(--muted); font-size:13.5px;
   border:1px solid var(--border); border-radius:12px; background:var(--surface)}
-.unfold .in.loaded .uload{display:none}
-.unfold .spin{width:17px; height:17px; border-radius:50%; display:block;
+.flip .back.loaded .uload{display:none}
+.flip .back .spin{width:17px; height:17px; border-radius:50%; display:block;
   border:2px solid var(--border2); border-top-color:var(--cyan); animation:uspin .7s linear infinite}
 @keyframes uspin{to{transform:rotate(360deg)}}
 /* 다 받기 전에는 자리만 잡아 두고, 받은 뒤 부드럽게 드러낸다 */
-.unfold .tex,.unfold .panes{opacity:0; transition:opacity .35s}
-.unfold .in.loaded .tex,.unfold .in.loaded .panes{opacity:1}
-.unfold .in:not(.loaded) .cap{visibility:hidden}
+.flip .back .tex,.flip .back .panes{opacity:0; transition:opacity .35s}
+.flip .back.loaded .tex,.flip .back.loaded .panes{opacity:1}
 /* 회전 중 보이는 케이스 뒷면 — 그림이 아직이면 빈 구멍처럼 보이지 않게 */
 .flip .back{background:var(--surface2); border-radius:8px}
 
@@ -499,3 +487,17 @@ footer a{color:var(--muted)}
   .stage.wide, .stage.wide.solo{width:100%}
   .stage.growing .flip{max-height:min(52vh, 420px)}
 }
+
+/* ---------- 케이스 뒷면 = 전개도 ----------
+   뒤집히면 보이는 것이 곧 전개도다. 예전에는 뒷면에 한 번 보여 주고 아래 패널에
+   또 펼쳐 같은 그림이 두 번 나왔다. 확대와 회전이 한 동작으로 끝나도록 합쳤다. */
+.flip .back{display:flex; align-items:center; justify-content:center;
+  background:var(--surface2); border-radius:10px; overflow:hidden; padding:8px}
+.flip .back .tex{width:100%; height:100%; display:flex; align-items:center; justify-content:center}
+.flip .back .tex img{width:auto; height:auto; max-width:100%; max-height:100%;
+  border-radius:8px; border:1px solid var(--border); box-shadow:var(--shadow); cursor:zoom-out}
+.flip .back .panes{width:100%; height:100%; align-items:center}
+/* 안내는 회전체 밖(.case)에 두어 글씨가 뒤집히지 않는다 */
+.spreadcap{position:absolute; left:0; right:0; bottom:-24px; text-align:center;
+  font-size:12px; color:var(--faint); opacity:0; transition:opacity .4s .3s; pointer-events:none}
+.stage.growing .spreadcap{opacity:1}
