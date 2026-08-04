@@ -271,16 +271,19 @@ function renderMedia() {
     let wide = false;              // 가로형 케이스(슈퍼패미컴·N64 등)인가
     let layoutTex = () => {};      // 전개도 크기 계산 — 전개도가 있을 때만 채워진다
 
-    /** 케이스 높이. 앞면일 때는 표지 비율, 뒤집힌 뒤에는 전개도 비율을 쓴다.
-        회전하는 0.9초 동안 폭과 높이가 함께 변해, 케이스가 전개도 모양으로 '펴진다'. */
+    /** 앞면일 때 케이스 모양 = 표지 비율. 높이를 px 로 박지 않고 비율로 둔다.
+        그래야 폭이 바뀌는 내내 높이가 매 프레임 따라온다. px 로 박으면 접히는
+        도중(폭 전환이 끝나기 전에) 잰 값이 남아 크기와 자리가 어긋난다. */
+    const frontRatio = () => (frontImg && frontImg.naturalWidth && frontImg.naturalHeight)
+      ? frontImg.naturalWidth + ' / ' + frontImg.naturalHeight : '3 / 4';
     const setH = () => {
       const nw = (frontImg && frontImg.naturalWidth) || 0;
       const nh = (frontImg && frontImg.naturalHeight) || 0;
       wide = nw > 0 && nw > nh * 1.05;
       stage.classList.toggle('wide', wide);
       if (!flip.classList.contains('on')) {
-        const w = stage.clientWidth || 1;
-        flip.style.height = Math.round(w * (nw ? nh / nw : 1.35)) + 'px';
+        flip.style.height = '';
+        flip.style.aspectRatio = frontRatio();
       }
       stage.classList.add('ready');
       layoutTex();
@@ -371,15 +374,22 @@ function renderMedia() {
             gdTop.classList.remove('spread');
             gdTop.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
-          setTimeout(setH, 30);                    // 표지 비율로 되돌린다
+          // 곧바로 표지 비율로 되돌린다. 이러면 폭이 줄어드는 내내 높이가 따라와
+          // 접힘이 끝났을 때 처음과 똑같은 크기·자리로 돌아온다.
+          flip.style.height = '';
+          flip.style.aspectRatio = frontRatio();
           return;
         }
         ensureTex();
         if (gdTop) gdTop.classList.add('spread');  // 칸이 가로 전체로 — 커질 자리를 만든다
         stage.classList.add('growing');            // 케이스가 그 자리까지 커지면서
         flip.classList.add('on');                  // 함께 돈다
-        // 전개도 모양으로 높이가 함께 변한다(폭 전환과 같은 0.9초).
+        // 비율로 두던 높이를 지금 크기(px)로 고정한 뒤 목표 높이로 옮겨야 전환이 걸린다.
+        // (비율에서 곧장 px 로 바꾸면 시작값이 없어 툭 뛴다)
         const h = parseInt(flip.dataset.spreadH || '0', 10);
+        flip.style.height = flip.offsetHeight + 'px';
+        flip.style.aspectRatio = 'auto';
+        void flip.offsetHeight;                    // 리플로우 — 시작값을 확정한다
         if (h) flip.style.height = h + 'px';
         setTimeout(layoutTex, 60);                 // 칸이 넓어진 뒤 크기 재확정
         setTimeout(layoutTex, 620);

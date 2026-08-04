@@ -213,7 +213,7 @@ footer a{color:var(--muted)}
 /* ② 다 돌아간 뒤 케이스는 물러나고 그 자리를 전개도가 이어받는다 */
 .case{position:relative; width:100%}
 .flip{position:relative; width:100%; transform-style:preserve-3d; cursor:pointer;
-  transition:transform .9s cubic-bezier(.22,.8,.24,1), max-height .9s cubic-bezier(.22,.8,.24,1)}
+  transition:transform .9s cubic-bezier(.22,.8,.24,1), height .9s cubic-bezier(.22,.8,.24,1)}
 .flip.on{transform:rotateY(180deg)}
 .flip .face{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
   backface-visibility:hidden; -webkit-backface-visibility:hidden}
