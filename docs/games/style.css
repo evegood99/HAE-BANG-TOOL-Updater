@@ -421,3 +421,15 @@ footer a{color:var(--muted)}
 .dm-mail{display:block; text-align:center; font-size:14px; font-weight:700; color:var(--cyan);
   margin-top:12px}
 .dm-mail:hover{text-decoration:underline}
+
+/* ---------- 판본 표시 ----------
+   고른 판본에 그 자료가 없으면 다른 판본으로 대체된다. 지금 보고 있는 것이
+   어느 판본인지 자료마다 알 수 있도록 국기만 작게 얹는다(전체 이름은 툴팁). */
+.rmark{position:absolute; z-index:3; display:inline-flex; align-items:center;
+  background:rgba(7,8,13,.8); border:1px solid var(--border2); border-radius:7px;
+  padding:2px 6px; font-size:13px; line-height:1.25; cursor:default; user-select:none}
+.stage .rmark.on-case{left:8px; top:8px}
+.stage.wide .rmark.on-case{left:8px; top:8px}
+.cart-wrap .rmark.on-cart{right:6px; top:6px}
+.shots figure{position:relative}
+.shots .rmark.on-shot{left:10px; top:10px}

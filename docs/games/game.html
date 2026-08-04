@@ -77,6 +77,14 @@ const REGION_NAME = {
   cn: '🇨🇳 중국판', asi: '🌏 아시아판',
 };
 const regionName = (r) => REGION_NAME[r] || (r ? r.toUpperCase() : '기타');
+// 각 자료 위에 붙일 판본 표시. 고른 판본에 그 자료가 없으면 다른 판본으로 대체되므로,
+// 지금 보고 있는 것이 어느 판본인지 자료마다 알려 준다.
+const regionMark = (r) => {
+  const n = REGION_NAME[r];
+  return n ? n.split(' ')[0] : (r ? r.toUpperCase() : '?');
+};
+const markHtml = (r, cls) => r
+  ? `<span class="rmark${cls ? ' ' + cls : ''}" title="${esc(regionName(r))}">${regionMark(r)}</span>` : '';
 // 리전 선택 시 선호 순서(그 판본에 없는 자료는 이 순서로 대체한다)
 const REGION_ORDER = ['kr', 'jp', 'us', 'eu', 'wor', 'ss'];
 /* 전개도 원본이 90도 돌아간 채 저장되는 기종과, 그때 앞/뒷면 패널이 차지하는 폭의 비율.
@@ -113,15 +121,17 @@ function indexMedia(list) {
   });
   return { idx, regions: order };
 }
-/** 해당 종류의 파일 — 선택 리전 우선, 없으면 선호 순서, 그래도 없으면 아무거나 */
-function pick(idx, type, region) {
+/** 해당 종류의 파일과 '실제로 고른 판본' — 선택 판본 우선, 없으면 선호 순서, 그래도 없으면 아무거나.
+    대체된 경우 화면에 어느 판본인지 표시해야 하므로 판본까지 함께 돌려준다. */
+function pickR(idx, type, region) {
   const m = idx[type];
   if (!m) return null;
-  if (region && m[region]) return m[region];
-  for (const r of REGION_ORDER) if (m[r]) return m[r];
+  if (region && m[region]) return { region, filename: m[region] };
+  for (const r of REGION_ORDER) if (m[r]) return { region: r, filename: m[r] };
   const keys = Object.keys(m);
-  return keys.length ? m[keys[0]] : null;
+  return keys.length ? { region: keys[0], filename: m[keys[0]] } : null;
 }
+const pick = (idx, type, region) => (pickR(idx, type, region) || {}).filename || null;
 /** 해당 종류에서 리전 상관없이 전부 (스크린샷처럼 여러 장 보여줄 때) */
 function all(idx, type) {
   return Object.entries(idx[type] || {}).map(([region, filename]) => ({ region, filename }));
@@ -132,11 +142,14 @@ let G, IDX, REGIONS, curRegion = '';
 
 function renderMedia() {
   const g = G;
-  const box3d = pick(IDX, 'box3d', curRegion);
-  const cover = pick(IDX, 'cover', curRegion);
-  const cart = pick(IDX, 'support', curRegion);
-  const bt = pick(IDX, 'boxtexture', curRegion);
+  const box3dR = pickR(IDX, 'box3d', curRegion);
+  const coverR = pickR(IDX, 'cover', curRegion);
+  const cartR = pickR(IDX, 'support', curRegion);
+  const btR = pickR(IDX, 'boxtexture', curRegion);
+  const box3d = box3dR && box3dR.filename, cover = coverR && coverR.filename;
+  const cart = cartR && cartR.filename, bt = btR && btR.filename;
   const vid = pick(IDX, 'videos', curRegion);
+  const mainR = box3dR || coverR;
   const main = box3d || cover;
 
   // 케이스를 누르면 3D 로 돌아가고, 동시에 제목·설명 아래에서 전개도가
@@ -148,7 +161,8 @@ function renderMedia() {
         <div class="face front"><img src="${caseSrc}" alt="" /></div>
         ${bt ? `<div class="face back"><img data-src="${mediaUrl(g.sys_id, bt)}" alt="" /></div>` : ''}
       </div>
-      ${bt ? '<div class="hint" id="hint">↻ 케이스 펴보기</div>' : ''}` : '';
+      ${bt ? '<div class="hint" id="hint">↻ 케이스 펴보기</div>' : ''}
+      ${mainR ? markHtml(mainR.region, 'on-case') : ''}` : '';
 
   // 카트리지·디스크가 있으면 그것을, 없고 영상만 있으면 같은 자리에 영상 카드를 둔다.
   // (영상은 있는데 카트 이미지가 없는 게임이 1만 개가 넘어 그대로 두면 영상을 볼 길이 없다)
@@ -156,6 +170,7 @@ function renderMedia() {
   const cartHtml = (cart && main !== cart) ? `
     <div class="cart-wrap" id="cart-wrap">
       <img src="${mediaUrl(g.sys_id, cart)}" alt="" />
+      ${markHtml(cartR.region, 'on-cart')}
       ${vid ? '<div class="vlabel">▶ 영상 보기</div>' : ''}
     </div>` : (vid ? `
     <div class="cart-wrap vid-only" id="cart-wrap">
@@ -188,7 +203,8 @@ function renderMedia() {
     ? `<div class="sec-t"><h2>화면</h2><span>${shots.length}장${
          shotRegion ? ' · ' + esc(regionName(curRegion)) : ''}</span></div>
        <div class="shots">${shots.map((m) =>
-         `<figure><img src="${mediaUrl(g.sys_id, m.filename)}" alt="" loading="lazy" /></figure>`).join('')}</div>` : '';
+         `<figure><img src="${mediaUrl(g.sys_id, m.filename)}" alt="" loading="lazy" />
+            ${markHtml(m.region, 'on-shot')}</figure>`).join('')}</div>` : '';
 
   // 부가 자료 — 케이스는 뒤집기로, 앞표지는 위 무대에서 이미 보이므로 생략.
   //   카트리지가 메인으로 쓰인(케이스가 없는) 게임만 따로 보여준다.
@@ -203,14 +219,16 @@ function renderMedia() {
 
   // 설명서 — 표지를 미리 보여주려고 iframe 을 걸어 두면 PDF 전체(700만 바이트대)를
   //   받는다. 상세 화면에서 가장 무거운 요청이라, 종이 모양 카드만 두고 누를 때 연다.
-  const man = pick(IDX, 'manuals', curRegion);
-  document.getElementById('man-box').innerHTML = man
+  // ⚠️ 판본은 고른 것이 아니라 '실제로 실린 것'을 적는다. 고른 판본에 설명서가 없으면
+  //    다른 판본으로 대체되는데, 예전에는 고른 판본 이름을 그대로 적어 사실과 달랐다.
+  const manR = pickR(IDX, 'manuals', curRegion);
+  document.getElementById('man-box').innerHTML = manR
     ? `<div class="sec-t"><h2>설명서</h2><span>누르면 전체 화면으로 볼 수 있습니다</span></div>
-       <div class="man-card" data-pdf="${mediaUrl(g.sys_id, man)}">
+       <div class="man-card" data-pdf="${mediaUrl(g.sys_id, manR.filename)}">
          <div class="man-cover">
-           <div class="doc"><b>설명서</b><span>${esc(regionName(curRegion))}</span><i>누르면 열립니다</i></div>
+           <div class="doc"><b>설명서</b><span>${esc(regionName(manR.region))}</span><i>누르면 열립니다</i></div>
          </div>
-         <div class="cap"><b>원본 설명서</b>스캔본 · ${esc(regionName(curRegion))}</div>
+         <div class="cap"><b>원본 설명서</b>스캔본 · ${esc(regionName(manR.region))}</div>
        </div>` : '';
 
   // 무대 높이는 앞면 비율로 고정한다(면이 absolute). 돌아가도 레이아웃이 흔들리지 않는다.
@@ -255,7 +273,7 @@ function renderMedia() {
               <div class="win"><img data-src="${texSrc}" alt="" /></div><figcaption>뒷면</figcaption>
             </figure>
           </div>
-          <div class="cap">케이스 전개도 · ${esc(regionName(curRegion))} · 누르면 접힙니다</div>
+          <div class="cap">케이스 전개도 · ${esc(regionName(btR.region))} · 누르면 접힙니다</div>
         </div>`;
       const texBox = unfold.querySelector('.tex');
       const texImg = texBox.querySelector('img');
