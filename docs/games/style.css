@@ -446,3 +446,20 @@ footer a{color:var(--muted)}
 .cart-wrap .rmark.on-cart{right:6px; top:6px}
 .shots figure{position:relative}
 .shots .rmark.on-shot{left:10px; top:10px}
+
+/* ---------- 전개도 불러오는 동안 ----------
+   원본이 30만~140만 바이트라 누른 뒤에야 받으면 빈 자리로 있다가 툭 나타난다.
+   회전하는 동안 '펼치는 중'을 보여 주고, 다 받으면 그림을 서서히 드러낸다. */
+.unfold .uload{display:flex; align-items:center; justify-content:center; gap:10px;
+  min-height:180px; color:var(--muted); font-size:13.5px;
+  border:1px solid var(--border); border-radius:12px; background:var(--surface)}
+.unfold .in.loaded .uload{display:none}
+.unfold .spin{width:17px; height:17px; border-radius:50%; display:block;
+  border:2px solid var(--border2); border-top-color:var(--cyan); animation:uspin .7s linear infinite}
+@keyframes uspin{to{transform:rotate(360deg)}}
+/* 다 받기 전에는 자리만 잡아 두고, 받은 뒤 부드럽게 드러낸다 */
+.unfold .tex,.unfold .panes{opacity:0; transition:opacity .35s}
+.unfold .in.loaded .tex,.unfold .in.loaded .panes{opacity:1}
+.unfold .in:not(.loaded) .cap{visibility:hidden}
+/* 회전 중 보이는 케이스 뒷면 — 그림이 아직이면 빈 구멍처럼 보이지 않게 */
+.flip .back{background:var(--surface2); border-radius:8px}

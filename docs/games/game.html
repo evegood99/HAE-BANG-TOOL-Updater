@@ -288,11 +288,13 @@ function renderMedia() {
               <div class="win"><img data-src="${texSrc}" alt="" /></div><figcaption>뒷면</figcaption>
             </figure>
           </div>
+          <div class="uload"><span class="spin"></span>전개도를 펼치는 중…</div>
           <div class="cap">케이스 전개도 · ${esc(regionName(btR.region))} · 누르면 접힙니다</div>
         </div>`;
       const texBox = unfold.querySelector('.tex');
       const texImg = texBox.querySelector('img');
       const panes = unfold.querySelector('.panes');
+      const inBox = unfold.querySelector('.in');
 
       // 가로형 케이스의 전개도는 원본이 90도 돌아가 있고, 게다가 앞면과 뒷면이
       // 서로 180도 뒤집혀 있다(실물 박스 전개도라 그렇다). 한 번의 회전으로는
@@ -330,7 +332,10 @@ function renderMedia() {
 
       layoutTex = () => {
         const nw = texImg.naturalWidth, nh = texImg.naturalHeight;
-        if (!nw) return;                           // 아직 안 받았다(처음 펼칠 때 받는다)
+        // 아직 안 받았으면 '펼치는 중' 표시만 남긴다. 크기를 모르는 채로 그리면
+        // 빈 자리로 있다가 다 받는 순간 툭 튀어나온다.
+        if (!nw) { inBox.classList.remove('loaded'); return; }
+        inBox.classList.add('loaded');             // 안내를 감추고 그림을 서서히 드러낸다
         // 같은 기종 안에서도 세로 케이스 판(회전 없음)이 섞여 있어 케이스 방향도 함께 본다.
         const target = baseRatio > 0 && wide && nw >= nh * 1.2;
         const p = Math.round(nw * baseRatio);
@@ -377,6 +382,11 @@ function renderMedia() {
         if (!on && gdTop) gdTop.scrollIntoView({ behavior: 'smooth', block: 'start' });
       };
       flip.onclick = () => setFlip(!flip.classList.contains('on'));
+      // 누르기 전에 미리 받아 둔다. 누른 뒤에 받기 시작하면 회전은 끝났는데
+      // 그림이 없어 빈 자리로 있다가 툭 나타난다. 마우스를 올리거나(데스크톱)
+      // 손이 닿는 순간(모바일) 시작하면 대개 회전이 끝나기 전에 준비된다.
+      flip.addEventListener('mouseenter', ensureTex, { once: true });
+      flip.addEventListener('touchstart', ensureTex, { once: true, passive: true });
     }
   }
 
