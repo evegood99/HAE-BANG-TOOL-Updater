@@ -288,7 +288,16 @@ function renderMedia() {
       stage.classList.add('ready');
       layoutTex();
     };
-    if (frontImg && !frontImg.complete) frontImg.onload = setH; else setH();
+    // ⚠️ 성공했을 때만 보이게 하면, 이미지를 못 받은 경우 무대가 opacity:0 인 채로 남아
+    //    '아무것도 안 나오는' 화면이 된다(모바일에서 미디어가 막혔을 때 실제로 그랬다).
+    //    실패·지연에도 반드시 보이도록 onerror 와 마감 시간을 함께 건다.
+    if (frontImg && !frontImg.complete) {
+      frontImg.onload = setH;
+      frontImg.onerror = setH;
+      setTimeout(setH, 2500);
+    } else {
+      setH();
+    }
     window.addEventListener('resize', setH);
 
     if (bt && back) {
