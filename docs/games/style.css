@@ -492,20 +492,15 @@ footer a{color:var(--muted)}
 }
 /* 좁은 화면에서는 케이스를 조금 더 크게 — 66% 면 손바닥 안에서 너무 작다 */
 @media (max-width:860px) {
-  .stage{width:84%}
-  .stage.solo{width:90%}
+  /* 폭·카트리지 비율은 데스크톱과 같은 값을 쓴다(66% / 78% / -50%).
+     한 칸짜리 배치라 칸이 넓어져도 무대는 표지 원본 폭에서 멈추므로
+     따로 줄일 필요가 없다 — 줄이면 디스크만 작아져 비율이 어긋난다. */
   /* 평소를 100% 로 두면 펼칠 때 커지는 것이 없다 — 여유를 남겨 둔다 */
   .stage.wide, .stage.wide.solo{width:92%}
   .stage.growing, .stage.wide.growing{width:100%}
   .stage.growing .flip{max-height:none}
   /* 좁은 화면에서는 안내를 케이스 바로 아래에 붙인다 */
   .spreadcap{bottom:-20px; font-size:11.5px}
-  /* 카트리지가 화면 밖으로 밀려나 잘리던 것 —
-     데스크톱은 칸이 430px 로 고정이라 right:-50% 가 딱 맞지만,
-     좁은 화면은 칸이 화면 전체라 무대(84%) 밖으로 나갈 여유가 16% 뿐이다.
-     겹치는 비율(28%)은 데스크톱과 같게 두고 크기만 줄인다. */
-  .cart-wrap{width:46%; right:-18%; bottom:4%}
-  .cart-wrap.vid-only{width:30%; right:-16%; bottom:3%}
 }
 
 /* ---------- 케이스 뒷면 = 전개도 ----------
