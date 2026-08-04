@@ -3,6 +3,18 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- 이 저장소는 GitHub Pages 와 Cloudflare Pages 두 곳에 배포된다.
+     깃허브 쪽에는 Functions(/api/*)가 없어 아카이브·패치가 동작하지 않으므로,
+     그쪽으로 들어온 방문자는 같은 경로 그대로 정식 도메인으로 보낸다.
+     <head> 위쪽에 두어 화면이 그려지기 전에 옮겨지게 한다. -->
+<link rel="canonical" href="https://evegoodretro.com/" />
+<script>
+(function () {
+  if (location.hostname.indexOf('github.io') < 0) return;   // 정식 도메인에서는 아무 일 없음
+  var p = location.pathname.replace(/^\/ROM-Settings-HAE-BANG-Tool/, '') || '/';
+  location.replace('https://evegoodretro.com' + p + location.search + location.hash);
+})();
+</script>
 <title>HAE-BANG Rom Setting Tools — 레트로 게임 라이브러리 큐레이터</title>
 <meta name="description" content="AI 기반 ROM 메타데이터 매칭, 미디어 자동 수집, 믹스 이미지 합성, 멀티 프론트엔드 내보내기와 휴대용 게임기 연동까지. 흩어진 ROM을 한 번에 정리하는 Windows 데스크톱 도구." />
 <meta property="og:title" content="HAE-BANG Rom Setting Tools" />
