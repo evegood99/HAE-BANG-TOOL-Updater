@@ -111,8 +111,18 @@ const mediaUrl = (sysId, fn) => `${MEDIA_BASE}/${sysId}/${encodeURIComponent(fn)
 
 /* ---------- 라이트박스 ---------- */
 const lb = document.getElementById('lb'), lbBody = document.getElementById('lb-body');
-function openLb(html) { lbBody.innerHTML = html; lb.classList.add('on'); }
-function closeLb() { lb.classList.remove('on'); lbBody.innerHTML = ''; }
+function openLb(html) {
+  lbBody.innerHTML = html;
+  void lb.offsetHeight;                    // 시작값 확정 — 없으면 페이드가 안 걸린다
+  lb.classList.add('on');
+}
+function closeLb() {
+  lb.classList.remove('on');
+  const v = lbBody.querySelector('video');
+  if (v) { try { v.pause(); } catch (e) {} }   // 페이드가 끝나기 전에 소리부터 멈춘다
+  // 곧바로 비우면 사라지는 동안 빈 상자만 남는다 — 페이드가 끝난 뒤 치운다.
+  setTimeout(() => { if (!lb.classList.contains('on')) lbBody.innerHTML = ''; }, 320);
+}
 document.getElementById('lb-x').onclick = closeLb;
 lb.onclick = (e) => { if (e.target === lb) closeLb(); };
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLb(); });
@@ -436,9 +446,40 @@ function renderMedia() {
               ${wheel ? `<img src="${mediaUrl(g.sys_id, wheel)}" alt="" />` : ''}
               <div><div class="t">${esc(t)}</div>${sub ? `<div class="s">${esc(sub)}</div>` : ''}</div>
             </div>
-            <video src="${mediaUrl(g.sys_id, vid)}" autoplay controls playsinline
-              style="width:min(1600px,97vw);max-height:82vh;border-radius:10px;background:#000"></video>
+            <div class="crt" id="crt">
+              <div class="scr"><video src="${mediaUrl(g.sys_id, vid)}"
+                autoplay controls playsinline></video></div>
+              <div class="fx"></div>
+              <div class="standby">📺 브라운관 예열 중…</div>
+            </div>
           </div>`);
+        // 첫 프레임이 준비되면 TV 를 켠다. 그 전에 켜면 검은 화면만 커진다.
+        // 영상을 못 받는 경우에도 예열 화면에 갇히지 않도록 실패·마감 시간을 함께 건다.
+        const crt = document.getElementById('crt');
+        const v = crt && crt.querySelector('video');
+        if (crt && v) {
+          // 화면 크기는 영상 비율대로 잡는다. 비율을 알기 전(예열)에는 4:3 으로 두고,
+          // 화면이 아직 꺼져 있는 loadedmetadata 시점에 다시 잡아 크기 변화를 감춘다.
+          const scr = crt.querySelector('.scr');
+          const fit = () => {
+            const vw = v.videoWidth || 4, vh = v.videoHeight || 3;
+            const sc = Math.min(Math.min(1600, innerWidth * 0.94) / vw, innerHeight * 0.78 / vh);
+            scr.style.width = Math.round(vw * sc) + 'px';
+            scr.style.height = Math.round(vh * sc) + 'px';
+          };
+          fit();
+          v.addEventListener('loadedmetadata', fit);
+          window.addEventListener('resize', fit);
+          // 첫 프레임이 준비되면 켠다. 그 전에 켜면 검은 화면만 커진다.
+          // 영상을 못 받아도 예열 화면에 갇히지 않도록 실패·마감 시간을 함께 건다.
+          const powerOn = () => crt.classList.add('on');
+          if (v.readyState >= 2) powerOn();
+          else {
+            v.addEventListener('loadeddata', powerOn, { once: true });
+            v.addEventListener('error', powerOn, { once: true });
+            setTimeout(powerOn, 4000);
+          }
+        }
       } else if (cart) {
         openLb(`<img src="${mediaUrl(g.sys_id, cart)}" alt="" />`);
       }
