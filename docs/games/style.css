@@ -198,16 +198,19 @@ footer a{color:var(--muted)}
 /* 케이스 무대 — 3D 로 돌아가고, 큰 그림은 아래 패널에서 펼쳐진다 */
 /* 높이·폭이 정해지기 전에는 감춘다. 그리기 전에 보이면 케이스와 카트리지가
    엉뚱한 곳에 잠깐 놓였다가 제자리를 찾는 것처럼 보인다(JS 가 앞면 비율로 크기를 잡는다). */
-.stage{position:relative; width:66%; padding:6px 0 30px; perspective:1500px;
-  opacity:0; transition:opacity .25s, max-height .5s cubic-bezier(.2,.75,.2,1), padding .4s}
+.stage{position:relative; width:66%; padding:6px 0 30px; perspective:1600px;
+  opacity:0; transition:opacity .3s, width .9s cubic-bezier(.22,.8,.24,1),
+    max-height .45s cubic-bezier(.2,.75,.2,1), padding .45s}
 .stage.ready{opacity:1}
 .stage.solo{width:76%}
-/* 펼치는 동안 케이스는 돌면서 물러나고, 그 자리를 전개도가 이어받는다.
-   물러나는 것을 조금 늦춰 3D 회전이 눈에 보이게 한다(회전 0.7초 중 앞부분). */
-.stage.flipped{max-height:0; opacity:0; padding:0; pointer-events:none; overflow:hidden;
-  transition-delay:.35s}
-.flip{position:relative; transform-style:preserve-3d; cursor:pointer;
-  transition:transform .7s cubic-bezier(.25,.8,.25,1)}
+/* ① 케이스가 전개도 자리까지 커진다 — 회전과 같은 0.9초 동안 함께 일어난다 */
+.stage.growing{width:100%}
+.stage.growing .cart-wrap{opacity:0; transform:translateX(24%) rotate(6deg); pointer-events:none}
+/* ② 다 돌아간 뒤 케이스는 물러나고 그 자리를 전개도가 이어받는다 */
+.stage.gone{max-height:0; opacity:0; padding:0; pointer-events:none; overflow:hidden}
+.case{position:relative; width:100%}
+.flip{position:relative; width:100%; transform-style:preserve-3d; cursor:pointer;
+  transition:transform .9s cubic-bezier(.22,.8,.24,1)}
 .flip.on{transform:rotateY(180deg)}
 .flip .face{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
   backface-visibility:hidden; -webkit-backface-visibility:hidden}
@@ -216,7 +219,7 @@ footer a{color:var(--muted)}
 .flip .back{transform:rotateY(180deg)}
 /* 힌트는 회전체 밖에 둔다 — 같이 뒤집혀 글씨가 반전되지 않도록.
    카트리지의 '영상 보기'와 같은 형태로 케이스 가운데에 얹는다. */
-.stage .hint{position:absolute; left:36%; top:46%; transform:translate(-50%,-50%);
+.case .hint{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
   background:rgba(10,12,20,.9); border:1px solid rgba(255,255,255,.28); color:#fff;
   border-radius:999px; padding:6px 14px; font-size:12px; font-weight:700; white-space:nowrap;
   opacity:0; transition:.2s; pointer-events:none; z-index:4}
@@ -236,7 +239,7 @@ footer a{color:var(--muted)}
   opacity:0; transition:.2s; pointer-events:none}
 .cart-wrap:hover .vlabel{opacity:1}
 /* 돌아간 동안엔 카트리지를 비켜 준다 */
-.stage.flipped .cart-wrap{opacity:0; pointer-events:none; transform:rotate(5deg) translateX(20%)}
+
 
 /* 가로형 케이스(슈퍼패미컴·N64 등) — 납작해서 옆에 겹치면 케이스가 가려진다.
    케이스를 칸 가득 넓히고, 카트리지는 겹치지 않게 아래로 내려 흐름에 넣는다. */
@@ -244,12 +247,14 @@ footer a{color:var(--muted)}
 .stage.wide .cart-wrap{position:relative; right:auto; bottom:auto; width:44%;
   margin:20px 0 0 auto; transform:rotate(4deg); transform-origin:center}
 .stage.wide .cart-wrap:hover{transform:rotate(1deg) translateY(-7px) scale(1.04)}
-.stage.wide .hint{left:50%}
+
 
 /* 영상만 있고 카트리지·디스크 이미지가 없는 게임 —
    카트리지보다 작은 영상 조각을 케이스 바깥에 두고 모서리만 살짝 걸친다. */
 .cart-wrap.vid-only{width:40%; right:-34%; bottom:4%; transform:rotate(2deg)}
 .stage.wide .cart-wrap.vid-only{width:30%; margin-top:16px}
+/* 가로형 케이스도 펼칠 때는 칸을 다 쓴다(.wide 가 뒤에 있어 여기서 다시 못박는다) */
+.stage.wide.growing{width:100%}
 .cart-wrap.vid-only:hover{transform:rotate(0deg) translateY(-6px) scale(1.06)}
 .cart-wrap.vid-only img{border-radius:9px; border:1px solid rgba(255,255,255,.18)}
 .cart-wrap.vid-only .ph{aspect-ratio:4/3; border-radius:9px; background:var(--surface2);
@@ -441,8 +446,8 @@ footer a{color:var(--muted)}
 .rmark{position:absolute; z-index:3; display:inline-flex; align-items:center;
   background:rgba(7,8,13,.8); border:1px solid var(--border2); border-radius:7px;
   padding:2px 6px; font-size:13px; line-height:1.25; cursor:default; user-select:none}
-.stage .rmark.on-case{left:8px; top:8px}
-.stage.wide .rmark.on-case{left:8px; top:8px}
+.case .rmark.on-case{left:8px; top:8px}
+
 .cart-wrap .rmark.on-cart{right:6px; top:6px}
 .shots figure{position:relative}
 .shots .rmark.on-shot{left:10px; top:10px}

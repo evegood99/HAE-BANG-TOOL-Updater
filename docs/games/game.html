@@ -164,17 +164,20 @@ function renderMedia() {
   const mainR = box3dR || coverR;
   const main = box3d || cover;
 
-  // 케이스를 누르면 3D 로 돌아가고, 동시에 제목·설명 아래에서 전개도가
-  // 가로 전체로 펼쳐진다. 힌트와 카트리지는 회전체 밖에 두어 글씨가 반전되지 않는다.
+  // 케이스를 누르면 전개도가 놓일 자리까지 커지면서 3D 로 돌아가고,
+  // 다 돌아간 뒤에 그 자리에서 펼쳐진다.
+  // 힌트와 판본 표시는 회전체(.flip) 밖에 두어 글씨가 함께 뒤집히지 않게 한다.
   const caseSrc = main ? mediaUrl(g.sys_id, main)
                        : (g.thumb ? `${THUMB_BASE}/${g.sys_id}/${g.game_id}.webp` : '');
   const face = caseSrc ? `
-      <div class="flip" id="flip">
-        <div class="face front"><img src="${caseSrc}" alt="" /></div>
-        ${bt ? `<div class="face back"><img data-src="${mediaUrl(g.sys_id, bt)}" alt="" /></div>` : ''}
-      </div>
-      ${bt ? '<div class="hint" id="hint">↻ 케이스 펴보기</div>' : ''}
-      ${mainR ? markHtml(mainR.region, 'on-case') : ''}` : '';
+      <div class="case" id="case">
+        <div class="flip" id="flip">
+          <div class="face front"><img src="${caseSrc}" alt="" /></div>
+          ${bt ? `<div class="face back"><img data-src="${mediaUrl(g.sys_id, bt)}" alt="" /></div>` : ''}
+        </div>
+        ${bt ? '<div class="hint" id="hint">↻ 케이스 펴보기</div>' : ''}
+        ${mainR ? markHtml(mainR.region, 'on-case') : ''}
+      </div>` : '';
 
   // 카트리지·디스크가 있으면 그것을, 없고 영상만 있으면 같은 자리에 영상 카드를 둔다.
   // (영상은 있는데 카트 이미지가 없는 게임이 1만 개가 넘어 그대로 두면 영상을 볼 길이 없다)
@@ -256,15 +259,11 @@ function renderMedia() {
     const setH = () => {
       const nw = (frontImg && frontImg.naturalWidth) || 0;
       const nh = (frontImg && frontImg.naturalHeight) || 0;
-      // 폭을 재기 전에 가로형 여부를 반영해야 한다(가로형은 무대 폭이 다르다)
       wide = nw > 0 && nw > nh * 1.05;
       stage.classList.toggle('wide', wide);
-      const w = stage.clientWidth || 1;
-      const h = Math.round(w * (nw ? nh / nw : 1.35));
-      flip.style.height = h + 'px';
-      // 힌트는 케이스 한가운데에. 가로형은 카트리지가 아래에 붙어 무대가 더 길어지므로
-      // 무대 비율(%)이 아니라 케이스 높이로 잡아야 자리가 맞는다.
-      if (hint) hint.style.top = (6 + h / 2) + 'px';
+      // 높이를 px 로 박지 않고 비율로 준다. 무대가 커질 때 높이가 폭을 따라
+      // 매 프레임 함께 자라므로, 확대가 끊기지 않고 이어진다.
+      flip.style.aspectRatio = nw && nh ? (nw + ' / ' + nh) : '3 / 4';
       // 자리를 다 잡은 뒤에 보여 준다. 그리기 전에는 높이·폭이 정해지지 않아
       // 케이스와 카트리지가 엉뚱한 곳에 잠깐 놓였다가 제자리를 찾는 것처럼 보인다.
       stage.classList.add('ready');
@@ -288,7 +287,7 @@ function renderMedia() {
               <div class="win"><img data-src="${texSrc}" alt="" /></div><figcaption>뒷면</figcaption>
             </figure>
           </div>
-          <div class="uload"><span class="spin"></span>전개도를 펼치는 중…</div>
+          <div class="uload"><span class="spin"></span>케이스를 열심히 펼치는 중…</div>
           <div class="cap">케이스 전개도 · ${esc(regionName(btR.region))} · 누르면 접힙니다</div>
         </div>`;
       const texBox = unfold.querySelector('.tex');
@@ -361,25 +360,39 @@ function renderMedia() {
       };
       texImg.onclick = () => setFlip(false);
 
-      /** 케이스 펴기/접기.
-          케이스가 3D 로 돌아가면서 그 자리를 전개도가 이어받는다. 예전에는 케이스는
-          그대로 두고 아래에 전개도를 또 펼쳐, 같은 그림이 두 번 보였다.
-          펼치는 동안 gd-top 을 한 칸으로 바꿔 이 칸이 가로를 다 쓰게 한다. */
+      /** 케이스 펴기/접기 — 두 박자로 나눈다.
+          ① 케이스가 전개도 자리까지 커지면서 동시에 3D 로 돌아간다(GROW 동안)
+          ② 다 돌아간 뒤 그 자리에서 전개도가 펼쳐진다
+          한꺼번에 하면 회전이 눈에 안 들어오고, 순서를 지키면 실제로 케이스를
+          집어 들어 펼치는 것처럼 읽힌다. */
       const gdTop = document.getElementById('gd-top');
+      const GROW = 900;                            // 확대+회전에 쓰는 시간(CSS 와 맞춘다)
+      let phase = null;                            // 진행 중인 예약(중간에 다시 누르면 취소)
+
       const setFlip = (on) => {
-        if (on) ensureTex();                      // 이때 전개도를 받는다
-        flip.classList.toggle('on', on);          // 3D 회전
-        stage.classList.toggle('flipped', on);    // 케이스·카트리지는 물러난다
-        unfold.classList.toggle('on', on);        // 그 자리를 전개도가 채운다
-        if (gdTop) gdTop.classList.toggle('spread', on);
+        clearTimeout(phase);
         if (hint) hint.textContent = on ? '↩ 원래대로' : '↻ 케이스 펴보기';
-        // 칸 너비가 0.5초에 걸쳐 바뀌므로, 다 바뀐 뒤 전개도 크기를 다시 잡는다.
-        // (바로 재면 아직 좁은 폭으로 계산되어 그림이 작게 남는다)
-        layoutTex();
-        setTimeout(layoutTex, 260);
-        setTimeout(layoutTex, 560);
-        // 접을 때는 케이스 자리로 되돌아가 화면이 엉뚱한 곳에 머무르지 않게 한다.
-        if (!on && gdTop) gdTop.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (!on) {                                 // 접기 — 펼친 것을 먼저 닫고 되돌린다
+          unfold.classList.remove('on');
+          stage.classList.remove('gone', 'growing');
+          flip.classList.remove('on');
+          if (gdTop) {
+            gdTop.classList.remove('spread');
+            gdTop.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+          return;
+        }
+        ensureTex();                               // 이때 전개도를 받는다(보통은 이미 받아 둠)
+        if (gdTop) gdTop.classList.add('spread');  // 칸이 가로 전체로 — 커질 자리를 만든다
+        stage.classList.add('growing');            // 케이스가 그 자리까지 커진다
+        flip.classList.add('on');                  // 커지면서 함께 돈다
+        // 다 돌아간 뒤에 펼친다. 그림이 아직이면 전개도 쪽에서 '열심히 펼치는 중'이 뜬다.
+        phase = setTimeout(() => {
+          stage.classList.add('gone');             // 케이스는 물러나고
+          unfold.classList.add('on');              // 그 자리를 전개도가 이어받는다
+          layoutTex();
+          setTimeout(layoutTex, 320);              // 펼침 전환이 끝난 뒤 크기 재확정
+        }, GROW);
       };
       flip.onclick = () => setFlip(!flip.classList.contains('on'));
       // 누르기 전에 미리 받아 둔다. 누른 뒤에 받기 시작하면 회전은 끝났는데
