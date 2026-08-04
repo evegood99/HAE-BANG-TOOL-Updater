@@ -335,7 +335,9 @@ function renderMedia() {
 
         // 뒤집힌 뒤 케이스가 가질 크기 — 폭은 칸 전체, 높이는 전개도 모양대로.
         const W = (gdTop && gdTop.clientWidth) || stage.clientWidth || 900;
-        const cap = Math.min(window.innerHeight * 0.62, 620);
+        // 상한은 '화면 밖으로 나가지 않게' 하는 안전장치일 뿐이다. 낮게 잡으면
+        // 높이가 먼저 걸려 전개도가 가로를 다 못 채운다(620 이면 메가드라이브가 85%).
+        const cap = Math.min(window.innerHeight * 0.82, 900);
         let h;
         if (!splittable) {
           h = Math.min(W * nh / nw, cap);

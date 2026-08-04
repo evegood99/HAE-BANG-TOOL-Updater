@@ -208,7 +208,7 @@ footer a{color:var(--muted)}
    화면 하나를 통째로 비운다(474x600 이 1,400px 까지 커진다).
    높이가 묶이면 그림은 그 안에서 가운데 정렬로 커지다가 멈춘다. */
 .stage.growing{width:100%; z-index:5}
-.stage.growing .flip{max-height:min(56vh, 520px)}
+/* 높이는 JS 가 전개도 비율로 직접 잡는다(여기서 묶으면 가로를 못 채운다) */
 .stage.growing .cart-wrap{opacity:0; transform:translateX(24%) rotate(6deg); pointer-events:none}
 /* ② 다 돌아간 뒤 케이스는 물러나고 그 자리를 전개도가 이어받는다 */
 .case{position:relative; width:100%}
@@ -485,14 +485,14 @@ footer a{color:var(--muted)}
   .stage{width:82%}
   .stage.solo{width:88%}
   .stage.wide, .stage.wide.solo{width:100%}
-  .stage.growing .flip{max-height:min(52vh, 420px)}
+  .stage.growing .flip{max-height:none}
 }
 
 /* ---------- 케이스 뒷면 = 전개도 ----------
    뒤집히면 보이는 것이 곧 전개도다. 예전에는 뒷면에 한 번 보여 주고 아래 패널에
    또 펼쳐 같은 그림이 두 번 나왔다. 확대와 회전이 한 동작으로 끝나도록 합쳤다. */
 .flip .back{display:flex; align-items:center; justify-content:center;
-  background:var(--surface2); border-radius:10px; overflow:hidden; padding:8px}
+  background:transparent; border-radius:10px; overflow:hidden}
 .flip .back .tex{width:100%; height:100%; display:flex; align-items:center; justify-content:center}
 .flip .back .tex img{width:auto; height:auto; max-width:100%; max-height:100%;
   border-radius:8px; border:1px solid var(--border); box-shadow:var(--shadow); cursor:zoom-out}
