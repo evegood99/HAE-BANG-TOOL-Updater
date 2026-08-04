@@ -199,16 +199,20 @@ footer a{color:var(--muted)}
 /* 높이·폭이 정해지기 전에는 감춘다. 그리기 전에 보이면 케이스와 카트리지가
    엉뚱한 곳에 잠깐 놓였다가 제자리를 찾는 것처럼 보인다(JS 가 앞면 비율로 크기를 잡는다). */
 .stage{position:relative; width:66%; padding:6px 0 30px; perspective:1600px;
-  opacity:0; transition:opacity .3s, width .9s cubic-bezier(.22,.8,.24,1),
+  opacity:0; transition:opacity .3s,
     max-height .45s cubic-bezier(.2,.75,.2,1), padding .45s}
 .stage.ready{opacity:1}
 .stage.solo{width:76%}
-/* ① 케이스가 전개도 자리까지 커진다 — 회전과 같은 0.9초 동안 함께 일어난다 */
-.stage.growing{width:100%}
+/* ① 케이스가 커지면서 돈다 — 회전과 같은 0.9초 동안 함께 일어난다.
+   폭을 늘리지 않고 transform 으로 키운다. 폭을 늘리면 세로형 케이스는 높이가
+   폭을 따라 함께 자라 화면 하나를 통째로 비워 버린다(474x600 이 1,400px 까지). */
+.stage.growing{z-index:5}
+.stage.growing .case{transform:scale(1.55)}
 .stage.growing .cart-wrap{opacity:0; transform:translateX(24%) rotate(6deg); pointer-events:none}
 /* ② 다 돌아간 뒤 케이스는 물러나고 그 자리를 전개도가 이어받는다 */
 .stage.gone{max-height:0; opacity:0; padding:0; pointer-events:none; overflow:hidden}
-.case{position:relative; width:100%}
+.case{position:relative; width:100%; transform-origin:center;
+  transition:transform .9s cubic-bezier(.22,.8,.24,1)}
 .flip{position:relative; width:100%; transform-style:preserve-3d; cursor:pointer;
   transition:transform .9s cubic-bezier(.22,.8,.24,1)}
 .flip.on{transform:rotateY(180deg)}
@@ -253,8 +257,6 @@ footer a{color:var(--muted)}
    카트리지보다 작은 영상 조각을 케이스 바깥에 두고 모서리만 살짝 걸친다. */
 .cart-wrap.vid-only{width:40%; right:-34%; bottom:4%; transform:rotate(2deg)}
 .stage.wide .cart-wrap.vid-only{width:30%; margin-top:16px}
-/* 가로형 케이스도 펼칠 때는 칸을 다 쓴다(.wide 가 뒤에 있어 여기서 다시 못박는다) */
-.stage.wide.growing{width:100%}
 .cart-wrap.vid-only:hover{transform:rotate(0deg) translateY(-6px) scale(1.06)}
 .cart-wrap.vid-only img{border-radius:9px; border:1px solid rgba(255,255,255,.18)}
 .cart-wrap.vid-only .ph{aspect-ratio:4/3; border-radius:9px; background:var(--surface2);

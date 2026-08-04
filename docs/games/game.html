@@ -383,15 +383,17 @@ function renderMedia() {
           return;
         }
         ensureTex();                               // 이때 전개도를 받는다(보통은 이미 받아 둠)
-        if (gdTop) gdTop.classList.add('spread');  // 칸이 가로 전체로 — 커질 자리를 만든다
-        stage.classList.add('growing');            // 케이스가 그 자리까지 커진다
+        stage.classList.add('growing');            // 케이스가 커진다(제자리에서 확대)
         flip.classList.add('on');                  // 커지면서 함께 돈다
-        // 다 돌아간 뒤에 펼친다. 그림이 아직이면 전개도 쪽에서 '열심히 펼치는 중'이 뜬다.
+        // 칸을 넓히는 건 ② 로 미룬다. 여기서 넓히면 무대 폭이 따라 커지고
+        // 세로형 케이스는 높이가 폭을 따라 자라 화면 하나가 통째로 비어 버린다.
         phase = setTimeout(() => {
           stage.classList.add('gone');             // 케이스는 물러나고
+          if (gdTop) gdTop.classList.add('spread'); // 칸이 가로 전체로 열리며
           unfold.classList.add('on');              // 그 자리를 전개도가 이어받는다
           layoutTex();
           setTimeout(layoutTex, 320);              // 펼침 전환이 끝난 뒤 크기 재확정
+          setTimeout(layoutTex, 620);
         }, GROW);
       };
       flip.onclick = () => setFlip(!flip.classList.contains('on'));
