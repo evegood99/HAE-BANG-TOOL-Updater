@@ -265,6 +265,9 @@ function renderMedia() {
       // 힌트는 케이스 한가운데에. 가로형은 카트리지가 아래에 붙어 무대가 더 길어지므로
       // 무대 비율(%)이 아니라 케이스 높이로 잡아야 자리가 맞는다.
       if (hint) hint.style.top = (6 + h / 2) + 'px';
+      // 자리를 다 잡은 뒤에 보여 준다. 그리기 전에는 높이·폭이 정해지지 않아
+      // 케이스와 카트리지가 엉뚱한 곳에 잠깐 놓였다가 제자리를 찾는 것처럼 보인다.
+      stage.classList.add('ready');
       layoutTex();
     };
     if (frontImg && !frontImg.complete) frontImg.onload = setH; else setH();
@@ -348,21 +351,30 @@ function renderMedia() {
           win.style.width = st.winW + 'px'; win.style.height = st.winH + 'px';
           im.style.width = st.imgW + 'px'; im.style.height = st.imgH + 'px';
           im.style.transform = st.tf;
-          win.onclick = () => setFlip(false, true);   // 펼쳐진 그림을 누르면 도로 접는다
+          win.onclick = () => setFlip(false);   // 펼쳐진 그림을 누르면 도로 접는다
         });
       };
-      texImg.onclick = () => setFlip(false, true);
+      texImg.onclick = () => setFlip(false);
 
-      /** 케이스 펴기/접기. backFromPanel 이면 접은 뒤 케이스 자리로 되돌아간다
-          — 펼친 그림을 눌러 접었을 때 화면이 텅 빈 곳에 머무르지 않도록. */
-      const setFlip = (on, backFromPanel) => {
+      /** 케이스 펴기/접기.
+          케이스가 3D 로 돌아가면서 그 자리를 전개도가 이어받는다. 예전에는 케이스는
+          그대로 두고 아래에 전개도를 또 펼쳐, 같은 그림이 두 번 보였다.
+          펼치는 동안 gd-top 을 한 칸으로 바꿔 이 칸이 가로를 다 쓰게 한다. */
+      const gdTop = document.getElementById('gd-top');
+      const setFlip = (on) => {
         if (on) ensureTex();                      // 이때 전개도를 받는다
         flip.classList.toggle('on', on);          // 3D 회전
-        stage.classList.toggle('flipped', on);    // 카트리지 비켜주기
-        unfold.classList.toggle('on', on);        // 아래로 펼치기
+        stage.classList.toggle('flipped', on);    // 케이스·카트리지는 물러난다
+        unfold.classList.toggle('on', on);        // 그 자리를 전개도가 채운다
+        if (gdTop) gdTop.classList.toggle('spread', on);
         if (hint) hint.textContent = on ? '↩ 원래대로' : '↻ 케이스 펴보기';
-        if (on) setTimeout(() => unfold.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 320);
-        else if (backFromPanel) stage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // 칸 너비가 0.5초에 걸쳐 바뀌므로, 다 바뀐 뒤 전개도 크기를 다시 잡는다.
+        // (바로 재면 아직 좁은 폭으로 계산되어 그림이 작게 남는다)
+        layoutTex();
+        setTimeout(layoutTex, 260);
+        setTimeout(layoutTex, 560);
+        // 접을 때는 케이스 자리로 되돌아가 화면이 엉뚱한 곳에 머무르지 않게 한다.
+        if (!on && gdTop) gdTop.scrollIntoView({ behavior: 'smooth', block: 'start' });
       };
       flip.onclick = () => setFlip(!flip.classList.contains('on'));
     }
@@ -431,8 +443,13 @@ function render(d) {
         ${REGIONS.map((r) => `<button data-r="${r}"${r === curRegion ? ' class="on"' : ''}>${esc(regionName(r))}</button>`).join('')}
       </div>` : ''}
 
-      <div class="gd-top">
-        <div id="stage-box"></div>
+      <div class="gd-top" id="gd-top">
+        <div class="stage-col">
+          <div id="stage-box"></div>
+          <!-- 전개도는 케이스가 있던 자리에서 펼쳐진다(아래에 또 보여주지 않는다).
+               펼치면 gd-top 이 한 칸이 되어 이 칸이 가로를 다 쓴다. -->
+          <div class="unfold" id="unfold"></div>
+        </div>
         <div>
           <div class="eyebrow">${esc(g.slug)}${Number(g.topstaff) === 1
             ? '<span class="pick" title="ScreenScraper 추천작">추천</span>' : ''}</div>
@@ -446,7 +463,6 @@ function render(d) {
         </div>
       </div>
 
-      <div class="unfold" id="unfold"></div>
       <div id="shot-box"></div>
       <div id="extra-box"></div>
       <div id="man-box"></div>

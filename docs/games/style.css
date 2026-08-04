@@ -174,7 +174,12 @@ footer a{color:var(--muted)}
 .regbar button.on{background:var(--grad); border-color:transparent; color:#0a0c14; font-weight:800}
 
 /* 상단: 왼쪽 패키지 / 오른쪽 로고+제목+설명 */
-.gd-top{display:grid; grid-template-columns:minmax(300px,430px) 1fr; gap:46px; align-items:start}
+.gd-top{display:grid; grid-template-columns:minmax(300px,430px) 1fr; gap:46px; align-items:start;
+  transition:grid-template-columns .5s cubic-bezier(.2,.75,.2,1)}
+/* 케이스를 펴면 이 칸이 가로를 다 쓴다 — 전개도가 케이스 자리에서 꽉 차게 펼쳐지도록.
+   제목·설명은 자연스럽게 아래로 내려간다. */
+.gd-top.spread{grid-template-columns:1fr; gap:0}
+.stage-col{min-width:0}
 @media(max-width:860px){ .gd-top{grid-template-columns:1fr; gap:26px} }
 
 /* 로고는 항상 제목 오른쪽 */
@@ -191,8 +196,16 @@ footer a{color:var(--muted)}
 .meta .v{font-size:15.5px; font-weight:700; color:var(--text)}
 
 /* 케이스 무대 — 3D 로 돌아가고, 큰 그림은 아래 패널에서 펼쳐진다 */
-.stage{position:relative; width:66%; padding:6px 0 30px; perspective:1500px}
+/* 높이·폭이 정해지기 전에는 감춘다. 그리기 전에 보이면 케이스와 카트리지가
+   엉뚱한 곳에 잠깐 놓였다가 제자리를 찾는 것처럼 보인다(JS 가 앞면 비율로 크기를 잡는다). */
+.stage{position:relative; width:66%; padding:6px 0 30px; perspective:1500px;
+  opacity:0; transition:opacity .25s, max-height .5s cubic-bezier(.2,.75,.2,1), padding .4s}
+.stage.ready{opacity:1}
 .stage.solo{width:76%}
+/* 펼치는 동안 케이스는 돌면서 물러나고, 그 자리를 전개도가 이어받는다.
+   물러나는 것을 조금 늦춰 3D 회전이 눈에 보이게 한다(회전 0.7초 중 앞부분). */
+.stage.flipped{max-height:0; opacity:0; padding:0; pointer-events:none; overflow:hidden;
+  transition-delay:.35s}
 .flip{position:relative; transform-style:preserve-3d; cursor:pointer;
   transition:transform .7s cubic-bezier(.25,.8,.25,1)}
 .flip.on{transform:rotateY(180deg)}
@@ -255,7 +268,7 @@ footer a{color:var(--muted)}
    3D 회전 대신 '펼침'으로 처리해 글씨 반전이나 복귀 시 배치 흐트러짐이 없다. */
 .unfold{display:grid; grid-template-rows:0fr; opacity:0;
   transition:grid-template-rows .6s cubic-bezier(.2,.75,.2,1), opacity .4s, margin .4s}
-.unfold.on{grid-template-rows:1fr; opacity:1; margin-top:34px}
+.unfold.on{grid-template-rows:1fr; opacity:1; margin:6px 0 30px}
 .unfold > .in{overflow:hidden; min-height:0}
 .unfold img{width:100%; display:block; border-radius:12px; border:1px solid var(--border);
   background:var(--surface2); box-shadow:var(--shadow)}
