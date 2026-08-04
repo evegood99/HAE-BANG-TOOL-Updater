@@ -173,10 +173,20 @@ function renderMedia() {
   document.getElementById('logo-box').innerHTML = wheel
     ? `<img src="${mediaUrl(g.sys_id, wheel)}" alt="${esc(g.name_kor || g.name || '')}" />` : '';
 
-  // 타이틀 화면 · 스크린샷 — 양옆으로 크게
-  const shots = [...all(IDX, 'titlescreens'), ...all(IDX, 'screenshots')];
+  // 타이틀 화면 · 스크린샷 — 양옆으로 크게.
+  //   판본을 바꾸면 표지·카트리지·설명서와 함께 이 화면들도 그 판본 것으로 바뀐다.
+  //   다만 그 판본에 화면이 없는 게임이 많으므로(전체의 90%가 판본 하나뿐),
+  //   없으면 있는 대로 전부 보여준다 — 판본 골랐다고 화면이 비면 더 나쁘다.
+  let shotRegion = false;
+  const shotsOf = (type) => {
+    const m = IDX[type] || {};
+    if (curRegion && m[curRegion]) { shotRegion = true; return [{ region: curRegion, filename: m[curRegion] }]; }
+    return all(IDX, type);
+  };
+  const shots = [...shotsOf('titlescreens'), ...shotsOf('screenshots')];
   document.getElementById('shot-box').innerHTML = shots.length
-    ? `<div class="sec-t"><h2>화면</h2><span>${shots.length}장</span></div>
+    ? `<div class="sec-t"><h2>화면</h2><span>${shots.length}장${
+         shotRegion ? ' · ' + esc(regionName(curRegion)) : ''}</span></div>
        <div class="shots">${shots.map((m) =>
          `<figure><img src="${mediaUrl(g.sys_id, m.filename)}" alt="" loading="lazy" /></figure>`).join('')}</div>` : '';
 
