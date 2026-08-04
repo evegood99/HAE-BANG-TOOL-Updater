@@ -393,6 +393,10 @@ function renderMedia() {
         if (h) flip.style.height = h + 'px';
         setTimeout(layoutTex, 60);                 // 칸이 넓어진 뒤 크기 재확정
         setTimeout(layoutTex, 620);
+        // 좁은 화면에서는 펼친 전개도가 화면보다 커서 아래가 잘린다 — 위로 맞춰 준다.
+        if (window.innerWidth <= 860 && gdTop) {
+          setTimeout(() => gdTop.scrollIntoView({ behavior: 'smooth', block: 'start' }), 950);
+        }
       };
       flip.onclick = () => setFlip(!flip.classList.contains('on'));
       flip.addEventListener('mouseenter', ensureTex, { once: true });
