@@ -349,7 +349,7 @@
   .mnav a:hover,.mnav a.on,.mnav a.active{color:var(--text); background:var(--surface)}
   /* 상단 메뉴가 8개가 되어 접히는 지점을 1040px 로 올린다(모든 페이지 공통).
      기존 미디어쿼리에는 다른 규칙이 섞여 있어 값을 바꾸지 않고 여기서 덧쓴다. */
-  @media (max-width:1040px) and (min-width:861px){
+  @media (max-width:1160px) and (min-width:961px){
     /* 태블릿 — 메뉴를 좁혀 상단에 그대로 둔다. 가로 태블릿은 전부 들어간다.
        (실측: 이 값이면 항목이 가장 많은 홈이 838px 부터 들어간다) */
     .nav-links{gap:1px; margin-left:8px}
@@ -359,7 +359,7 @@
      ⚠️ 숨김·버튼·메뉴판을 반드시 한 곳에서 함께 켠다. 예전엔 버튼만 1040px 에서
      켜고 메뉴판은 더 좁은 폭에서 켜서, 그 사이 구간(태블릿)에서는 버튼이 보이는데
      눌러도 아무것도 안 열렸다. */
-  @media (max-width:860px){
+  @media (max-width:960px){
     .nav-links{display:none}
     .menu-btn{display:inline-flex}
     .mnav{display:block}
@@ -688,7 +688,7 @@
       <div class="foot-col">
         <h5 data-ko="후원" data-en="Support">후원</h5>
         <p class="muted" style="font-size:13px;margin:0 0 12px" data-ko="개발자에게 작은 응원을 보내 주세요." data-en="Send a small token of support to the developer.">개발자에게 작은 응원을 보내 주세요.</p>
-        <button id="donateBtn" class="donate-btn" data-ko="♥ 후원하기" data-en="♥ Donate">♥ 후원하기</button>
+        <button class="donate-btn" data-donate data-ko="♥ 후원하기" data-en="♥ Donate">♥ 후원하기</button>
       </div>
     </div>
     <div class="foot-bottom">
@@ -706,30 +706,6 @@
 <div class="vlb" id="vlb" aria-hidden="true">
   <video id="vlbVid" loop playsinline controls poster="assets/rom_matching_view.png"></video>
   <div class="lb-hint" data-ko="바깥을 클릭하면 닫힙니다" data-en="Click outside to close">바깥을 클릭하면 닫힙니다</div>
-</div>
-
-<!-- 후원 모달 (프로그램의 후원 UI 형태: 네이버페이/카카오페이 QR) -->
-<div class="dm" id="donateModal" aria-hidden="true">
-  <div class="dm-card">
-    <div class="dm-head">
-      <h3 data-ko="후원하기 ♥" data-en="Support ♥">후원하기 ♥</h3>
-      <button class="dm-x" id="donateClose" aria-label="close">&times;</button>
-    </div>
-    <p class="dm-desc" data-ko="이 프로그램이 도움이 되었다면 개발자에게 작은 응원의 후원을 보내 주세요. 감사합니다!" data-en="If this tool has helped you, please consider a small donation to the developer. Thank you!">이 프로그램이 도움이 되었다면 개발자에게 작은 응원의 후원을 보내 주세요. 감사합니다!</p>
-    <div class="dm-qr">
-      <figure>
-        <img src="assets/donate_naver.png" alt="Naver Pay QR" loading="lazy" />
-        <figcaption>Naver Pay</figcaption>
-      </figure>
-      <figure>
-        <img src="assets/donate_kakao.png" alt="Kakao Pay QR" loading="lazy" />
-        <figcaption>Kakao Pay</figcaption>
-      </figure>
-    </div>
-    <p class="dm-scan" data-ko="카메라 또는 페이 앱으로 QR을 스캔해 후원할 수 있어요." data-en="Scan a QR code with your camera or pay app to donate.">카메라 또는 페이 앱으로 QR을 스캔해 후원할 수 있어요.</p>
-    <p class="dm-note" data-ko="후원해 주셨다면 아래 이메일로 알려 주세요. 추후 특전 안내를 위함입니다. 🙏" data-en="If you have donated, please let us know via the email below — for future perks. 🙏">후원해 주셨다면 아래 이메일로 알려 주세요. 추후 특전 안내를 위함입니다. 🙏</p>
-    <a class="dm-mail" href="mailto:evegood99@gmail.com?subject=HAE-BANG%20Tool%20Donation">✉ evegood99@gmail.com</a>
-  </div>
 </div>
 
 <!-- 후원 전용 베타 다운로드 모달 (스폰서 코드 입력 → Worker 가 검사 후 목록/링크 발급) -->
@@ -841,14 +817,7 @@
   lb.addEventListener('click', closeLB);
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeLB(); });
 
-  // 후원 모달: Donate 버튼 → QR(네이버페이/카카오페이) 표시
-  var dm = document.getElementById('donateModal');
-  var donateBtn = document.getElementById('donateBtn');
-  function closeDonate(){ if (dm) dm.classList.remove('open'); }
-  if (donateBtn) donateBtn.addEventListener('click', function(){ if (dm) dm.classList.add('open'); });
-  var dClose = document.getElementById('donateClose');
-  if (dClose) dClose.addEventListener('click', closeDonate);
-  if (dm) dm.addEventListener('click', function(e){ if (e.target === dm) closeDonate(); });
+  // 후원 모달은 assets/donate.js 가 만든다(모든 페이지 공용).
 
   // ---------- 후원 전용 베타 다운로드 (스폰서 코드) ----------
   // 코드 검사는 전부 Cloudflare Worker 에서 한다. 이 페이지는 공개 정적 파일이므로
@@ -955,6 +924,7 @@
   window.addEventListener('resize', function () { if (window.innerWidth > 1040) setOpen(false); });
 })();
 </script>
+<script src="assets/donate.js"></script>
 <script src="assets/qrlink.js"></script>
 </body>
 </html>

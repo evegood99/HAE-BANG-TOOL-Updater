@@ -58,7 +58,6 @@ header{position:sticky; top:0; z-index:50; backdrop-filter:blur(14px);
 
 /* 홈페이지와 같은 지점에서 접는다 */
 /* 메뉴 접힘 규칙은 아래 .menu-btn 근처에 모아 두었다 */
-@media(max-width:560px){ .hide-s{display:none} }
 
 /* ---------- 공통 ---------- */
 .btn{display:inline-flex; align-items:center; gap:7px; padding:9px 16px; border-radius:11px;
@@ -66,6 +65,8 @@ header{position:sticky; top:0; z-index:50; backdrop-filter:blur(14px);
   color:var(--text); cursor:pointer; transition:.18s}
 .btn:hover{background:var(--surface2); border-color:var(--indigo)}
 .btn-primary{background:var(--grad); border-color:transparent; color:#0a0c14}
+/* .btn 의 display:inline-flex 뒤에 와야 실제로 숨는다(앞에 있으면 무시된다) */
+@media(max-width:560px){ .hide-s{display:none} }
 .btn-primary:hover{filter:brightness(1.08)}
 .sec{padding:44px 0}
 .sec-head{display:flex; align-items:flex-end; gap:14px; margin-bottom:18px; flex-wrap:wrap}
@@ -454,7 +455,7 @@ footer a{color:var(--muted)}
 .mnav a{display:block; padding:12px; border-radius:10px; font-size:15px;
   font-weight:600; color:var(--muted)}
 .mnav a:hover,.mnav a.on,.mnav a.active{color:var(--text); background:var(--surface)}
-@media (max-width:1040px) and (min-width:861px){
+@media (max-width:1160px) and (min-width:961px){
   /* 태블릿 — 메뉴를 좁혀 상단에 그대로 둔다. 가로 태블릿은 전부 들어간다.
      (실측: 이 값이면 항목이 가장 많은 홈이 838px 부터 들어간다) */
   .nav-links{gap:1px; margin-left:8px}
@@ -464,7 +465,7 @@ footer a{color:var(--muted)}
    ⚠️ 숨김·버튼·메뉴판을 반드시 한 곳에서 함께 켠다. 예전엔 버튼만 1040px 에서
    켜고 메뉴판은 더 좁은 폭에서 켜서, 그 사이 구간(태블릿)에서는 버튼이 보이는데
    눌러도 아무것도 안 열렸다. */
-  @media (max-width:860px){
+  @media (max-width:960px){
   .nav-links{display:none}
   .menu-btn{display:inline-flex}
   .mnav{display:block}

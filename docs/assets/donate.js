@@ -1,0 +1,147 @@
+/**
+ * 후원 — 버튼과 모달을 여기서 한 번만 만들어 모든 페이지에 붙인다.
+ *
+ * 예전에는 홈(하단 푸터, 간단한 안내)과 아카이브(서브바, 자세한 안내)가 서로
+ * 다른 마크업·문구를 갖고 있었다. 문구를 고칠 때마다 갈라지므로 하나로 합친다.
+ *
+ * 버튼은 헤더의 다운로드 왼쪽에 놓는다. 별도로 [data-donate] 를 달아 둔 곳
+ * (홈 푸터 등)도 같은 모달을 연다.
+ * 스타일은 #dm 으로 좁혀서 넣는다 — 홈의 스폰서 모달(#sponModal)이 같은 .dm
+ * 클래스를 쓰고 있어, 좁히지 않으면 그쪽 모양까지 바뀐다.
+ */
+(function () {
+  var MAIL = 'evegood99@gmail.com';
+  // /games/ 아래에서는 한 단계 올라가야 assets 와 홈에 닿는다.
+  var P = /\/games(\/|$)/.test(location.pathname) ? '../' : '';
+
+  var CSS =
+    '.btn-donate{display:inline-flex; align-items:center; gap:6px; padding:9px 15px;' +
+      'border-radius:11px; border:1px solid rgba(244,63,94,.45); color:#ffd7de;' +
+      'font-family:inherit; font-size:13.5px; font-weight:700; cursor:pointer; white-space:nowrap;' +
+      'background:linear-gradient(120deg,rgba(244,63,94,.22),rgba(244,63,94,.10)); transition:.18s}' +
+    '.btn-donate:hover{border-color:#fb7185; color:#fff;' +
+      'background:linear-gradient(120deg,rgba(244,63,94,.34),rgba(244,63,94,.18))}' +
+    '#dm{position:fixed; inset:0; z-index:210; display:flex; align-items:center; justify-content:center;' +
+      'padding:24px; background:rgba(4,5,10,.86); backdrop-filter:blur(6px);' +
+      'opacity:0; pointer-events:none; transition:.2s}' +
+    '#dm.open{opacity:1; pointer-events:auto}' +
+    '#dm .dm-card{width:480px; max-width:94vw; max-height:92vh; overflow:auto;' +
+      'background:var(--surface,#12141c); border:1px solid var(--border2,#2a2e3d); border-radius:16px;' +
+      'padding:22px 24px 20px; box-shadow:0 30px 80px rgba(0,0,0,.6);' +
+      'transform:translateY(10px); transition:.2s}' +
+    '#dm.open .dm-card{transform:none}' +
+    '#dm .dm-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:12px}' +
+    '#dm .dm-head h3{margin:0; font-size:18px; font-weight:800; color:var(--text,#e8ebf2)}' +
+    '#dm .dm-x{background:none; border:0; color:var(--faint,#6b7280); font-size:26px; line-height:1;' +
+      'cursor:pointer; transition:.15s; font-family:inherit}' +
+    '#dm .dm-x:hover{color:var(--text,#e8ebf2)}' +
+    '#dm .dm-desc{font-size:13.5px; line-height:1.6; color:var(--muted,#9aa1b6); margin:0 0 12px}' +
+    '#dm .dm-use{list-style:none; margin:0 0 18px; padding:0; display:flex; flex-direction:column; gap:10px}' +
+    '#dm .dm-use li{border:1px solid var(--border,#232734); border-radius:12px;' +
+      'background:var(--surface2,#181b25); padding:11px 13px}' +
+    '#dm .dm-use b{display:block; font-size:13.5px; color:var(--text,#e8ebf2); margin-bottom:3px}' +
+    '#dm .dm-use span{display:block; font-size:12.5px; line-height:1.6; color:var(--muted,#9aa1b6)}' +
+    '#dm .dm-qr{display:flex; gap:14px; justify-content:center; margin:4px 0 2px}' +
+    '#dm .dm-qr figure{margin:0; display:flex; flex-direction:column; align-items:center; gap:8px}' +
+    '#dm .dm-qr img{width:100%; max-width:186px; height:auto; max-height:262px; object-fit:contain;' +
+      'border-radius:10px; background:#fff; padding:6px}' +
+    '#dm .dm-qr figcaption{font-size:12.5px; font-weight:700; color:var(--muted,#9aa1b6)}' +
+    '#dm .dm-scan{font-size:12px; color:var(--faint,#6b7280); text-align:center; margin:14px 0 4px}' +
+    '#dm .dm-code{margin:16px 0 6px; padding:13px 14px; border-radius:12px;' +
+      'border:1px solid rgba(34,211,238,.28); background:rgba(34,211,238,.07)}' +
+    '#dm .dm-code > b{display:block; font-size:13px; color:var(--cyan,#22d3ee); margin-bottom:6px}' +
+    '#dm .dm-code p{margin:0 0 11px; font-size:12.5px; line-height:1.7; color:var(--muted,#9aa1b6)}' +
+    '#dm .dm-code p b{color:var(--text,#e8ebf2)}' +
+    '#dm .dm-code .btn{display:inline-flex; align-items:center; padding:8px 14px; border-radius:10px;' +
+      'border:1px solid var(--border2,#2a2e3d); color:var(--text,#e8ebf2); font-size:13px; font-weight:700}' +
+    '#dm .dm-mail{display:block; text-align:center; font-size:14px; font-weight:700;' +
+      'color:var(--cyan,#22d3ee); margin-top:12px}' +
+    '#dm .dm-mail:hover{text-decoration:underline}' +
+    // 이 버튼이 늘면서 헤더가 좁은 화면에서 넘쳤다 — 여기서 같이 줄인다.
+    // (페이지 쪽 CSS 에 두면 이 주입 CSS 가 뒤에 와서 덮어 버린다)
+    // 다운로드는 접는다. .hide-s 규칙이 홈에만 있고 소식·가이드·읽을거리엔
+    // 아예 없어서 페이지마다 달랐다 — 여기서 한 번에 맞춘다.
+    '@media (max-width:560px){ .nav-right .btn-primary{display:none} }' +
+    '@media (max-width:400px){' +
+      '.brand .bs{display:none}' +
+      '.nav{gap:8px}' +
+      '.btn-donate{padding:8px 10px; font-size:12.5px}' +
+    '}' +
+    // 아주 작은 화면(320px 급)에서는 로고 글씨를 접고 아이콘만 남긴다
+    '@media (max-width:350px){ .brand > span{display:none} }';
+
+  var HTML =
+    '<div class="dm" id="dm" aria-hidden="true">' +
+      '<div class="dm-card" role="dialog" aria-modal="true" aria-label="후원하기">' +
+        '<div class="dm-head">' +
+          '<h3>후원하기 ♥</h3>' +
+          '<button class="dm-x" id="dm-x" aria-label="닫기">&times;</button>' +
+        '</div>' +
+        '<p class="dm-desc">보내 주신 후원금은 아래 세 가지에 쓰입니다.</p>' +
+        '<ul class="dm-use">' +
+          '<li><b>게임 아카이브 운영</b><span>7만여 개 게임의 자료를 담아 두고 전송하는 데 드는 ' +
+            '데이터베이스·이미지 저장 비용입니다.</span></li>' +
+          '<li><b>한글화 패치 토큰 지원</b><span>대한글화시대의 번역 작업에 드는 AI 토큰 비용에 씁니다. ' +
+            '후원이 늘수록 더 많은 게임을 한글로 옮길 수 있습니다.</span></li>' +
+          '<li><b>해방툴 개발</b><span>기능 추가와 유지보수, 그리고 메타데이터를 계속 채워 나가는 데 씁니다.</span></li>' +
+        '</ul>' +
+        '<div class="dm-qr">' +
+          '<figure><img src="' + P + 'assets/donate_naver.png" alt="네이버페이 QR" loading="lazy" />' +
+            '<figcaption>Naver Pay</figcaption></figure>' +
+          '<figure><img src="' + P + 'assets/donate_kakao.png" alt="카카오페이 QR" loading="lazy" />' +
+            '<figcaption>Kakao Pay</figcaption></figure>' +
+        '</div>' +
+        '<p class="dm-scan">카메라 또는 페이 앱으로 QR을 스캔해 후원할 수 있어요.</p>' +
+        '<div class="dm-code">' +
+          '<b>후원자 코드 안내</b>' +
+          '<p>후원해 주신 뒤 아래 이메일로 알려 주시면 <b>스폰서 코드</b>를 보내드립니다. ' +
+            '이 코드로 해방툴 <b>프로그램 사전 다운로드</b> 및 <b>마이너 신규 베타 버전 다운로드</b>의 ' +
+            '혜택을 제공하고 있습니다.</p>' +
+          '<a class="btn" href="' + P + 'index.html#download">베타 다운로드로 이동 →</a>' +
+        '</div>' +
+        '<a class="dm-mail" href="mailto:' + MAIL + '?subject=HAE-BANG%20Donation">✉ ' + MAIL + '</a>' +
+      '</div>' +
+    '</div>';
+
+  function init() {
+    if (document.getElementById('dm')) return;
+
+    var st = document.createElement('style');
+    st.textContent = CSS;
+    document.head.appendChild(st);
+
+    // 헤더의 다운로드 왼쪽에 버튼을 놓는다.
+    var right = document.querySelector('.nav-right');
+    if (right && !right.querySelector('[data-donate]')) {
+      var b = document.createElement('button');
+      b.className = 'btn-donate';
+      b.setAttribute('data-donate', '');
+      b.setAttribute('data-ko', '♥ 후원');      // 홈·소식·가이드의 언어 전환이 읽는다
+      b.setAttribute('data-en', '♥ Donate');
+      b.textContent = document.documentElement.lang === 'en' ? '♥ Donate' : '♥ 후원';
+      var dl = right.querySelector('.btn-primary');
+      if (dl) right.insertBefore(b, dl); else right.appendChild(b);
+    }
+
+    document.body.insertAdjacentHTML('beforeend', HTML);
+    var dm = document.getElementById('dm');
+
+    function open(on) {
+      dm.classList.toggle('open', on);
+      dm.setAttribute('aria-hidden', on ? 'false' : 'true');
+      // 모달이 떠 있는 동안 뒤 목록이 같이 스크롤되지 않도록 잠근다.
+      document.body.style.overflow = on ? 'hidden' : '';
+    }
+    document.querySelectorAll('[data-donate]').forEach(function (b) {
+      b.addEventListener('click', function (e) { e.preventDefault(); open(true); });
+    });
+    document.getElementById('dm-x').addEventListener('click', function () { open(false); });
+    dm.addEventListener('click', function (e) { if (e.target === dm) open(false); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && dm.classList.contains('open')) open(false);
+    });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
