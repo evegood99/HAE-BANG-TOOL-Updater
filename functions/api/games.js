@@ -9,7 +9,9 @@
  *
  * 정렬은 식(expression)으로 하되, 같은 식으로 만든 인덱스가 있어야 인덱스를 탄다.
  * 없으면 60개를 보여주려고 그 기종 전체를 읽고 줄 세운다(dos 기준 16,000행).
- *   idx_g_staff / idx_g_note / idx_g_name — ORDER BY 와 순서·방향이 정확히 같아야 한다.
+ *   기종 안:  idx_g_staff / idx_g_note / idx_g_name
+ *   연도 안:  idx_g_year_staff / idx_g_year_note / idx_g_year_name
+ *   ORDER BY 와 열 순서·방향이 정확히 같아야 인덱스를 탄다.
  */
 import { cached, json } from './_cache.js';
 
@@ -121,6 +123,14 @@ async function countOf(env, slug, year, cond, bind) {
   if (slug && !year) {
     const r = await env.DB.prepare('SELECT game_count AS total FROM systems WHERE slug = ?')
       .bind(slug).first();
+    if (r) return r.total;
+  }
+  // 연도가 걸리면 미리 세어 둔 year_counts 를 읽는다. 그때그때 COUNT(*) 로 세면
+  // 그 해에 걸린 것을 전부 훑는다(1994년 2,900행) — 여기서는 1행이면 된다.
+  if (year) {
+    const r = await env.DB.prepare(
+      'SELECT n AS total FROM year_counts WHERE slug = ? AND year = ?'
+    ).bind(slug || '', year).first();
     if (r) return r.total;
   }
   const r = await env.DB.prepare(`SELECT COUNT(*) AS total FROM web_games ${cond}`)

@@ -81,6 +81,14 @@
     <h2 id="y-title">연도를 선택하세요</h2>
     <span class="muted" id="y-count"></span>
   </div>
+  <!-- 연도를 고른 뒤에만 보인다. 기본은 추천순 — 그해의 대표작이 먼저 보이도록. -->
+  <div class="toolbar" id="sortbar" style="display:none">
+    <select id="sort">
+      <option value="staff">추천작 먼저</option>
+      <option value="note">평점 높은순</option>
+      <option value="name">이름순</option>
+    </select>
+  </div>
   <div id="grid"></div>
   <div id="pager"></div>
 </section>
@@ -102,6 +110,7 @@ const nf = new Intl.NumberFormat('ko-KR');
 const P = new URLSearchParams(location.search);
 let sys = P.get('sys') || '';
 let year = parseInt(P.get('year') || '', 10) || null;
+let sort = P.get('sort') || 'staff';       // 기본 추천순
 let page = 1;
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) =>
@@ -123,6 +132,7 @@ function syncUrl() {
   const p = new URLSearchParams();
   if (sys) p.set('sys', sys);
   if (year) p.set('year', year);
+  if (sort !== 'staff') p.set('sort', sort);
   history.replaceState(null, '', '?' + p.toString());
 }
 
@@ -131,7 +141,11 @@ async function loadSystems() {
   const sel = document.getElementById('sys');
   sel.innerHTML = '<option value="">모든 기종</option>' +
     systems.map((s) => `<option value="${esc(s.slug)}"${s.slug === sys ? ' selected' : ''}>${esc(s.name)}</option>`).join('');
-  sel.onchange = () => { sys = sel.value; year = null; loadYears(); document.getElementById('grid').innerHTML = ''; document.getElementById('y-title').textContent = '연도를 선택하세요'; document.getElementById('y-count').textContent = ''; };
+  const so = document.getElementById('sort');
+  so.value = sort;
+  so.onchange = () => { sort = so.value; page = 1; loadGames(); };
+  sel.onchange = () => { sys = sel.value; year = null;
+    document.getElementById('sortbar').style.display = 'none'; loadYears(); document.getElementById('grid').innerHTML = ''; document.getElementById('y-title').textContent = '연도를 선택하세요'; document.getElementById('y-count').textContent = ''; };
 }
 
 async function loadYears() {
@@ -190,8 +204,9 @@ async function loadGames() {
   const grid = document.getElementById('grid');
   grid.className = ''; grid.innerHTML = '<div class="loading">불러오는 중…</div>';
   try {
-    const p = new URLSearchParams({ year, page });
+    const p = new URLSearchParams({ year, page, sort });
     if (sys) p.set('sys', sys);
+    document.getElementById('sortbar').style.display = '';
     const d = await api('/api/games?' + p);
     document.getElementById('y-title').textContent = `${year}년의 게임`;
     document.getElementById('y-count').textContent =
