@@ -33,7 +33,11 @@ export async function cached(ctx, ttl, build) {
   if (res.status !== 200) return res;         // 오류는 캐시하지 않는다
 
   const out = new Response(res.body, res);
-  out.headers.set('Cache-Control', 'public, max-age=' + ttl);
+  // 브라우저에는 짧게, 엣지에는 길게.
+  // max-age 를 그대로 내보내면 방문자 브라우저가 그만큼 옛 응답을 붙들고 있어서
+  // (연도 집계는 24시간) 자료를 고쳐도 한참 반영되지 않는다. 엣지는 s-maxage 를
+  // 따르므로 D1 을 아끼는 효과는 그대로다.
+  out.headers.set('Cache-Control', 'public, max-age=60, s-maxage=' + ttl);
   out.headers.set('X-Cache', 'MISS');
   ctx.waitUntil(cache.put(key, out.clone()));
   return out;
