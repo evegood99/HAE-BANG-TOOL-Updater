@@ -149,6 +149,14 @@
   .tbc .ic{font-family:var(--pixel); font-size:13px; color:var(--gold); letter-spacing:.06em; animation:blink 1.1s steps(1) infinite}
   .tbc h3{margin:14px 0 6px; font-size:20px; font-weight:800}
   .tbc p{margin:0; color:var(--muted); font-size:14.5px}
+  /* 다음 편으로 넘어가는 링크 — 눌러서 이어 읽는다 */
+  a.tbc{display:block; text-decoration:none; color:inherit; cursor:pointer;
+    transition:transform .25s cubic-bezier(.2,.8,.25,1), border-color .25s, background .25s}
+  a.tbc:hover{transform:translateY(-4px); border-style:solid; border-color:var(--gold)}
+  .tbc-go{display:inline-block; margin-top:16px; padding:9px 18px; border-radius:999px;
+    border:1px solid var(--border2); background:rgba(255,255,255,.04);
+    font-size:13.5px; font-weight:800; letter-spacing:.01em; transition:.2s}
+  a.tbc:hover .tbc-go{border-color:transparent; background:var(--gold); color:#0a0c14}
 
   footer{border-top:1px solid var(--border); padding:40px 0 50px; margin-top:50px; color:var(--faint); font-size:13px}
   .foot{display:flex; justify-content:space-between; gap:18px; flex-wrap:wrap; align-items:center}
@@ -334,11 +342,12 @@
       <p class="reveal">바로 여기에서 <strong>세팅</strong>이라는 말이 나옵니다. 물론 앞서 말한 코어 다운로드, 롬 준비, 게임패드 설정도 세팅이라 할 수 있습니다. 하지만 이런 초기 세팅엔 시간이 그리 많이 들지 않습니다.</p>
       <div class="callout reveal">진짜 고역은 따로 있습니다. <b>게임 롬 파일과, 그에 대응하는 이미지·설명 정보를 일일이 잘 매핑하는 작업</b>이죠. 알팩 하나하나를 맞는 케이스에 포장하고 매뉴얼까지 넣는 일과 같아서, 상당한 시간과 노력이 듭니다.</div>
       <p class="reveal">레트로아크도 나름 스크린샷·박스커버를 보여 주는 기능은 있지만… 뭔가 예쁘진 않죠? 그래서 등장하는 것들이 바로 <span class="hl">ES-DE</span>, <span class="hl">다이지쇼(Daijishō)</span>, <span class="hl">페가수스(Pegasus)</span> 같은, 흔히 프론트엔드라 부르는 다양한 프로그램들입니다.</p>
-      <div class="tbc reveal">
-        <div class="ic">▶ TO BE CONTINUED…</div>
-        <h3>다음 편에 계속</h3>
+      <a class="tbc reveal" href="#part-2" data-goto="2">
+        <div class="ic">▶ PART 2</div>
+        <h3>프론트엔드와 레트로아크</h3>
         <p>예쁜 프론트엔드들, 그리고 그 미려함의 핵심인 <strong>메타데이터·미디어 세팅</strong> 이야기로 이어집니다.</p>
-      </div>
+        <span class="tbc-go">이어서 읽기 →</span>
+      </a>
     </div>
     <!-- EN -->
     <div class="article en-only">
@@ -397,11 +406,12 @@
       <p class="reveal">This is exactly where the word <strong>"setup"</strong> comes in. Of course, the core downloads, ROM prep, and gamepad config mentioned earlier are also setup. But that initial setup doesn't take much time.</p>
       <div class="callout reveal">The real grind is elsewhere. <b>It's the work of carefully mapping each ROM file to its matching images and descriptive info.</b> It's like packing each cartridge into its proper case and slipping in the manual too — it takes considerable time and effort.</div>
       <p class="reveal">RetroArch does have features to show screenshots and box covers… but it's just not pretty, is it? That's why programs like <span class="hl">ES-DE</span>, <span class="hl">Daijishō</span>, and <span class="hl">Pegasus</span> — the various programs commonly called front-ends — come into play.</p>
-      <div class="tbc reveal">
-        <div class="ic">▶ TO BE CONTINUED…</div>
-        <h3>Continues next time</h3>
+      <a class="tbc reveal" href="#part-2" data-goto="2">
+        <div class="ic">▶ PART 2</div>
+        <h3>Front-Ends and RetroArch</h3>
         <p>The pretty front-ends, and the heart of that beauty — <strong>metadata &amp; media setup</strong> — are up next.</p>
-      </div>
+        <span class="tbc-go">Read on →</span>
+      </a>
     </div>
   </article>
 
@@ -442,11 +452,12 @@
         <img src="assets/p2_relation2.png" alt="프론트엔드가 레트로아크를 에뮬레이터처럼 연결" loading="lazy" />
         <span class="cap">범용 프론트엔드는 레트로아크(코어)를 하나의 에뮬레이터처럼 연결해 사용</span>
       </a>
-      <div class="tbc reveal">
-        <div class="ic">▶ TO BE CONTINUED…</div>
-        <h3>다음 편에 계속</h3>
+      <a class="tbc reveal" href="#part-3" data-goto="3">
+        <div class="ic">▶ PART 3</div>
+        <h3>게임기·SoC·OS 고르기</h3>
         <p>이제 실제로 손에 쥐는 <strong>휴대용 게임기 — SoC와 OS</strong>의 세계로 들어갑니다.</p>
-      </div>
+        <span class="tbc-go">이어서 읽기 →</span>
+      </a>
     </div>
     <!-- EN -->
     <div class="article en-only">
@@ -483,11 +494,12 @@
         <img src="assets/p2_relation2.png" alt="Front-ends connect to RetroArch like an emulator" loading="lazy" />
         <span class="cap">General front-ends connect to RetroArch (cores) as if it were a single emulator</span>
       </a>
-      <div class="tbc reveal">
-        <div class="ic">▶ TO BE CONTINUED…</div>
-        <h3>Continues next time</h3>
+      <a class="tbc reveal" href="#part-3" data-goto="3">
+        <div class="ic">▶ PART 3</div>
+        <h3>Choosing a Device · SoC · OS</h3>
         <p>Now we step into the world of the actual devices in your hands — <strong>handhelds: SoC and OS.</strong></p>
-      </div>
+        <span class="tbc-go">Read on →</span>
+      </a>
     </div>
   </article>
 
@@ -653,6 +665,10 @@
     try{ history.replaceState(null,'','#part-'+n); }catch(e){}
   }
   document.querySelectorAll('.ptab').forEach(function(t){ t.addEventListener('click', function(){ showPart(t.dataset.part); }); });
+  // 본문 끝의 '다음 편' 상자도 탭과 똑같이 동작한다(주소만 바뀌고 새로 안 읽는다)
+  document.querySelectorAll('[data-goto]').forEach(function(a){
+    a.addEventListener('click', function(e){ e.preventDefault(); showPart(a.dataset.goto); });
+  });
 
   // 라이트박스: 클릭 위치에서 확대(FLIP), 클릭하면 원위치로 축소되며 닫힘
   var lb = document.getElementById('lb'), lbImg = document.getElementById('lbImg'), lastRect = null;
