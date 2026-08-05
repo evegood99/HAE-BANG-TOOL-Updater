@@ -119,7 +119,11 @@ footer a{color:var(--muted)}
 .toolbar{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:20px}
 .toolbar input,.toolbar select{background:var(--surface); border:1px solid var(--border2);
   color:var(--text); border-radius:11px; padding:9px 13px; font-size:14px; font-family:inherit}
-.toolbar input{min-width:220px}
+/* 옵션 글자가 길면 select 가 그 길이만큼 늘어나 화면 밖으로 나간다
+   (기종 목록의 "Atari - Jaguar" 같은 이름 때문에 320px 화면에서 359px 이 됐다).
+   플렉스 항목은 기본값(min-width:auto)이라 내용보다 작아지지 않으므로 함께 푼다. */
+.toolbar select{max-width:100%; min-width:0}
+.toolbar input{min-width:min(220px,100%)}
 .toolbar input:focus,.toolbar select:focus{outline:none; border-color:var(--indigo)}
 
 /* 표지를 크게 보여주려고 넓은 화면에서 5열로 잡는다(1180px 기준 6열 → 5열) */
