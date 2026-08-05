@@ -15,9 +15,10 @@
   var P = /\/games(\/|$)/.test(location.pathname) ? '../' : '';
 
   var CSS =
-    '.btn-donate{display:inline-flex; align-items:center; gap:6px; padding:9px 15px;' +
-      'border-radius:11px; border:1px solid rgba(244,63,94,.45); color:#ffd7de;' +
-      'font-family:inherit; font-size:13.5px; font-weight:700; cursor:pointer; white-space:nowrap;' +
+    // 다운로드가 주 버튼이라 후원은 한 단계 작게 둔다
+    '.btn-donate{display:inline-flex; align-items:center; gap:5px; padding:6px 11px;' +
+      'border-radius:9px; border:1px solid rgba(244,63,94,.45); color:#ffd7de;' +
+      'font-family:inherit; font-size:12.5px; font-weight:700; cursor:pointer; white-space:nowrap;' +
       'background:linear-gradient(120deg,rgba(244,63,94,.22),rgba(244,63,94,.10)); transition:.18s}' +
     '.btn-donate:hover{border-color:#fb7185; color:#fff;' +
       'background:linear-gradient(120deg,rgba(244,63,94,.34),rgba(244,63,94,.18))}' +
@@ -65,7 +66,7 @@
     '@media (max-width:400px){' +
       '.brand .bs{display:none}' +
       '.nav{gap:8px}' +
-      '.btn-donate{padding:8px 10px; font-size:12.5px}' +
+      '.btn-donate{padding:5px 9px; font-size:12px}' +
     '}' +
     // 아주 작은 화면(320px 급)에서는 로고 글씨를 접고 아이콘만 남긴다
     '@media (max-width:350px){ .brand > span{display:none} }';
