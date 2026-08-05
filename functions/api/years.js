@@ -17,9 +17,17 @@ export async function onRequestGet(context) {
 
   return cached(context, 86400, async () => {
     try {
-      const { results } = await env.DB.prepare(
-        'SELECT year, n FROM year_counts WHERE slug = ? ORDER BY year'
-      ).bind(slug).all();
+      // 전체 집계는 fbneo 를 뺀다. 목록(/api/games)에서 mame 와 겹치는 fbneo 를
+      // 빼고 보여주므로, 막대 숫자와 목록 개수가 어긋나지 않게 여기서도 맞춘다.
+      const { results } = slug
+        ? (await env.DB.prepare(
+            'SELECT year, n FROM year_counts WHERE slug = ? ORDER BY year'
+          ).bind(slug).all())
+        : (await env.DB.prepare(
+            "SELECT y.year, y.n - IFNULL(f.n, 0) AS n FROM year_counts y" +
+            "  LEFT JOIN year_counts f ON f.slug = 'fbneo' AND f.year = y.year" +
+            " WHERE y.slug = '' ORDER BY y.year"
+          ).all());
       return json({ ok: true, years: results });
     } catch (e) {
       return json({ ok: false, error: String(e && e.message || e) }, 500);

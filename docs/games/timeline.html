@@ -199,6 +199,12 @@ function renderPager(cur, pages) {
   });
 }
 
+/* 기종을 안 고른 목록에서는 fbneo 를 빼고 mame 만 남긴다(둘은 같은 목록).
+   남은 쪽에 두 이름을 함께 적어, 왜 fbneo 가 안 보이는지 알 수 있게 한다. */
+function sysLabel(slug) {
+  return (!sys && slug === 'mame') ? 'mame(fbneo)' : slug;
+}
+
 async function loadGames() {
   syncUrl();
   const grid = document.getElementById('grid');
@@ -219,7 +225,7 @@ async function loadGames() {
         : `<div class="noimg">이미지 없음</div>`;
       return `<a class="g" href="game.html?sys=${encodeURIComponent(g.slug)}&id=${g.game_id}">
                 <div class="ph">${img}${badges(g)}</div><div class="t">${esc(t)}</div>
-                <div class="y">${esc(g.slug)}${g.genre ? ' · ' + esc(g.genre) : ''}</div></a>`;
+                <div class="y">${esc(sysLabel(g.slug))}${g.genre ? ' · ' + esc(g.genre) : ''}</div></a>`;
     }).join('');
     renderPager(d.page, d.pages);
   } catch (e) {

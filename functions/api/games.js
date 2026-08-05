@@ -44,6 +44,10 @@ export async function onRequestGet(context) {
     const bind = [];
     const G = useFts ? 'g.' : '';          // FTS 는 web_games 를 g 로 조인해 쓴다
     if (slug) { where.push(`${G}slug = ?`); bind.push(slug); }
+    // fbneo 와 mame 는 같은 목록이다 — 4,825개가 game_id 는 물론 연도·평점·추천·
+    // 표지·이름까지 전부 같다(다른 쌍 0개). 기종을 고르지 않은 목록에서는 같은 게임이
+    // 두 번 나오므로 한쪽을 뺀다. 기종을 고른 경우엔 그 기종을 보러 온 것이라 그대로 둔다.
+    if (!slug) where.push("slug <> 'fbneo'");
     if (year) { where.push(`${G}year = ?`); bind.push(year); }
     if (q && !useFts) {
       // 두 글자는 색인이 안 잡히므로(trigram) 예전처럼 LIKE 로 찾는다.
@@ -128,10 +132,16 @@ async function countOf(env, slug, year, cond, bind) {
   // 연도가 걸리면 미리 세어 둔 year_counts 를 읽는다. 그때그때 COUNT(*) 로 세면
   // 그 해에 걸린 것을 전부 훑는다(1994년 2,900행) — 여기서는 1행이면 된다.
   if (year) {
-    const r = await env.DB.prepare(
-      'SELECT n AS total FROM year_counts WHERE slug = ? AND year = ?'
-    ).bind(slug || '', year).first();
-    if (r) return r.total;
+    // 기종을 안 골랐으면 목록에서 뺀 fbneo 만큼 빼서 개수를 맞춘다(2행).
+    const r = slug
+      ? await env.DB.prepare(
+          'SELECT n AS total FROM year_counts WHERE slug = ? AND year = ?'
+        ).bind(slug, year).first()
+      : await env.DB.prepare(
+          "SELECT SUM(CASE WHEN slug = '' THEN n ELSE -n END) AS total" +
+          "  FROM year_counts WHERE year = ? AND slug IN ('', 'fbneo')"
+        ).bind(year).first();
+    if (r && r.total != null) return r.total;
   }
   const r = await env.DB.prepare(`SELECT COUNT(*) AS total FROM web_games ${cond}`)
     .bind(...bind).first();
