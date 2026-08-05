@@ -11,8 +11,9 @@
  */
 (function () {
   var MAIL = 'evegood99@gmail.com';
-  // /games/ 아래에서는 한 단계 올라가야 assets 와 홈에 닿는다.
-  var P = /\/games(\/|$)/.test(location.pathname) ? '../' : '';
+  // 루트 기준 절대경로를 쓴다. 상대경로는 폴더 깊이를 세야 하는데, 깨끗한 주소
+  // (/story = story.html)와 하위 폴더(/games/ /patches/)를 구분할 방법이 없다.
+  var P = '/';
 
   var CSS =
     // 다운로드가 주 버튼이라 후원은 한 단계 작게 둔다
@@ -98,7 +99,7 @@
           '<p>후원해 주신 뒤 아래 이메일로 알려 주시면 <b>스폰서 코드</b>를 보내드립니다. ' +
             '이 코드로 해방툴 <b>프로그램 사전 다운로드</b> 및 <b>마이너 신규 베타 버전 다운로드</b>의 ' +
             '혜택을 제공하고 있습니다.</p>' +
-          '<a class="btn" href="' + P + 'index.html#download">베타 다운로드로 이동 →</a>' +
+          '<a class="btn" href="' + P + '#download">베타 다운로드로 이동 →</a>' +
         '</div>' +
         '<a class="dm-mail" href="mailto:' + MAIL + '?subject=HAE-BANG%20Donation">✉ ' + MAIL + '</a>' +
       '</div>' +
