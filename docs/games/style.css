@@ -57,7 +57,7 @@ header{position:sticky; top:0; z-index:50; backdrop-filter:blur(14px);
 .subbar .sb-right a:hover{background:var(--surface2)}
 
 /* 홈페이지와 같은 지점에서 접는다 */
-@media(max-width:1040px){ .nav-links{display:none} }
+/* 메뉴 접힘 규칙은 아래 .menu-btn 근처에 모아 두었다 */
 @media(max-width:560px){ .hide-s{display:none} }
 
 /* ---------- 공통 ---------- */
@@ -454,7 +454,21 @@ footer a{color:var(--muted)}
 .mnav a{display:block; padding:12px; border-radius:10px; font-size:15px;
   font-weight:600; color:var(--muted)}
 .mnav a:hover,.mnav a.on,.mnav a.active{color:var(--text); background:var(--surface)}
-@media (max-width:1040px){ .menu-btn{display:inline-flex} .mnav{display:block} }
+@media (max-width:1040px) and (min-width:861px){
+  /* 태블릿 — 메뉴를 좁혀 상단에 그대로 둔다. 가로 태블릿은 전부 들어간다.
+     (실측: 이 값이면 항목이 가장 많은 홈이 838px 부터 들어간다) */
+  .nav-links{gap:1px; margin-left:8px}
+  .nav-links a{padding:8px 6px; font-size:12.5px}
+}
+  /* 860px 이하 — 메뉴를 접고 햄버거로 바꾼다.
+   ⚠️ 숨김·버튼·메뉴판을 반드시 한 곳에서 함께 켠다. 예전엔 버튼만 1040px 에서
+   켜고 메뉴판은 더 좁은 폭에서 켜서, 그 사이 구간(태블릿)에서는 버튼이 보이는데
+   눌러도 아무것도 안 열렸다. */
+  @media (max-width:860px){
+  .nav-links{display:none}
+  .menu-btn{display:inline-flex}
+  .mnav{display:block}
+}
 
 /* ---------- 후원 모달 (donate.js 가 만들어 붙인다) ---------- */
 .btn-donate{border-color:rgba(244,63,94,.45); color:#ffd7de;
