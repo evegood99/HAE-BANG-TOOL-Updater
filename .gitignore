@@ -8,3 +8,6 @@
 # OS / 편집기
 Thumbs.db
 .DS_Store
+
+# 로컬 개발 서버가 받아 둔 API·미디어 사본 (tools/dev.mjs)
+.devcache/

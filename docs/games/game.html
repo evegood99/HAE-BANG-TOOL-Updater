@@ -77,8 +77,12 @@
 </footer>
 
 <script>
-const THUMB_BASE = 'https://pub-ce7fb67413a8472b9d565037b8fbd5ef.r2.dev';
-const MEDIA_BASE = 'https://media.evegoodretro.com/pub';
+/* localhost 에서는 tools/dev.mjs 가 대신 받아 준다.
+   미디어 워커에는 핫링크 가드가 걸려 있어 localhost 에서 바로 부르면 막힌다. */
+const DEV = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+const THUMB_BASE = DEV ? '/thumb'
+  : 'https://pub-ce7fb67413a8472b9d565037b8fbd5ef.r2.dev';
+const MEDIA_BASE = DEV ? '/pub' : 'https://media.evegoodretro.com/pub';
 const P = new URLSearchParams(location.search);
 const SYS = P.get('sys') || '', ID = P.get('id') || '';
 
