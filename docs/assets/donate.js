@@ -10,10 +10,11 @@
  * 클래스를 쓰고 있어, 좁히지 않으면 그쪽 모양까지 바뀐다.
  */
 (function () {
-  var MAIL = 'evegood99@gmail.com';
   // 루트 기준 절대경로를 쓴다. 상대경로는 폴더 깊이를 세야 하는데, 깨끗한 주소
   // (/story = story.html)와 하위 폴더(/games/ /patches/)를 구분할 방법이 없다.
   var P = '/';
+  // 후원 알림은 mailto 대신 문의 발송 경로(/api/contact 워커)로 보낸다.
+  var TS_SITEKEY = '0x4AAAAAAEJ-dMWHvMfvuco0';   // Turnstile 공개 사이트키
 
   var CSS =
     // 다운로드가 주 버튼이라 후원은 한 단계 작게 둔다
@@ -59,6 +60,25 @@
     '#dm .dm-mail{display:block; text-align:center; font-size:14px; font-weight:700;' +
       'color:var(--cyan,#22d3ee); margin-top:12px}' +
     '#dm .dm-mail:hover{text-decoration:underline}' +
+    // 후원 알리기 폼 (mailto 대체 — /api/contact 로 자동 발송)
+    '#dm .dm-form{margin-top:16px; border-top:1px solid var(--border,#232734); padding-top:14px}' +
+    '#dm .dm-form > b{display:block; font-size:13px; color:var(--text,#e8ebf2); margin-bottom:9px}' +
+    '#dm .dm-row{display:grid; grid-template-columns:1fr 1fr; gap:8px}' +
+    '@media (max-width:430px){ #dm .dm-row{grid-template-columns:1fr} }' +
+    '#dm .dm-in{width:100%; font-family:inherit; font-size:13px; color:var(--text,#e8ebf2);' +
+      'background:var(--bg2,#0a0c14); border:1px solid var(--border2,#2a2e3d); border-radius:9px;' +
+      'padding:9px 11px; outline:none; margin-bottom:8px; box-sizing:border-box}' +
+    '#dm .dm-in:focus{border-color:var(--cyan,#22d3ee)}' +
+    '#dm textarea.dm-in{min-height:60px; resize:vertical}' +
+    '#dm .dm-send{display:inline-flex; align-items:center; gap:6px; font-size:13.5px; font-weight:800;' +
+      'color:#05070d; background:linear-gradient(120deg,#22d3ee,#6366f1); border:0; border-radius:10px;' +
+      'padding:10px 16px; cursor:pointer; font-family:inherit}' +
+    '#dm .dm-send[disabled]{opacity:.55; cursor:not-allowed}' +
+    '#dm .dm-form-foot{display:flex; align-items:center; justify-content:space-between; gap:10px;' +
+      'flex-wrap:wrap; margin-top:2px}' +
+    '#dm .dm-status{font-size:12.5px; min-height:16px; margin:8px 0 0}' +
+    '#dm .dm-status.ok{color:#6ee7b7}' +
+    '#dm .dm-status.err{color:#fb7185}' +
     // 이 버튼이 늘면서 헤더가 좁은 화면에서 넘쳤다 — 여기서 같이 줄인다.
     // (페이지 쪽 CSS 에 두면 이 주입 CSS 가 뒤에 와서 덮어 버린다)
     // 다운로드는 접는다. .hide-s 규칙이 홈에만 있고 소식·가이드·읽을거리엔
@@ -96,12 +116,26 @@
         '<p class="dm-scan">카메라 또는 페이 앱으로 QR을 스캔해 후원할 수 있어요.</p>' +
         '<div class="dm-code">' +
           '<b>후원자 코드 안내</b>' +
-          '<p>후원해 주신 뒤 아래 이메일로 알려 주시면 <b>스폰서 코드</b>를 보내드립니다. ' +
+          '<p>후원해 주신 뒤 아래 폼으로 알려 주시면 <b>스폰서 코드</b>를 보내드립니다. ' +
             '이 코드로 해방툴 <b>프로그램 사전 다운로드</b> 및 <b>마이너 신규 베타 버전 다운로드</b>의 ' +
             '혜택을 제공하고 있습니다.</p>' +
-          '<a class="btn" href="' + P + '#download">베타 다운로드로 이동 →</a>' +
+          '<a class="btn" href="' + P + 'haebang.html#download">베타 다운로드로 이동 →</a>' +
         '</div>' +
-        '<a class="dm-mail" href="mailto:' + MAIL + '?subject=HAE-BANG%20Donation">✉ ' + MAIL + '</a>' +
+        '<form class="dm-form" id="dm-form" autocomplete="off" novalidate>' +
+          '<b>✉ 후원 알리기 — 이메일을 남기시면 스폰서 코드를 보내드립니다</b>' +
+          '<div class="dm-row">' +
+            '<input class="dm-in" id="dm-name" type="text" maxlength="100" placeholder="이름 (닉네임)" />' +
+            '<input class="dm-in" id="dm-email" type="email" maxlength="200" placeholder="회신 받을 이메일" />' +
+          '</div>' +
+          '<textarea class="dm-in" id="dm-msg" maxlength="2000" placeholder="남길 내용 (선택) — 후원 수단·시각, 궁금한 점 등"></textarea>' +
+          '<input name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" ' +
+            'style="position:absolute; left:-9999px; top:-9999px; width:1px; height:1px; opacity:0" />' +
+          '<div class="dm-form-foot">' +
+            '<div id="dm-ts"></div>' +
+            '<button class="dm-send" id="dm-send" type="submit">보내기 ✉</button>' +
+          '</div>' +
+          '<p class="dm-status" id="dm-status" role="status" aria-live="polite"></p>' +
+        '</form>' +
       '</div>' +
     '</div>';
 
@@ -128,12 +162,69 @@
     document.body.insertAdjacentHTML('beforeend', HTML);
     var dm = document.getElementById('dm');
 
+    // ── Turnstile — 모달을 처음 열 때만 로드/렌더한다 (모든 페이지에 미리 싣지 않기) ──
+    var tsId = null, tsLoading = false;
+    function mountTs() {
+      if (tsId !== null) return;
+      if (window.turnstile) {
+        try { tsId = window.turnstile.render('#dm-ts', { sitekey: TS_SITEKEY, theme: 'dark' }); } catch (e) {}
+        return;
+      }
+      if (tsLoading) return;
+      tsLoading = true;
+      window.__dmTsReady = function () { tsLoading = false; mountTs(); };
+      var s = document.createElement('script');
+      s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?onload=__dmTsReady&render=explicit';
+      s.async = true;
+      document.head.appendChild(s);
+    }
+
     function open(on) {
       dm.classList.toggle('open', on);
       dm.setAttribute('aria-hidden', on ? 'false' : 'true');
       // 모달이 떠 있는 동안 뒤 목록이 같이 스크롤되지 않도록 잠근다.
       document.body.style.overflow = on ? 'hidden' : '';
+      if (on) mountTs();
     }
+
+    // ── 후원 알리기 폼 — /api/contact 워커로 발송 (mailto 대체) ──
+    var f = document.getElementById('dm-form');
+    if (f) f.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var stt = document.getElementById('dm-status');
+      var btn = document.getElementById('dm-send');
+      function say(m, c) { stt.textContent = m || ''; stt.className = 'dm-status' + (c ? ' ' + c : ''); }
+      var name = document.getElementById('dm-name').value.trim();
+      var email = document.getElementById('dm-email').value.trim();
+      var msg = document.getElementById('dm-msg').value.trim() ||
+        '(내용 없음) 후원 알림입니다 — 스폰서 코드 부탁드립니다.';
+      if (!name || !email) { say('이름과 이메일을 채워 주세요.', 'err'); return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { say('이메일 주소를 확인해 주세요.', 'err'); return; }
+      var tk = '';
+      try { tk = (window.turnstile && tsId !== null) ? window.turnstile.getResponse(tsId) : ''; } catch (err) {}
+      if (!tk) { say('로봇이 아님을 확인해 주세요.', 'err'); return; }
+      btn.disabled = true;
+      say('보내는 중…');
+      fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ kind: 'donate', name: name, email: email, message: msg,
+          turnstile: tk, website: f.website.value }),
+      }).then(function (r) { return r.json().catch(function () { return { ok: false }; }); })
+      .then(function (d) {
+        btn.disabled = false;
+        if (d && d.ok) {
+          say('전달했습니다! 확인 후 스폰서 코드를 이메일로 보내드릴게요. 감사합니다 ♥', 'ok');
+          f.reset();
+          try { window.turnstile.reset(tsId); } catch (err) {}
+        } else {
+          say('전송에 실패했습니다. 잠시 후 다시 시도해 주세요.', 'err');
+        }
+      }).catch(function () {
+        btn.disabled = false;
+        say('서버에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요.', 'err');
+      });
+    });
     document.querySelectorAll('[data-donate]').forEach(function (b) {
       b.addEventListener('click', function (e) { e.preventDefault(); open(true); });
     });

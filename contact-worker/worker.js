@@ -51,13 +51,17 @@ export default {
     if (!ver || !ver.success) return json({ ok: false, error: 'captcha_failed' }, 403);
 
     // ── 이메일 발송 (send_email 바인딩 — 토큰 불필요) ──
+    // kind: 'donate' 는 후원 모달의 '후원 알리기', 그 외는 일반 문의
+    const kindLabel = body.kind === 'donate' ? '후원 알림' : '문의';
     const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const text =
+      '종류: ' + kindLabel + '\n' +
       '보낸 사람: ' + name + ' <' + email + '>\n' +
       'IP: ' + ip + '\n' +
       '----------------------------------------\n\n' + message;
     const html =
-      '<p><b>보낸 사람:</b> ' + esc(name) + ' &lt;' + esc(email) + '&gt;<br>' +
+      '<p><b>종류:</b> ' + kindLabel + '<br>' +
+      '<b>보낸 사람:</b> ' + esc(name) + ' &lt;' + esc(email) + '&gt;<br>' +
       '<b>IP:</b> ' + esc(ip) + '</p><hr>' +
       '<p style="white-space:pre-wrap">' + esc(message) + '</p>';
 
@@ -66,7 +70,7 @@ export default {
         to: TO,
         from: FROM,
         replyTo: { email: email, name: name },
-        subject: '[HAE-BANG RETRO 문의] ' + name,
+        subject: '[HAE-BANG RETRO ' + kindLabel + '] ' + name,
         text: text,
         html: html,
       });
