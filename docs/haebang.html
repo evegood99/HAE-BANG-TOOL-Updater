@@ -69,11 +69,14 @@
   .nav-links a{padding:8px 12px; border-radius:9px; font-size:14px; color:var(--muted); font-weight:600; transition:.18s}
   .nav-links a:hover{color:var(--text); background:var(--surface)}
   .nav-links a.active{color:var(--text); background:var(--surface); box-shadow:inset 0 -2px 0 var(--cyan)}
-  /* 해방툴 섹션 내부 바로가기 (글로벌 내비 아래 보조 줄) */
-  .subnav{display:flex; gap:8px; flex-wrap:wrap; padding-top:16px}
-  .subnav a{font-size:12.5px; font-weight:700; color:var(--muted); border:1px solid var(--border);
-    background:var(--surface); padding:6px 12px; border-radius:999px; transition:.18s}
-  .subnav a:hover{color:var(--text); border-color:var(--border2); transform:translateY(-1px)}
+  /* 해방툴 내부 바로가기 — 아카이브의 subbar 와 동일 패턴(헤더 아래 고정, 스크롤해도 유지) */
+  .subbar{position:sticky; top:66px; z-index:49; backdrop-filter:blur(10px);
+    background:rgba(10,12,20,.62); border-bottom:1px solid var(--border)}
+  .subbar .wrap{display:flex; align-items:center; gap:4px; height:46px; overflow-x:auto}
+  .subbar a{padding:6px 12px; border-radius:8px; font-size:13.5px; font-weight:600;
+    color:var(--faint); transition:.18s; white-space:nowrap}
+  .subbar a:hover,.subbar a.on{color:var(--text); background:var(--surface)}
+  .subbar .sb-right{margin-left:auto}
   .nav-right{margin-left:auto; display:flex; align-items:center; gap:10px}
   .icon-btn{display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:10px;
     border:1px solid var(--border); color:var(--muted); background:var(--surface); transition:.18s; cursor:pointer}
@@ -401,16 +404,20 @@
   <div class="mnav" id="mnav"><div class="in"></div></div>
 </header>
 
-<main id="top">
-
-  <!-- 해방툴 내부 바로가기 -->
-  <div class="wrap subnav">
+<!-- 해방툴 내부 바로가기 — 아카이브(기종별/연도별)처럼 스크롤해도 계속 보인다.
+     모바일 햄버거 메뉴도 .subbar .wrap > a 를 복제해 같은 항목을 담는다. -->
+<div class="subbar">
+  <div class="wrap">
     <a href="news.html" data-ko="새로운 소식" data-en="News">새로운 소식</a>
     <a href="#features" data-ko="기능" data-en="Features">기능</a>
     <a href="#how" data-ko="작동 방식" data-en="How it works">작동 방식</a>
     <a href="#targets" data-ko="지원 대상" data-en="Supported">지원 대상</a>
     <a href="guide.html" data-ko="가이드" data-en="Guide">가이드</a>
+    <div class="sb-right"></div>
   </div>
+</div>
+
+<main id="top">
 
   <!-- HERO -->
   <section class="hero">
