@@ -157,9 +157,11 @@
   .lineup{display:grid; grid-template-columns:1fr 1fr; gap:18px}
   .prod{position:relative; display:flex; flex-direction:column; border:1px solid var(--border); border-radius:var(--radius);
     padding:26px 24px; background:linear-gradient(180deg,var(--surface),rgba(13,15,23,.55)); transition:.22s; overflow:hidden}
+  /* ⚠️ pointer-events:none 필수 — 이 오버레이가 카드 전체를 덮어 버튼 클릭을 가로챈다(투명해도) */
   .prod::after{content:""; position:absolute; inset:0; border-radius:inherit; padding:1px; background:var(--grad);
     -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0); -webkit-mask-composite:xor;
-    mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0); mask-composite:exclude; opacity:0; transition:.22s}
+    mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0); mask-composite:exclude;
+    opacity:0; transition:.22s; pointer-events:none}
   .prod:hover{transform:translateY(-4px); border-color:transparent}
   .prod:hover::after{opacity:.7}
   .p-head{display:flex; align-items:center; gap:13px; margin-bottom:13px}
