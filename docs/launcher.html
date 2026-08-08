@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- 이 저장소는 GitHub Pages 와 Cloudflare Pages 두 곳에 배포된다.
+     깃허브 쪽에는 Functions(/api/*)가 없어 아카이브·패치가 동작하지 않으므로,
+     그쪽으로 들어온 방문자는 같은 경로 그대로 정식 도메인으로 보낸다.
+     <head> 위쪽에 두어 화면이 그려지기 전에 옮겨지게 한다. -->
+<link rel="canonical" href="https://evegoodretro.com/launcher" />
+<script>
+(function () {
+  if (location.hostname.indexOf('github.io') < 0) return;   // 정식 도메인에서는 아무 일 없음
+  var p = location.pathname.replace(/^\/ROM-Settings-HAE-BANG-Tool/, '') || '/';
+  location.replace('https://evegoodretro.com' + p + location.search + location.hash);
+})();
+</script>
+<title>HB런처 — 3D 케이스 게임 런처 | HAE-BANG RETRO</title>
+<meta name="description" content="게임 케이스를 3D로 진열하고, 케이스를 열어 카트리지를 콘솔에 꽂으면 게임이 시작되는 새로운 에뮬레이터 런처. RetroArch 호환, Windows·Android. 해방툴과 직결. 현재 개발 중." />
+<meta property="og:title" content="HB런처 — 3D 케이스 게임 런처" />
+<meta property="og:description" content="케이스를 열고, 꽂고, 플레이. HAE-BANG RETRO의 새 프로젝트." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="assets/hbl_case.png" />
+<link rel="icon" href="assets/favicon.ico" />
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<style>
+  :root{
+    --bg:#07080d; --bg2:#0a0c14; --surface:#11131d; --surface2:#171a27;
+    --border:#222639; --border2:#2c3147;
+    --text:#e9ebf4; --muted:#9aa1b6; --faint:#6b7186;
+    --cyan:#22d3ee; --violet:#8b5cf6; --indigo:#6366f1; --gold:#fbbf24; --emerald:#34d399; --rose:#fb7185;
+    --grad:linear-gradient(120deg,#22d3ee 0%,#6366f1 50%,#8b5cf6 100%);
+    --grad-soft:linear-gradient(120deg,rgba(34,211,238,.16),rgba(139,92,246,.16));
+    --radius:16px; --maxw:1180px;
+    --shadow:0 24px 60px -20px rgba(0,0,0,.7);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; background:var(--bg); color:var(--text);
+    font-family:"Pretendard Variable",Pretendard,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; line-height:1.6; overflow-x:hidden}
+  body::before{content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background:radial-gradient(900px 520px at 78% -8%, rgba(251,191,36,.10), transparent 60%),
+      radial-gradient(720px 480px at 10% 4%, rgba(34,211,238,.12), transparent 55%),
+      radial-gradient(700px 700px at 50% 120%, rgba(139,92,246,.12), transparent 60%)}
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 22px}
+  .grad-text{background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .muted{color:var(--muted)}
+  .eyebrow{font-size:12.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); font-weight:700}
+  header{position:sticky; top:0; z-index:50; backdrop-filter:blur(14px);
+    background:rgba(8,9,15,.62); border-bottom:1px solid transparent; transition:.25s}
+  header.scrolled{border-bottom-color:var(--border); background:rgba(8,9,15,.84)}
+  .nav{display:flex; align-items:center; gap:18px; height:66px}
+  .brand{display:flex; align-items:center; gap:11px; font-weight:800; letter-spacing:.2px}
+  .brand img{width:34px; height:34px; border-radius:9px; box-shadow:0 0 0 1px var(--border2), 0 6px 18px -6px rgba(34,211,238,.5)}
+  .brand .bt{font-size:15.5px}
+  .brand .bs{font-size:10.5px; color:var(--muted); font-weight:600; letter-spacing:.04em}
+  .nav-links{display:flex; gap:6px; margin-left:18px}
+  .nav-links a{padding:8px 12px; border-radius:9px; font-size:14px; color:var(--muted); font-weight:600; transition:.18s}
+  .nav-links a:hover{color:var(--text); background:var(--surface)}
+  .nav-links a.active{color:var(--text); background:var(--surface); box-shadow:inset 0 -2px 0 var(--gold)}
+  .nav-right{margin-left:auto; display:flex; align-items:center; gap:10px}
+  .icon-btn{display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:10px;
+    border:1px solid var(--border); color:var(--muted); background:var(--surface); transition:.18s; cursor:pointer}
+  .icon-btn:hover{color:var(--text); border-color:var(--border2); transform:translateY(-1px)}
+  .lang{font-size:12.5px; font-weight:800; letter-spacing:.04em}
+  .btn{display:inline-flex; align-items:center; gap:8px; font-weight:700; border-radius:11px; cursor:pointer;
+    padding:11px 18px; font-size:14px; border:1px solid transparent; transition:.2s; white-space:nowrap}
+  .btn-primary{background:var(--grad); color:#05070d; box-shadow:0 10px 30px -10px rgba(99,102,241,.7)}
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 16px 40px -12px rgba(99,102,241,.85)}
+  .btn-ghost{border-color:var(--border2); color:var(--text); background:var(--surface)}
+  .btn-ghost:hover{border-color:var(--cyan); color:#fff; transform:translateY(-2px)}
+
+  .hero{padding:80px 0 26px; text-align:center}
+  .badge{display:inline-flex; align-items:center; gap:7px; font-size:12.5px; font-weight:700; color:var(--muted);
+    border:1px solid var(--border); background:var(--surface); padding:6px 11px; border-radius:999px}
+  .badge .dot{width:7px; height:7px; border-radius:50%; background:var(--gold); box-shadow:0 0 10px var(--gold)}
+  .hero-badges{display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin:22px 0 0}
+  h1.hero-title{font-size:clamp(34px,5.4vw,58px); line-height:1.1; letter-spacing:-.02em; font-weight:800; margin:14px auto 18px; max-width:800px}
+  .hero-tag{font-size:clamp(15.5px,2vw,18.5px); color:var(--muted); max-width:640px; margin:0 auto}
+
+  section{padding:56px 0}
+  .sec-head{text-align:center; max-width:700px; margin:0 auto 40px}
+  .sec-head h2{font-size:clamp(24px,3.4vw,36px); font-weight:800; letter-spacing:-.02em; margin:12px 0 12px}
+  .sec-head p{color:var(--muted); font-size:15.5px; margin:0}
+
+  /* 컨셉 4단계 */
+  .steps{display:grid; grid-template-columns:repeat(4,1fr); gap:14px}
+  .step{position:relative; border:1px solid var(--border); border-radius:14px; padding:22px 16px; background:var(--surface)}
+  .step .si{font-size:26px; margin-bottom:10px}
+  .step h4{margin:0 0 5px; font-size:15.5px; font-weight:800}
+  .step p{margin:0; font-size:13px; color:var(--muted)}
+  .step:not(:last-child)::after{content:"→"; position:absolute; right:-12px; top:50%; transform:translateY(-50%);
+    color:var(--faint); font-size:16px; z-index:2}
+
+  /* 렌더 샷 */
+  .shots{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
+  .shot{border:1px solid var(--border); border-radius:14px; overflow:hidden; background:var(--surface)}
+  .shot .imgw{aspect-ratio:16/9; overflow:hidden; background:#0a0c13}
+  .shot .imgw img{width:100%; height:100%; object-fit:cover; display:block}
+  .shot .cap{padding:12px 15px; border-top:1px solid var(--border)}
+  .shot .cap b{display:block; font-size:13.5px; font-weight:700}
+  .shot .cap span{font-size:12px; color:var(--muted)}
+  .dev-note{text-align:center; font-size:12.5px; color:var(--faint); margin-top:16px}
+
+  /* 특징 카드 */
+  .fgrid{display:grid; grid-template-columns:repeat(2,1fr); gap:18px}
+  .fcard{border:1px solid var(--border); border-radius:var(--radius); padding:24px 22px;
+    background:linear-gradient(180deg,var(--surface),rgba(13,15,23,.55))}
+  .fcard .ico{width:44px; height:44px; border-radius:12px; display:grid; place-items:center; margin-bottom:14px;
+    background:var(--grad-soft); border:1px solid var(--border2); font-size:21px}
+  .fcard h3{margin:0 0 8px; font-size:17px; font-weight:800}
+  .fcard p{margin:0; color:var(--muted); font-size:14px}
+
+  .cta{position:relative; border:1px solid var(--border2); border-radius:24px; overflow:hidden; text-align:center;
+    padding:52px 24px; background:radial-gradient(120% 130% at 50% -10%, rgba(251,191,36,.14), transparent 60%), var(--surface)}
+  .cta h2{font-size:clamp(24px,3.4vw,36px); font-weight:800; margin:0 0 12px; letter-spacing:-.02em}
+  .cta p{color:var(--muted); font-size:15.5px; max-width:560px; margin:0 auto 26px}
+  .cta-row{display:flex; gap:12px; flex-wrap:wrap; justify-content:center}
+
+  footer{border-top:1px solid var(--border); padding:42px 0 46px; margin-top:30px}
+  .foot-bottom{display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap; color:var(--faint); font-size:12.5px}
+  .foot-links{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:18px; justify-content:center}
+  .foot-links a{color:var(--muted); font-size:13.5px; font-weight:600}
+  .foot-links a:hover{color:var(--text)}
+
+  .reveal{opacity:0; transform:translateY(22px); transition:opacity .6s ease, transform .6s ease}
+  .reveal.in{opacity:1; transform:none}
+
+  @media (max-width:920px){
+    .steps{grid-template-columns:1fr 1fr}
+    .step:not(:last-child)::after{display:none}
+    .shots{grid-template-columns:1fr}
+    .fgrid{grid-template-columns:1fr}
+  }
+  /* 모바일 메뉴 — 좁은 화면에서 상단 메뉴가 숨겨지므로 햄버거로 같은 항목을 낸다 */
+  .menu-btn{display:none; align-items:center; justify-content:center; padding:0;
+    width:38px; height:38px; border-radius:10px; border:1px solid var(--border2);
+    background:var(--surface); color:var(--text); font-size:17px; line-height:1;
+    cursor:pointer; font-family:inherit; transition:.18s}
+  .menu-btn:hover{border-color:var(--cyan)}
+  .mnav{display:none; position:absolute; top:100%; left:0; right:0;
+    background:rgba(8,9,15,.98); backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--border); max-height:0; overflow:hidden;
+    transition:max-height .28s ease}
+  .mnav.on{max-height:78vh; overflow:auto}
+  .mnav .in{padding:8px 22px 16px; display:flex; flex-direction:column; gap:2px}
+  .mnav a{display:block; padding:12px; border-radius:10px; font-size:15px;
+    font-weight:600; color:var(--muted)}
+  .mnav a:hover,.mnav a.on,.mnav a.active{color:var(--text); background:var(--surface)}
+  /* 상단 메뉴가 8개가 되어 접히는 지점을 1040px 로 올린다(모든 페이지 공통).
+     기존 미디어쿼리에는 다른 규칙이 섞여 있어 값을 바꾸지 않고 여기서 덧쓴다. */
+  @media (max-width:1160px) and (min-width:941px){
+    /* 태블릿 — 메뉴를 좁혀 상단에 그대로 둔다. 가로 태블릿은 전부 들어간다.
+       (실측: 이 값이면 항목이 가장 많은 홈이 838px 부터 들어간다) */
+    .nav-links{gap:1px; margin-left:8px}
+    .nav-links a{padding:8px 6px; font-size:12.5px}
+  }
+  /* 860px 이하 — 메뉴를 접고 햄버거로 바꾼다.
+     ⚠️ 숨김·버튼·메뉴판을 반드시 한 곳에서 함께 켠다. 예전엔 버튼만 1040px 에서
+     켜고 메뉴판은 더 좁은 폭에서 켜서, 그 사이 구간(태블릿)에서는 버튼이 보이는데
+     눌러도 아무것도 안 열렸다. */
+  @media (max-width:940px){
+    .nav-links{display:none}
+    .menu-btn{display:inline-flex}
+    .mnav{display:block}
+  }
+</style>
+</head>
+<body>
+
+<header id="hdr">
+  <div class="wrap nav">
+    <a class="brand" href="index.html">
+      <img src="assets/icon.png" alt="HAE-BANG RETRO logo" />
+      <span>
+        <span class="bt">HAE-BANG RETRO</span>
+        <div class="bs" data-ko="HB런처" data-en="HB Launcher">HB런처</div>
+      </span>
+    </a>
+    <nav class="nav-links">
+      <a href="index.html" data-ko="홈" data-en="Home">홈</a>
+      <a href="haebang.html" data-ko="해방툴" data-en="Rom Tool">해방툴</a>
+      <a href="https://evegoodretro.com/games/" data-ko="게임 아카이브" data-en="Game Archive">게임 아카이브</a>
+      <a href="launcher.html" class="active" data-ko="HB런처" data-en="HB Launcher">HB런처</a>
+      <a href="https://evegoodretro.com/patches/" data-ko="한글화 패치" data-en="KR Patches">한글화 패치</a>
+      <a href="story.html" data-ko="읽을거리" data-en="Read">읽을거리</a>
+    </nav>
+    <div class="nav-right">
+      <button class="icon-btn lang" id="langBtn" title="Language" aria-label="Language">EN</button>
+    </div>
+      <button class="menu-btn" id="menuBtn" aria-label="메뉴" aria-expanded="false">☰</button>
+    </div>
+  </div>
+  <div class="mnav" id="mnav"><div class="in"></div></div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <span class="eyebrow">HB LAUNCHER · IN DEVELOPMENT</span>
+      <h1 class="hero-title">
+        <span data-ko="케이스를 열고, 꽂고," data-en="Open the case, slot it in,">케이스를 열고, 꽂고,</span>
+        <span class="grad-text" data-ko="플레이." data-en="play.">플레이.</span>
+      </h1>
+      <p class="hero-tag"
+         data-ko="게임 케이스를 3D 진열장에 늘어놓고, 마음에 드는 케이스를 돌려 보고, 열어서 카트리지를 꺼내 콘솔에 꽂으면 — 게임이 시작됩니다. 어릴 적 그 감각 그대로의 에뮬레이터 런처를 만들고 있습니다."
+         data-en="Shelve your games as 3D cases. Spin the one you like, open it, pull the cartridge and slot it into the console — the game begins. An emulator launcher that feels the way it did when you were a kid.">게임 케이스를 3D 진열장에 늘어놓고, 마음에 드는 케이스를 돌려 보고, 열어서 카트리지를 꺼내 콘솔에 꽂으면 — 게임이 시작됩니다. 어릴 적 그 감각 그대로의 에뮬레이터 런처를 만들고 있습니다.</p>
+      <div class="hero-badges">
+        <span class="badge"><span class="dot"></span><span data-ko="개발 중 (프로토타입)" data-en="In development (prototype)">개발 중 (프로토타입)</span></span>
+        <span class="badge">Windows · Android(APK)</span>
+        <span class="badge" data-ko="RetroArch 기본 호환" data-en="RetroArch-compatible">RetroArch 기본 호환</span>
+        <span class="badge" data-ko="해방툴 직결" data-en="Wired to the Rom Tool">해방툴 직결</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 컨셉 -->
+  <section id="concept">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow" data-ko="컨셉" data-en="Concept">컨셉</span>
+        <h2 data-ko="게임을 '고르는 것'부터 놀이가 되도록" data-en="Choosing a game becomes play itself">게임을 '고르는 것'부터 놀이가 되도록</h2>
+        <p data-ko="텍스트 목록에서 파일명을 고르는 대신, 장식장에서 게임을 꺼내는 경험을 그대로 옮깁니다."
+           data-en="Instead of picking a filename from a list, you take a game off the shelf — the real thing, recreated.">텍스트 목록에서 파일명을 고르는 대신, 장식장에서 게임을 꺼내는 경험을 그대로 옮깁니다.</p>
+      </div>
+      <div class="steps">
+        <div class="step reveal"><div class="si">🗄️</div><h4 data-ko="진열장에서 고르고" data-en="Pick from the shelf">진열장에서 고르고</h4><p data-ko="시스템별 3D 케이스 진열 — 실제 박스아트로" data-en="3D cases per system, with real box art">시스템별 3D 케이스 진열 — 실제 박스아트로</p></div>
+        <div class="step reveal"><div class="si">🔄</div><h4 data-ko="돌려서 살펴보고" data-en="Spin it around">돌려서 살펴보고</h4><p data-ko="드래그로 회전 — 뒷면·책등까지 실제 케이스처럼" data-en="Drag to rotate — back and spine like the real case">드래그로 회전 — 뒷면·책등까지 실제 케이스처럼</p></div>
+        <div class="step reveal"><div class="si">📦</div><h4 data-ko="케이스를 열면" data-en="Open the case">케이스를 열면</h4><p data-ko="뚜껑이 열리며 카트리지·CD가 나타납니다" data-en="The lid swings open to reveal the cartridge or disc">뚜껑이 열리며 카트리지·CD가 나타납니다</p></div>
+        <div class="step reveal"><div class="si">🎮</div><h4 data-ko="꽂으면 시작" data-en="Slot it in — play">꽂으면 시작</h4><p data-ko="카트리지가 콘솔에 꽂히는 모션과 함께 게임 실행" data-en="The cartridge slides into the console and the game runs">카트리지가 콘솔에 꽂히는 모션과 함께 게임 실행</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 개발 렌더 -->
+  <section id="preview">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow" data-ko="개발 미리보기" data-en="Dev preview">개발 미리보기</span>
+        <h2 data-ko="지금 이만큼 만들어졌습니다" data-en="Where the build is today">지금 이만큼 만들어졌습니다</h2>
+        <p data-ko="아래 이미지는 목업이 아니라 개발 중인 빌드의 실제 렌더입니다." data-en="These are real renders from the development build — not mockups.">아래 이미지는 목업이 아니라 개발 중인 빌드의 실제 렌더입니다.</p>
+      </div>
+      <div class="shots">
+        <div class="shot reveal">
+          <div class="imgw"><img src="assets/hbl_case.png" alt="3D 케이스 렌더" loading="lazy" /></div>
+          <div class="cap"><b data-ko="① 3D 케이스" data-en="① The 3D case">① 3D 케이스</b><span data-ko="실제 박스아트를 입힌 케이스를 자유롭게 회전" data-en="Real box art wrapped on a case you can spin freely">실제 박스아트를 입힌 케이스를 자유롭게 회전</span></div>
+        </div>
+        <div class="shot reveal">
+          <div class="imgw"><img src="assets/hbl_open.png" alt="케이스 열림 렌더" loading="lazy" /></div>
+          <div class="cap"><b data-ko="② 케이스 오픈" data-en="② Case open">② 케이스 오픈</b><span data-ko="뚜껑이 열리며 안의 카트리지가 드러남" data-en="The lid opens to reveal the cartridge inside">뚜껑이 열리며 안의 카트리지가 드러남</span></div>
+        </div>
+        <div class="shot reveal">
+          <div class="imgw"><img src="assets/hbl_insert.png" alt="콘솔 삽입 렌더" loading="lazy" /></div>
+          <div class="cap"><b data-ko="③ 콘솔 삽입" data-en="③ Into the console">③ 콘솔 삽입</b><span data-ko="카트리지가 콘솔에 꽂히면 게임 실행" data-en="The cartridge seats into the console and the game launches">카트리지가 콘솔에 꽂히면 게임 실행</span></div>
+        </div>
+      </div>
+      <p class="dev-note" data-ko="* 개발 초기 프로토타입 렌더로, 최종 그래픽·연출은 달라질 수 있습니다." data-en="* Early prototype renders — final visuals will evolve.">* 개발 초기 프로토타입 렌더로, 최종 그래픽·연출은 달라질 수 있습니다.</p>
+    </div>
+  </section>
+
+  <!-- 특징 -->
+  <section id="features">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow" data-ko="계획된 특징" data-en="Planned features">계획된 특징</span>
+        <h2 data-ko="보기만 예쁜 런처가 아닙니다" data-en="Not just a pretty launcher">보기만 예쁜 런처가 아닙니다</h2>
+      </div>
+      <div class="fgrid">
+        <div class="fcard reveal">
+          <div class="ico">🕹️</div>
+          <h3 data-ko="RetroArch 기본 + 확장 연결" data-en="RetroArch first, extensible beyond">RetroArch 기본 + 확장 연결</h3>
+          <p data-ko="RetroArch를 기본 호환으로 하고, 시스템별 스탠드얼론 에뮬레이터는 연결 정보를 통해 추가합니다. 새 에뮬레이터 대응은 앱 업데이트 없이 데이터 갱신만으로 이뤄지도록 설계하고 있습니다."
+             data-en="RetroArch works out of the box, and per-system standalone emulators plug in via connection profiles — designed so new emulators arrive as data updates, not app updates.">RetroArch를 기본 호환으로 하고, 시스템별 스탠드얼론 에뮬레이터는 연결 정보를 통해 추가합니다. 새 에뮬레이터 대응은 앱 업데이트 없이 데이터 갱신만으로 이뤄지도록 설계하고 있습니다.</p>
+        </div>
+        <div class="fcard reveal">
+          <div class="ico">🔗</div>
+          <h3 data-ko="해방툴과 다이렉트 연결" data-en="Direct link with the Rom Tool">해방툴과 다이렉트 연결</h3>
+          <p data-ko="안드로이드 기기에 HB런처가 있으면 해방툴이 롬과 미디어를 기기로 바로 밀어 넣습니다. 해방툴에서 세팅한 라이브러리는 매칭 과정 없이 즉시 진열장이 됩니다."
+             data-en="With HB Launcher on your Android device, the Rom Tool pushes ROMs and media straight to it. A library set up in the Rom Tool becomes your shelf instantly — no re-matching.">안드로이드 기기에 HB런처가 있으면 해방툴이 롬과 미디어를 기기로 바로 밀어 넣습니다. 해방툴에서 세팅한 라이브러리는 매칭 과정 없이 즉시 진열장이 됩니다.</p>
+        </div>
+        <div class="fcard reveal">
+          <div class="ico">🧠</div>
+          <h3 data-ko="런처 혼자서도 알아서" data-en="Smart on its own, too">런처 혼자서도 알아서</h3>
+          <p data-ko="해방툴 없이도 기기의 롬 폴더를 스캔해 해방툴과 같은 방식으로 게임을 식별하고, 케이스·카트리지 이미지 같은 미디어를 서버에서 스스로 가져옵니다."
+             data-en="Even without the Rom Tool, it scans your ROM folders, identifies games the same way the Tool does, and fetches case and cartridge art from the server by itself.">해방툴 없이도 기기의 롬 폴더를 스캔해 해방툴과 같은 방식으로 게임을 식별하고, 케이스·카트리지 이미지 같은 미디어를 서버에서 스스로 가져옵니다.</p>
+        </div>
+        <div class="fcard reveal">
+          <div class="ico">🎯</div>
+          <h3 data-ko="게임패드 우선 · 핸드헬드 우선" data-en="Gamepad-first, handheld-first">게임패드 우선 · 핸드헬드 우선</h3>
+          <p data-ko="모든 조작을 패드 버튼만으로. 안드로이드 게임 핸드헬드의 저사양 GPU에서도 부드럽게 돌도록 처음부터 가볍게 만들고 있습니다."
+             data-en="Everything works from the pad alone, and it's built light from day one to run smoothly on low-power Android handheld GPUs.">모든 조작을 패드 버튼만으로. 안드로이드 게임 핸드헬드의 저사양 GPU에서도 부드럽게 돌도록 처음부터 가볍게 만들고 있습니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section>
+    <div class="wrap">
+      <div class="cta reveal">
+        <h2 data-ko="개발 소식을 지켜봐 주세요" data-en="Follow along as it grows">개발 소식을 지켜봐 주세요</h2>
+        <p data-ko="HB런처는 지금 한창 만들어지는 중입니다. 진행 소식은 새로운 소식 페이지에 계속 올라오고, 그동안 해방툴로 라이브러리를 먼저 세팅해 두시면 런처가 나왔을 때 바로 이어집니다."
+           data-en="HB Launcher is being built right now. Progress lands on the news page — and if you set up your library with the Rom Tool in the meantime, the launcher will pick it up the moment it arrives.">HB런처는 지금 한창 만들어지는 중입니다. 진행 소식은 새로운 소식 페이지에 계속 올라오고, 그동안 해방툴로 라이브러리를 먼저 세팅해 두시면 런처가 나왔을 때 바로 이어집니다.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="haebang.html" data-ko="해방툴 알아보기" data-en="Explore the Rom Tool">해방툴 알아보기</a>
+          <a class="btn btn-ghost" href="news.html" data-ko="새로운 소식" data-en="News">새로운 소식</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-links">
+      <a href="index.html" data-ko="홈" data-en="Home">홈</a>
+      <a href="haebang.html" data-ko="해방툴" data-en="Rom Tool">해방툴</a>
+      <a href="https://evegoodretro.com/games/" data-ko="게임 아카이브" data-en="Game Archive">게임 아카이브</a>
+      <a href="https://evegoodretro.com/patches/" data-ko="한글화 패치" data-en="KR Patches">한글화 패치</a>
+      <a href="story.html" data-ko="읽을거리" data-en="Read">읽을거리</a>
+      <a href="news.html" data-ko="새로운 소식" data-en="News">새로운 소식</a>
+    </div>
+    <div class="foot-bottom">
+      <span>© <span id="yr"></span> HAE-BANG RETRO. All rights reserved.</span>
+      <span data-ko="HB런처 · 개발 중" data-en="HB Launcher · in development">HB런처 · 개발 중</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  var lang = 'ko';
+  function applyLang(l){
+    lang = l;
+    document.documentElement.lang = l;
+    document.querySelectorAll('[data-ko]').forEach(function(el){
+      var v = el.getAttribute('data-' + l);
+      if (v != null) el.textContent = v;
+    });
+    document.getElementById('langBtn').textContent = (l === 'ko') ? 'EN' : '한';
+    try { localStorage.setItem('hb_lang', l); } catch(e){}
+  }
+  document.getElementById('langBtn').addEventListener('click', function(){ applyLang(lang === 'ko' ? 'en' : 'ko'); });
+  try { var saved = localStorage.getItem('hb_lang'); if (saved) applyLang(saved); } catch(e){}
+  var hdr = document.getElementById('hdr');
+  function onScroll(){ hdr.classList.toggle('scrolled', window.scrollY > 8); }
+  onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+</script>
+<script>
+/* 모바일 메뉴 — 상단 메뉴가 숨겨지는 폭에서 같은 항목을 펼쳐 보여준다.
+   항목을 따로 적지 않고 .nav-links 를 복제해 두 곳이 어긋날 일이 없게 한다. */
+(function () {
+  var btn = document.getElementById('menuBtn'), mn = document.getElementById('mnav');
+  if (!btn || !mn) return;
+  var box = mn.querySelector('.in');
+  document.querySelectorAll('.nav-links a').forEach(function (a) { box.appendChild(a.cloneNode(true)); });
+  document.querySelectorAll('.subbar .wrap > a').forEach(function (a) { box.appendChild(a.cloneNode(true)); });
+  function setOpen(on) {
+    mn.classList.toggle('on', on);
+    btn.textContent = on ? '✕' : '☰';
+    btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+  }
+  btn.addEventListener('click', function () { setOpen(!mn.classList.contains('on')); });
+  box.addEventListener('click', function (e) { if (e.target.closest('a')) setOpen(false); });
+  window.addEventListener('resize', function () { if (window.innerWidth > 1040) setOpen(false); });
+})();
+</script>
+</body>
+</html>
