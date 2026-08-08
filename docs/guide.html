@@ -178,6 +178,14 @@
     .menu-btn{display:inline-flex}
     .mnav{display:block}
   }
+  /* 해방툴 섹션 서브메뉴 — 헤더 아래 고정(해방툴 페이지와 동일 패턴) */
+  .subbar{position:sticky; top:66px; z-index:49; backdrop-filter:blur(10px);
+    background:rgba(10,12,20,.62); border-bottom:1px solid var(--border)}
+  .subbar .wrap{display:flex; align-items:center; gap:4px; height:46px; overflow-x:auto}
+  .subbar a{padding:6px 12px; border-radius:8px; font-size:13.5px; font-weight:600;
+    color:var(--faint); transition:.18s; white-space:nowrap}
+  .subbar a:hover,.subbar a.on{color:var(--text); background:var(--surface)}
+  .subbar .sb-right{margin-left:auto}
 </style>
 </head>
 <body>
@@ -205,6 +213,17 @@
     </div>
   <div class="mnav" id="mnav"><div class="in"></div></div>
 </header>
+
+<!-- 해방툴 섹션 서브메뉴 — 해방툴 페이지와 동일하게 유지 -->
+<div class="subbar">
+  <div class="wrap">
+    <a href="news.html"><span class="ko-only">새로운 소식</span><span class="en-only">News</span></a>
+    <a href="haebang.html#matching"><span class="ko-only">작동 방식</span><span class="en-only">How it works</span></a>
+    <a href="haebang.html#targets"><span class="ko-only">지원 대상</span><span class="en-only">Supported</span></a>
+    <a href="guide.html" class="on"><span class="ko-only">가이드</span><span class="en-only">Guide</span></a>
+    <div class="sb-right"></div>
+  </div>
+</div>
 
 <section class="ghero">
   <div class="ghero-in">
