@@ -95,6 +95,15 @@
   .step:not(:last-child)::after{content:"→"; position:absolute; right:-12px; top:50%; transform:translateY(-50%);
     color:var(--faint); font-size:16px; z-index:2}
 
+  /* 동작 영상 */
+  .demo-video{max-width:840px; margin:0 auto 20px; border:1px solid var(--border2); border-radius:14px;
+    overflow:hidden; background:var(--surface); box-shadow:var(--shadow)}
+  .demo-video video{display:block; width:100%; height:auto; background:#0a0c13}
+  .demo-video .cap{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;
+    padding:12px 16px; border-top:1px solid var(--border)}
+  .demo-video .cap b{font-size:14px; font-weight:800}
+  .demo-video .cap span{font-size:12.5px; color:var(--muted)}
+
   /* 렌더 샷 */
   .shots{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
   .shot{border:1px solid var(--border); border-radius:14px; overflow:hidden; background:var(--surface)}
@@ -212,9 +221,9 @@
          data-ko="게임 케이스를 3D 진열장에 늘어놓고, 마음에 드는 케이스를 돌려 보고, 열어서 카트리지를 꺼내 콘솔에 꽂으면 — 게임이 시작됩니다. 어릴 적 그 감각 그대로의 에뮬레이터 런처를 만들고 있습니다."
          data-en="Shelve your games as 3D cases. Spin the one you like, open it, pull the cartridge and slot it into the console — the game begins. An emulator launcher that feels the way it did when you were a kid.">게임 케이스를 3D 진열장에 늘어놓고, 마음에 드는 케이스를 돌려 보고, 열어서 카트리지를 꺼내 콘솔에 꽂으면 — 게임이 시작됩니다. 어릴 적 그 감각 그대로의 에뮬레이터 런처를 만들고 있습니다.</p>
       <div class="hero-badges">
-        <span class="badge"><span class="dot"></span><span data-ko="개발 중 (프로토타입)" data-en="In development (prototype)">개발 중 (프로토타입)</span></span>
+        <span class="badge"><span class="dot"></span><span data-ko="개발 중 · 프로토타입 동작" data-en="In dev · prototype running">개발 중 · 프로토타입 동작</span></span>
         <span class="badge">Windows · Android(APK)</span>
-        <span class="badge" data-ko="RetroArch 기본 호환" data-en="RetroArch-compatible">RetroArch 기본 호환</span>
+        <span class="badge" data-ko="RetroArch 실행 검증 완료" data-en="RetroArch launch verified">RetroArch 실행 검증 완료</span>
         <span class="badge" data-ko="해방툴 직결" data-en="Wired to the Rom Tool">해방툴 직결</span>
       </div>
     </div>
@@ -244,23 +253,37 @@
       <div class="sec-head reveal">
         <span class="eyebrow" data-ko="개발 미리보기" data-en="Dev preview">개발 미리보기</span>
         <h2 data-ko="지금 이만큼 만들어졌습니다" data-en="Where the build is today">지금 이만큼 만들어졌습니다</h2>
-        <p data-ko="아래 이미지는 목업이 아니라 개발 중인 빌드의 실제 렌더입니다." data-en="These are real renders from the development build — not mockups.">아래 이미지는 목업이 아니라 개발 중인 빌드의 실제 렌더입니다.</p>
+        <p data-ko="아래 영상과 이미지는 목업이 아니라 개발 중인 빌드를 그대로 녹화한 실제 화면입니다." data-en="The video and images below are real captures of the development build — not mockups.">아래 영상과 이미지는 목업이 아니라 개발 중인 빌드를 그대로 녹화한 실제 화면입니다.</p>
       </div>
+
+      <!-- 실제 동작 영상 (개발 빌드를 Godot Movie Maker 로 녹화) -->
+      <div class="demo-video reveal">
+        <video autoplay loop muted playsinline preload="metadata" poster="assets/hbl_demo_poster.jpg"
+               aria-label="HB런처 동작 영상">
+          <source src="assets/hbl_demo.mp4" type="video/mp4" />
+        </video>
+        <div class="cap">
+          <b data-ko="▶ 실제 동작 영상" data-en="▶ The launcher in motion">▶ 실제 동작 영상</b>
+          <span data-ko="진열장 탐색 → 케이스 열기 → 카트리지가 콘솔에 꽂히고 → 실행 복귀까지, 개발 빌드 그대로의 10초"
+                data-en="Browse the shelf → open the case → the cartridge seats into the console → eject on return — 10 seconds straight from the dev build">진열장 탐색 → 케이스 열기 → 카트리지가 콘솔에 꽂히고 → 실행 복귀까지, 개발 빌드 그대로의 10초</span>
+        </div>
+      </div>
+
       <div class="shots">
         <div class="shot reveal">
-          <div class="imgw"><img src="assets/hbl_case.png" alt="3D 케이스 렌더" loading="lazy" /></div>
-          <div class="cap"><b data-ko="① 3D 케이스" data-en="① The 3D case">① 3D 케이스</b><span data-ko="실제 박스아트를 입힌 케이스를 자유롭게 회전" data-en="Real box art wrapped on a case you can spin freely">실제 박스아트를 입힌 케이스를 자유롭게 회전</span></div>
+          <div class="imgw"><img src="assets/hbl_case.png" alt="케이스 진열장(캐러셀)" loading="lazy" /></div>
+          <div class="cap"><b data-ko="① 케이스 진열장" data-en="① The case shelf">① 케이스 진열장</b><span data-ko="실제 박스아트 케이스를 스와이프·패드로 탐색" data-en="Browse real box-art cases by swipe or D-pad">실제 박스아트 케이스를 스와이프·패드로 탐색</span></div>
         </div>
         <div class="shot reveal">
-          <div class="imgw"><img src="assets/hbl_open.png" alt="케이스 열림 렌더" loading="lazy" /></div>
-          <div class="cap"><b data-ko="② 케이스 오픈" data-en="② Case open">② 케이스 오픈</b><span data-ko="뚜껑이 열리며 안의 카트리지가 드러남" data-en="The lid opens to reveal the cartridge inside">뚜껑이 열리며 안의 카트리지가 드러남</span></div>
+          <div class="imgw"><img src="assets/hbl_open.png" alt="클램셸 케이스 열림" loading="lazy" /></div>
+          <div class="cap"><b data-ko="② 케이스 오픈" data-en="② Case open">② 케이스 오픈</b><span data-ko="클램셸이 열리며 설명서와 카트리지가 드러남" data-en="The clamshell opens to reveal the manual and cartridge">클램셸이 열리며 설명서와 카트리지가 드러남</span></div>
         </div>
         <div class="shot reveal">
-          <div class="imgw"><img src="assets/hbl_insert.png" alt="콘솔 삽입 렌더" loading="lazy" /></div>
+          <div class="imgw"><img src="assets/hbl_insert.png" alt="콘솔 삽입" loading="lazy" /></div>
           <div class="cap"><b data-ko="③ 콘솔 삽입" data-en="③ Into the console">③ 콘솔 삽입</b><span data-ko="카트리지가 콘솔에 꽂히면 게임 실행" data-en="The cartridge seats into the console and the game launches">카트리지가 콘솔에 꽂히면 게임 실행</span></div>
         </div>
       </div>
-      <p class="dev-note" data-ko="* 개발 초기 프로토타입 렌더로, 최종 그래픽·연출은 달라질 수 있습니다." data-en="* Early prototype renders — final visuals will evolve.">* 개발 초기 프로토타입 렌더로, 최종 그래픽·연출은 달라질 수 있습니다.</p>
+      <p class="dev-note" data-ko="* 개발 빌드의 실제 화면입니다. Windows에서 RetroArch 실행, 안드로이드 핸드헬드 실기기(60fps) 구동까지 검증되었습니다. 최종 그래픽·연출은 계속 다듬어집니다." data-en="* Real captures of the dev build — verified launching RetroArch on Windows and running at 60fps on a real Android handheld. Visuals will keep improving.">* 개발 빌드의 실제 화면입니다. Windows에서 RetroArch 실행, 안드로이드 핸드헬드 실기기(60fps) 구동까지 검증되었습니다. 최종 그래픽·연출은 계속 다듬어집니다.</p>
     </div>
   </section>
 
