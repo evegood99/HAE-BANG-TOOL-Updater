@@ -328,6 +328,11 @@ footer a{color:var(--muted)}
   background:var(--surface); cursor:pointer; transition:.18s}
 .man-card:hover{border-color:var(--indigo); transform:translateY(-2px)}
 .man-cover{position:relative; height:300px; background:var(--surface2); overflow:hidden}
+/* 표지 썸네일(PDF 1페이지에서 뽑은 앞표지)이 있을 때 — 높이를 고정하지 않고 이미지
+   비율을 그대로 따른다. 표지는 세로 비율이 0.57~0.68 로 제각각이라, 높이를 고정하면
+   위쪽 제목이 잘리거나 좌우에 빈 띠가 남는다. */
+.man-cover.has-img{height:auto; background:#0d0f16}
+.man-cover.has-img img{display:block; width:100%; height:auto}
 /* 표지 대신 종이 모양 카드 — PDF 는 눌렀을 때만 받는다. 미리 보여주려고 iframe 을 걸면
    원본(700만 바이트대)을 통째로 받게 되어 상세 화면에서 가장 무거운 요청이 된다. */
 .man-cover .doc{position:absolute; inset:12px; border-radius:8px; overflow:hidden;

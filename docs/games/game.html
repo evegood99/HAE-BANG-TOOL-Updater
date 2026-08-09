@@ -263,11 +263,17 @@ function renderMedia() {
   // ⚠️ 판본은 고른 것이 아니라 '실제로 실린 것'을 적는다. 고른 판본에 설명서가 없으면
   //    다른 판본으로 대체되는데, 예전에는 고른 판본 이름을 그대로 적어 사실과 달랐다.
   const manR = pickR(IDX, 'manuals', curRegion);
+  // 표지 썸네일(manthumb)은 PDF 1페이지에서 앞표지만 뽑아 둔 작은 WebP 다.
+  // ⚠️ 반드시 '실린 설명서와 같은 판본'의 것만 쓴다 — 다른 판본 표지를 붙이면
+  //    아래 캡션(판본)과 그림이 어긋난다. 없으면 예전처럼 종이 모양 카드로 둔다.
+  const manThumb = manR && IDX.manthumb ? IDX.manthumb[manR.region] : null;
   document.getElementById('man-box').innerHTML = manR
     ? `<div class="sec-t"><h2>설명서</h2><span>누르면 전체 화면으로 볼 수 있습니다</span></div>
        <div class="man-card" data-pdf="${mediaUrl(g.sys_id, manR.filename)}">
-         <div class="man-cover">
-           <div class="doc"><b>설명서</b><span>${esc(regionName(manR.region))}</span><i>누르면 열립니다</i></div>
+         <div class="man-cover${manThumb ? ' has-img' : ''}">
+           ${manThumb
+             ? `<img src="${mediaUrl(g.sys_id, manThumb)}" alt="설명서 표지" loading="lazy" />`
+             : `<div class="doc"><b>설명서</b><span>${esc(regionName(manR.region))}</span><i>누르면 열립니다</i></div>`}
          </div>
          <div class="cap"><b>원본 설명서</b>스캔본 · ${esc(regionName(manR.region))}</div>
        </div>` : '';
