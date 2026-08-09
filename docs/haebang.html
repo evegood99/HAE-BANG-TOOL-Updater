@@ -20,7 +20,7 @@
 <meta property="og:title" content="해방툴 (HAE-BANG Rom Setting Tools)" />
 <meta property="og:description" content="AI와 레트로 감성이 만난 새로운 ROM 매니저. 수천 개의 ROM을 한 번에 정리하세요." />
 <meta property="og:type" content="website" />
-<meta property="og:image" content="assets/icon.png" />
+<meta property="og:image" content="assets/hb_tool.png" />
 <link rel="icon" href="assets/favicon.ico" />
 <link rel="preconnect" href="https://cdn.jsdelivr.net" />
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -97,14 +97,16 @@
   .badge{display:inline-flex; align-items:center; gap:7px; font-size:12.5px; font-weight:700; color:var(--muted);
     border:1px solid var(--border); background:var(--surface); padding:6px 11px; border-radius:999px}
   .badge .dot{width:7px; height:7px; border-radius:50%; background:var(--emerald); box-shadow:0 0 10px var(--emerald)}
-  /* 히어로 워드마크 로고 (크게 + 글로우 + 샤인 스윕) */
+  /* 히어로 로고 (글로우 + 샤인 스윕). 가로형 워드마크에서 정사각 아트워크로 바뀌어
+     폭을 줄였다 — 430px 그대로 두면 첫 화면을 아이콘이 다 먹는다. */
   .hero-logo{position:relative; display:inline-block; margin-bottom:24px; animation:logoIn .85s cubic-bezier(.2,.85,.25,1) both}
-  .hero-logo img{display:block; width:min(430px,76vw); height:auto;
-    filter:drop-shadow(0 8px 28px rgba(34,211,238,.30)) drop-shadow(0 3px 14px rgba(139,92,246,.28))}
+  .hero-logo img{display:block; width:min(320px,66vw); height:auto;
+    filter:drop-shadow(0 12px 34px rgba(34,197,94,.38)) drop-shadow(0 3px 14px rgba(74,222,128,.26))}
   .hero-logo::after{content:""; position:absolute; inset:0; pointer-events:none;
-    background:linear-gradient(112deg, transparent 34%, rgba(255,255,255,.62) 48%, transparent 60%);
+    background:linear-gradient(112deg, transparent 34%, rgba(226,255,238,.5) 48%, transparent 60%);
     background-size:260% 100%; background-position:135% 0;
-    -webkit-mask:url(assets/logo.png) no-repeat center/contain; mask:url(assets/logo.png) no-repeat center/contain;
+    -webkit-mask:url(assets/hb_tool.png) no-repeat center/contain;
+    mask:url(assets/hb_tool.png) no-repeat center/contain;
     animation:shine 6s ease-in-out 1.4s infinite}
   @keyframes logoIn{from{opacity:0; transform:translateY(16px) scale(.965)} to{opacity:1; transform:none}}
   @keyframes shine{0%,58%{background-position:135% 0} 84%,100%{background-position:-45% 0}}
@@ -423,7 +425,7 @@
     <div class="wrap hero-grid">
       <div class="reveal in">
         <div class="hero-logo">
-          <img src="assets/logo.png" alt="HAE-BANG Rom Setting Tools" />
+          <img src="assets/hb_tool.png" alt="해방툴 (HAE-BANG Rom Setting Tools)" />
         </div>
         <div class="badge-row">
           <span class="badge"><span class="dot"></span>v1.0.0 · Windows</span>
