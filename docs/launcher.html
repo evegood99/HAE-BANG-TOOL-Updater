@@ -20,7 +20,7 @@
 <meta property="og:title" content="HB런처 — 3D 케이스 게임 런처" />
 <meta property="og:description" content="케이스를 열고, 꽂고, 플레이. HAE-BANG RETRO의 새 프로젝트." />
 <meta property="og:type" content="website" />
-<meta property="og:image" content="assets/hbl_jewel.jpg" />
+<meta property="og:image" content="assets/hb_launcher_v2.png" />
 <link rel="icon" href="assets/favicon_v2.ico" />
 <link rel="preconnect" href="https://cdn.jsdelivr.net" />
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -74,6 +74,35 @@
   .btn-ghost:hover{border-color:var(--cyan); color:#fff; transform:translateY(-2px)}
 
   .hero{padding:80px 0 26px; text-align:center}
+  /* 대표 아이콘 + 워드마크 — 홈·해방툴 히어로와 같은 구조.
+     아트워크 네 귀퉁이에 A/B/X/Y 프레임이 있어 모서리를 둥글리지 않는다(잘린다).
+     샤인 띠는 알파를 마스크로 써서 아이콘 모양대로만 지나간다. */
+  .hero-logo{display:flex; align-items:center; justify-content:center; gap:17px; margin-bottom:22px;
+    animation:logoIn .85s cubic-bezier(.2,.85,.25,1) both}
+  .hbl-ico{position:relative; display:inline-block; flex:0 0 auto}
+  .hbl-ico img{display:block; width:min(116px,25vw); height:auto;
+    filter:drop-shadow(0 10px 26px rgba(34,197,94,.34))}
+  .hbl-ico::after{content:""; position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(112deg, transparent 34%, rgba(226,255,238,.5) 48%, transparent 60%);
+    background-size:260% 100%; background-position:135% 0;
+    -webkit-mask:url(assets/hb_launcher_v2.png) no-repeat center/contain;
+    mask:url(assets/hb_launcher_v2.png) no-repeat center/contain;
+    animation:shine 6s ease-in-out 1.4s infinite}
+  .hbl-word{display:flex; flex-direction:column; gap:6px; text-align:left; min-width:0}
+  .hbl-word b{font-size:clamp(26px,4.2vw,46px); font-weight:900; letter-spacing:-.5px; line-height:1;
+    background:linear-gradient(110deg,#15803d 0%,#22c55e 20%,#4ade80 33%,#dcffe9 45%,#4ade80 57%,#22c55e 70%,#15803d 100%);
+    background-size:240% 100%; background-position:135% 0;
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter:drop-shadow(0 6px 22px rgba(34,197,94,.34));
+    animation:shine 6s ease-in-out 1.4s infinite}
+  .hbl-word i{font-style:normal; font-size:clamp(10px,1.4vw,13.5px); font-weight:800;
+    letter-spacing:.18em; color:#22c55e; white-space:nowrap}
+  @keyframes logoIn{from{opacity:0; transform:translateY(16px) scale(.965)} to{opacity:1; transform:none}}
+  @keyframes shine{0%,58%{background-position:135% 0} 84%,100%{background-position:-45% 0}}
+  @media (max-width:560px){
+    .hero-logo{gap:12px}
+    .hbl-word i{letter-spacing:.1em}
+  }
   .badge{display:inline-flex; align-items:center; gap:7px; font-size:12.5px; font-weight:700; color:var(--muted);
     border:1px solid var(--border); background:var(--surface); padding:6px 11px; border-radius:999px}
   .badge .dot{width:7px; height:7px; border-radius:50%; background:var(--gold); box-shadow:0 0 10px var(--gold)}
@@ -212,7 +241,13 @@
   <!-- HERO -->
   <section class="hero">
     <div class="wrap">
-      <span class="eyebrow">HB LAUNCHER · IN DEVELOPMENT</span>
+      <div class="hero-logo">
+        <span class="hbl-ico"><img src="assets/hb_launcher_v2.png" alt="HB런처 아이콘" /></span>
+        <span class="hbl-word">
+          <b>HB LAUNCHER</b>
+          <i data-ko="3D 케이스 게임 런처" data-en="3D CASE GAME LAUNCHER">3D 케이스 게임 런처</i>
+        </span>
+      </div>
       <h1 class="hero-title">
         <span data-ko="케이스를 열고, 꽂고," data-en="Open the case, slot it in,">케이스를 열고, 꽂고,</span>
         <span class="grad-text" data-ko="플레이." data-en="play.">플레이.</span>
