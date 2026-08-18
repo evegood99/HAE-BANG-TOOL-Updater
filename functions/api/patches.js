@@ -5,6 +5,12 @@
  * 패치를 올릴 때마다 두 곳을 고쳐야 하므로, README 를 읽어 그대로 쓴다.
  * 버전·상태·스크린샷은 표에서, 내려받기 수와 파일 정보는 Releases API 에서 가져와 합친다.
  *
+ * ⚠️ 내려받기 수는 **그 게임의 모든 릴리스를 합산**한다. GitHub 의 download_count 는
+ * 릴리스(태그)별로 매겨져서, 새 버전을 올리면 README 표가 새 태그를 가리키게 되고
+ * 이전 버전에 쌓인 수가 통째로 빠져 화면에는 0 으로 보인다(버밀리온 v0.9 의 734회가
+ * v0.96 을 올리는 순간 사라졌다). 그래서 태그에서 버전 꼬리(-v0.96)를 뗀 이름으로
+ * 묶어 전 버전을 더한다.
+ *
  * GitHub API 는 미인증이면 IP당 시간 60회라 엣지 캐시(6시간)로 아낀다.
  * 표 형식이 바뀌어 파싱이 0건이 되면 아래 FALLBACK 으로 화면이 비지 않게 한다.
  */
@@ -59,6 +65,14 @@ async function build(fresh) {
     if (!parsed) items = FALLBACK.slice();
 
     const byTag = new Map(releases.map((r) => [String(r.tag_name).toLowerCase(), r]));
+    // 게임별 누적 내려받기 수 — 태그의 버전 꼬리를 뗀 이름으로 전 버전을 더한다.
+    const totalBySlug = new Map();
+    for (const r of releases) {
+      const slug = tagSlug(r.tag_name);
+      if (!slug) continue;
+      const n = (r.assets || []).reduce((a, x) => a + (x.download_count || 0), 0);
+      totalBySlug.set(slug, (totalBySlug.get(slug) || 0) + n);
+    }
     const games = items.map((it) => {
       const rel = it.tag ? byTag.get(it.tag.toLowerCase()) : null;
       const asset = rel && (rel.assets || [])[0];
@@ -81,7 +95,9 @@ async function build(fresh) {
         download: asset ? asset.browser_download_url : null,
         file: asset ? asset.name : null,
         size: asset ? asset.size : null,
-        downloads: rel ? (rel.assets || []).reduce((a, x) => a + (x.download_count || 0), 0) : 0,
+        // 표가 가리키는 판만이 아니라 그 게임의 모든 판을 더한다. 표에 릴리스 링크가
+        // 아직 없어도 폴더 이름이 태그와 같으면 잡히도록 폴더 이름으로도 찾아 본다.
+        downloads: totalBySlug.get(it.tag ? tagSlug(it.tag) : folderSlug(it.path)) || 0,
         date: rel ? String(rel.published_at || '').slice(0, 10) : null,
       };
     });
@@ -167,6 +183,13 @@ const clean = (s) => String(s || '').replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27
 const trimSlash = (s) => String(s || '').replace(/^\/+|\/+$/g, '');
 const encodePath = (p) => String(p).split('/').map(encodeURIComponent).join('/');
 const tagVersion = (t) => (String(t).match(/(v[\d.]+)$/) || [])[1] || '';
+// 'vermilion-v0.96' → 'vermilion' (버전 꼬리를 뗀 게임 이름)
+const tagSlug = (t) => String(t || '').toLowerCase().replace(/-v[\d.]+$/, '');
+// 'md/Minato-no-Traysia/' → 'minato-no-traysia'
+const folderSlug = (p) => {
+  const parts = trimSlash(p).split('/');
+  return (parts[parts.length - 1] || '').toLowerCase();
+};
 
 function json(obj, maxAge = 0, status = 200) {
   return new Response(JSON.stringify(obj), {
