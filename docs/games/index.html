@@ -110,7 +110,7 @@
    미디어 워커에는 핫링크 가드가 걸려 있어 localhost 에서 바로 부르면 막힌다. */
 const DEV = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
 const THUMB_BASE = DEV ? '/thumb'
-  : 'https://pub-ce7fb67413a8472b9d565037b8fbd5ef.r2.dev';
+  : 'https://cdn.evegoodretro.com/thumb';
 const thumbUrl = (sysId, gameId) => `${THUMB_BASE}/${sysId}/${gameId}.webp`;
 const nf = new Intl.NumberFormat('ko-KR');
 
