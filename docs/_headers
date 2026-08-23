@@ -1,7 +1,0 @@
-/assets/hbl_demo.mp4
-  Cache-Control: public, max-age=600, must-revalidate
-  X-HBS-Rule: demo
-
-/assets/hbl_demo_poster.jpg
-  Cache-Control: public, max-age=600, must-revalidate
-  X-HBS-Rule: demo
