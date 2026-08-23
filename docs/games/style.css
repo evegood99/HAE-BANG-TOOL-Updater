@@ -109,6 +109,16 @@ header{position:sticky; top:0; z-index:50; backdrop-filter:blur(14px);
 
 /* ---------- 상태 ---------- */
 .loading,.error{padding:40px 0; text-align:center; color:var(--muted); font-size:14px}
+/* 내용은 API 응답 뒤 #main 에 통째로 들어온다. 그 전까지 자리를 잡아 두지 않으면
+   40px 짜리 상자가 갑자기 한 페이지로 자라며 아래가 전부 밀린다(CLS). */
+#main .loading{min-height:100vh; display:flex; align-items:center; justify-content:center}
+/* 아래 자리들도 API 응답 뒤 통째로 갈아 끼운다(#today 오늘의 게임, #plats 기종 목록,
+   #grid 게임 격자, #bars 연도 막대). 실제 내용이 더 크면 자연히 늘어나므로
+   빈 칸이 남을 일은 거의 없다 — 기종 49개·게임 수십 개가 들어오는 자리다. */
+#today{min-height:300px}
+#plats{min-height:50vh}
+#grid{min-height:70vh}
+#bars{min-height:60vh}
 .error{color:#fb7185}
 
 footer{border-top:1px solid var(--border); margin-top:40px; padding:26px 0; color:var(--faint); font-size:12.5px}
@@ -227,7 +237,10 @@ footer a{color:var(--muted)}
   pointer-events:none; max-height:0; margin:0; overflow:hidden}
 /* ② 다 돌아간 뒤 케이스는 물러나고 그 자리를 전개도가 이어받는다 */
 .case{position:relative; width:100%}
-.flip{position:relative; width:100%; transform-style:preserve-3d; cursor:pointer;
+/* 자식이 모두 absolute 라 높이가 0 이다. JS 가 이미지를 받은 뒤 style.height 를 넣어 주는데,
+   그때까지 자리를 비워 두면 케이스가 나타나는 순간 아래가 통째로 밀린다(CLS).
+   비율만 잡아 두면 JS 가 넣는 height 가 이겨서 실제 케이스 모양은 그대로다. */
+.flip{position:relative; width:100%; aspect-ratio:3/4; transform-style:preserve-3d; cursor:pointer;
   transition:transform .9s cubic-bezier(.22,.8,.24,1), height .9s cubic-bezier(.22,.8,.24,1)}
 .flip.on{transform:rotateY(180deg)}
 .flip .face{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
