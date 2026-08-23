@@ -24,6 +24,43 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" />
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 <link rel="stylesheet" href="style.css" />
+<script>
+/* CLS 진단 — 주소에 ?clsdebug 를 붙였을 때만 켠다(평소엔 아무 일도 하지 않는다).
+   Cloudflare 가 알려 주는 요소는 '밀린 요소'라 원인과 다를 수 있어, 무엇이 언제
+   얼마나 밀었는지 직접 본다. 콘솔에서 예약높이 대 최종높이를 비교하면
+   min-height 를 감이 아니라 수치로 맞출 수 있다. */
+(function () {
+  if (!new URLSearchParams(location.search).has('clsdebug')) return;
+  var total = 0;
+  try {
+    new PerformanceObserver(function (list) {
+      list.getEntries().forEach(function (e) {
+        if (e.hadRecentInput) return;
+        total += e.value;
+        console.log('[CLS] +' + e.value.toFixed(4) + ' (누적 ' + total.toFixed(4) + ')',
+          (e.sources || []).map(function (s) {
+            return { node: s.node, prev: s.previousRect, cur: s.currentRect };
+          }));
+      });
+    }).observe({ type: 'layout-shift', buffered: true });
+  } catch (err) { console.warn('layout-shift 관측 불가', err); }
+  addEventListener('load', function () {
+    setTimeout(function () {
+      ['main', 'today', 'plats', 'grid', 'bars'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var cs = getComputedStyle(el);
+        console.log('[CLS] #' + id + ' 예약 ' + cs.minHeight + ' / 최종 ' +
+                    Math.round(el.getBoundingClientRect().height) + 'px');
+      });
+      console.log('[CLS] 폰트 ' + document.fonts.status +
+                  ' / 뷰포트 ' + innerWidth + 'x' + innerHeight +
+                  ' / 누적 ' + total.toFixed(4));
+    }, 1500);
+  });
+})();
+</script>
+
 </head>
 <body>
 
