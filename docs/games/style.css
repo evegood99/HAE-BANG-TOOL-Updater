@@ -237,10 +237,11 @@ footer a{color:var(--muted)}
   pointer-events:none; max-height:0; margin:0; overflow:hidden}
 /* ② 다 돌아간 뒤 케이스는 물러나고 그 자리를 전개도가 이어받는다 */
 .case{position:relative; width:100%}
-/* 자식이 모두 absolute 라 높이가 0 이다. JS 가 이미지를 받은 뒤 style.height 를 넣어 주는데,
-   그때까지 자리를 비워 두면 케이스가 나타나는 순간 아래가 통째로 밀린다(CLS).
-   비율만 잡아 두면 JS 가 넣는 height 가 이겨서 실제 케이스 모양은 그대로다. */
-.flip{position:relative; width:100%; aspect-ratio:3/4; transform-style:preserve-3d; cursor:pointer;
+/* 자식이 모두 absolute 라 높이가 0 이다. 이미지가 도착하면 setH() 가 그 장의 실제 비율로
+   style.aspectRatio 를 덮어쓰지만, 그 전까지 자리를 비워 두면 케이스가 나타나는 순간
+   아래가 통째로 밀린다(CLS). --case-ratio 는 game.html 이 기종별 중앙값으로 넣어 준다
+   (썸네일 65,008장 실측). 값이 없으면 전 기종 중앙값 0.824 를 쓴다. */
+.flip{position:relative; width:100%; aspect-ratio:var(--case-ratio,0.824); transform-style:preserve-3d; cursor:pointer;
   transition:transform .9s cubic-bezier(.22,.8,.24,1), height .9s cubic-bezier(.22,.8,.24,1)}
 .flip.on{transform:rotateY(180deg)}
 .flip .face{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
