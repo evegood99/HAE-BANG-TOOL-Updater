@@ -233,6 +233,17 @@
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && dm.classList.contains('open')) open(false);
     });
+
+    // 해방툴(앱)의 후원 창에서 '홈페이지에서 후원 알리기'로 넘어온 경우 바로 열어 준다.
+    // 앱은 로컬 WebView 라 Turnstile 위젯을 띄울 수 없어, 알리는 폼은 이쪽에서 받는다.
+    if (/[?&]donate=1(?:&|$)/.test(location.search) || location.hash === '#donate') {
+      open(true);
+      // 후원 자체보다 '알리기'가 목적이라 폼이 보이는 자리까지 내려 준다.
+      setTimeout(function () {
+        var f = document.getElementById('dm-form');
+        if (f && f.scrollIntoView) f.scrollIntoView({ block: 'center' });
+      }, 60);
+    }
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
