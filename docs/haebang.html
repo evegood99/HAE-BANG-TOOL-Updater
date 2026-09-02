@@ -859,7 +859,11 @@
     document.documentElement.lang = l;
     document.querySelectorAll('[data-ko]').forEach(function(el){
       var v = el.getAttribute('data-' + l);
-      if (v != null) el.textContent = v;
+      if (v == null) return;
+      // data-ko / data-en 은 원래 '글자만' 담는 약속이라 textContent 로 넣는다.
+      // 다운로드 안내처럼 굵게 짚어야 하는 문장에는 <b> 를 쓰는데, 그대로 두면
+      // 태그가 글자로 보인다. 태그가 든 값만 HTML 로 넣는다(우리가 쓴 정적 문구다).
+      if (v.indexOf('<') >= 0) el.innerHTML = v; else el.textContent = v;
     });
     document.getElementById('langBtn').textContent = (l === 'ko') ? 'EN' : '한';
     try { localStorage.setItem('hb_lang', l); } catch(e){}
