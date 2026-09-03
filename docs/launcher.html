@@ -141,6 +141,9 @@
   .shot .cap{padding:12px 15px; border-top:1px solid var(--border)}
   .shot .cap b{display:block; font-size:13.5px; font-weight:700}
   .shot .cap span{font-size:12px; color:var(--muted)}
+  /* 실기기 영상 2단 — 카메라 촬영(소리 있음)이라 자동재생 대신 클릭 재생 */
+  .live2{display:grid; grid-template-columns:repeat(2,1fr); gap:18px; margin-bottom:18px}
+  .live2 .shot video{display:block; width:100%; aspect-ratio:16/9; background:#0a0c13}
   .dev-note{text-align:center; font-size:12.5px; color:var(--faint); margin-top:16px}
 
   /* 특징 카드 */
@@ -171,6 +174,7 @@
     .steps{grid-template-columns:1fr 1fr}
     .step:not(:last-child)::after{display:none}
     .shots{grid-template-columns:1fr}
+    .live2{grid-template-columns:1fr}
     .fgrid{grid-template-columns:1fr}
   }
   /* 모바일 메뉴 — 좁은 화면에서 상단 메뉴가 숨겨지므로 햄버거로 같은 항목을 낸다 */
@@ -302,6 +306,24 @@
           <b data-ko="▶ 실제 동작 영상" data-en="▶ The launcher in motion">▶ 실제 동작 영상</b>
           <span data-ko="기종 진열대를 훑고 → 케이스를 열어 앞뒤로 살펴보고 → TV로 플레이 영상을 띄우고 → 즐겨찾기에 꽂고 → 카트리지·디스크를 실물 본체에 꽂아 실행까지. 베타 0.4 빌드를 그대로 녹화한 2분 2초"
                 data-en="Browse the system shelf → open cases and look them over → play the gameplay video on the TV → pin a favourite to My Picks → then slot the cartridge or disc into the real console and launch. 2min 2sec recorded straight from the beta 0.4 build">기종 진열대를 훑고 → 케이스를 열어 앞뒤로 살펴보고 → TV로 플레이 영상을 띄우고 → 즐겨찾기에 꽂고 → 카트리지·디스크를 실물 본체에 꽂아 실행까지. 베타 0.4 빌드를 그대로 녹화한 2분 2초</span>
+        </div>
+      </div>
+
+      <!-- 실기기 영상 — 카메라로 찍은 실물. 소리가 있어 자동재생 대신 클릭 재생 -->
+      <div class="live2 reveal">
+        <div class="shot">
+          <video controls playsinline preload="none" poster="assets/hbl_ondevice_poster.jpg"
+                 aria-label="RG 476H 실기기 구동 영상">
+            <source src="assets/hbl_ondevice.mp4" type="video/mp4" />
+          </video>
+          <div class="cap"><b data-ko="▶ 실기기 구동 — RG 476H" data-en="▶ On real hardware — RG 476H">▶ 실기기 구동 — RG 476H</b><span data-ko="안드로이드 핸드헬드에서 그대로 — 진열대, TV 플레이 영상, 케이스 개봉, 게임 실행, 옵션까지" data-en="Straight on an Android handheld — the shelf, TV gameplay video, opening cases, launching a game, and the options">안드로이드 핸드헬드에서 그대로 — 진열대, TV 플레이 영상, 케이스 개봉, 게임 실행, 옵션까지</span></div>
+        </div>
+        <div class="shot">
+          <video controls playsinline preload="none" poster="assets/hbl_sync_poster.jpg"
+                 aria-label="해방툴에서 HB런처로 전송하는 영상">
+            <source src="assets/hbl_sync.mp4" type="video/mp4" />
+          </video>
+          <div class="cap"><b data-ko="▶ 해방툴 → HB런처 전송" data-en="▶ Rom Tool → HB Launcher">▶ 해방툴 → HB런처 전송</b><span data-ko="해방툴의 [HB런처] 내보내기가 롬·미디어를 기기로 밀어 넣는다 — 기기 화면에 진행이 그대로 뜨고, 끝나면 새 시스템이 진열대에 선다" data-en="The Rom Tool's HB Launcher export pushes ROMs and media to the device — progress shows right on the device screen, and the new systems stand on the shelf when it's done">해방툴의 [HB런처] 내보내기가 롬·미디어를 기기로 밀어 넣는다 — 기기 화면에 진행이 그대로 뜨고, 끝나면 새 시스템이 진열대에 선다</span></div>
         </div>
       </div>
 
