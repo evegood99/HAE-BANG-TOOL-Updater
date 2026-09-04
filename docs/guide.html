@@ -16,7 +16,7 @@
 })();
 </script>
 <title>사용 가이드 · HAE-BANG Rom Setting Tools</title>
-<meta name="description" content="HAE-BANG Rom Setting Tools 전체 기능 매뉴얼 — 시스템 추가·재스캔, 메타/미디어 편집, 믹스 이미지, 컨트롤러 설정, AI·ScreenScraper 설정, 내보내기까지 상세 안내." />
+<meta name="description" content="HAE-BANG Rom Setting Tools 전체 기능 매뉴얼 — 시스템 추가·재스캔, 메타/미디어 편집, 3D 박스, 한글화 패치 적용, 믹스 이미지, 컨트롤러·프론트엔드 설정, AI·ScreenScraper 설정, 내보내기, HB런처 전송, 도구(APK 보관함)까지 상세 안내." />
 <link rel="icon" href="assets/favicon_v2.ico" />
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" />
@@ -233,8 +233,8 @@
       <span class="en-only"><span class="grad-text">User Guide</span> — every feature, explained</span>
     </h1>
     <p>
-      <span class="ko-only">시스템 추가부터 메타·미디어 편집, 컨트롤러 설정, 기기 내보내기와 <strong>가져오기</strong>, <strong>기기 탐색기</strong>까지 — HAE-BANG Rom Setting Tools가 다루는 모든 기능을 순서대로 정리한 매뉴얼입니다.</span>
-      <span class="en-only">From adding systems to editing metadata &amp; media, controller mapping, exporting to devices, <strong>importing</strong> existing libraries and the <strong>device browser</strong> — a complete manual for everything HAE-BANG Rom Setting Tools can do.</span>
+      <span class="ko-only">시스템 추가부터 메타·미디어 편집, <strong>한글화 패치 적용</strong>, 컨트롤러·프론트엔드 설정, 기기 내보내기와 <strong>가져오기</strong>, <strong>HB런처 전송</strong>, <strong>기기 탐색기</strong>, <strong>도구(APK 보관함)</strong>까지 — HAE-BANG Rom Setting Tools가 다루는 모든 기능을 순서대로 정리한 매뉴얼입니다. (베타 v1.0.4 기준 · v1.0.5 진행 중)</span>
+      <span class="en-only">From adding systems to editing metadata &amp; media, <strong>applying translation patches</strong>, controller &amp; front-end settings, exporting to devices, <strong>importing</strong> existing libraries, <strong>sending to HB Launcher</strong>, the <strong>device browser</strong> and <strong>Tools (APK library)</strong> — a complete manual for everything HAE-BANG Rom Setting Tools can do. (As of beta v1.0.4 · v1.0.5 in progress)</span>
     </p>
   </div>
 </section>
@@ -246,7 +246,8 @@
     <a href="#start"><span class="ko-only">1. 시작하기 · 기본 개념</span><span class="en-only">1. Getting Started</span></a>
     <a href="#system"><span class="ko-only">2. 시스템 관리</span><span class="en-only">2. Managing Systems</span></a>
     <a class="sub" href="#add-system"><span class="ko-only">시스템 추가</span><span class="en-only">Add a system</span></a>
-    <a class="sub" href="#add-roms"><span class="ko-only">+폴더 / +파일 / 복사·이동</span><span class="en-only">+Folder / +Files / Copy·Move</span></a>
+    <a class="sub" href="#add-roms"><span class="ko-only">+폴더 / +파일 / 우클릭 메뉴</span><span class="en-only">+Folder / +Files / right-click menu</span></a>
+    <a class="sub" href="#patch"><span class="ko-only">ROM 패치 · M3U 병합</span><span class="en-only">Patch ROM · Merge M3U</span></a>
     <a class="sub" href="#rescan"><span class="ko-only">재스캔</span><span class="en-only">Re-scan</span></a>
     <a href="#library"><span class="ko-only">3. 게임 정보 & 미디어 보기</span><span class="en-only">3. Game Info & Media</span></a>
     <a href="#meta"><span class="ko-only">4. 메타 편집기</span><span class="en-only">4. Meta Editor</span></a>
@@ -259,16 +260,19 @@
     <a class="sub" href="#region"><span class="ko-only">리전 우선순위</span><span class="en-only">Region priority</span></a>
     <a class="sub" href="#ai"><span class="ko-only">AI 설정</span><span class="en-only">AI settings</span></a>
     <a class="sub" href="#scraper"><span class="ko-only">ScreenScraper</span><span class="en-only">ScreenScraper</span></a>
+    <a class="sub" href="#frontend"><span class="ko-only">프론트엔드 설정 (코어/실행기)</span><span class="en-only">Front-end settings (cores)</span></a>
     <a href="#export"><span class="ko-only">8. 내보내기</span><span class="en-only">8. Export</span></a>
     <a class="sub" href="#export-target"><span class="ko-only">대상 기기 · 프론트엔드</span><span class="en-only">Target &amp; front-end</span></a>
     <a class="sub" href="#export-media"><span class="ko-only">내보낼 미디어</span><span class="en-only">Media to export</span></a>
     <a class="sub" href="#export-folder"><span class="ko-only">폴더 · 롬 경로</span><span class="en-only">Folders &amp; ROM paths</span></a>
     <a class="sub" href="#export-run"><span class="ko-only">전송 · 진행률</span><span class="en-only">Transfer &amp; progress</span></a>
-    <a href="#import"><span class="ko-only">9. 가져오기</span><span class="en-only">9. Import</span></a>
+    <a href="#hbl"><span class="ko-only">9. HB런처로 보내기</span><span class="en-only">9. Send to HB Launcher</span></a>
+    <a href="#import"><span class="ko-only">10. 가져오기</span><span class="en-only">10. Import</span></a>
     <a class="sub" href="#import-local"><span class="ko-only">내 컴퓨터에서</span><span class="en-only">From this PC</span></a>
     <a class="sub" href="#import-device"><span class="ko-only">기기에서</span><span class="en-only">From a device</span></a>
-    <a href="#browser"><span class="ko-only">10. 기기 탐색기 · 파일 편집</span><span class="en-only">10. Device Browser</span></a>
-    <a href="#etc"><span class="ko-only">11. 후원 · 업데이트</span><span class="en-only">11. Support · Updates</span></a>
+    <a href="#browser"><span class="ko-only">11. 기기 탐색기 · 파일 편집</span><span class="en-only">11. Device Browser</span></a>
+    <a href="#tools"><span class="ko-only">12. 도구 — APK 보관함</span><span class="en-only">12. Tools — APK Library</span></a>
+    <a href="#etc"><span class="ko-only">13. 후원 · 업데이트</span><span class="en-only">13. Support · Updates</span></a>
   </aside>
 
   <!-- ===== CONTENT ===== -->
@@ -284,12 +288,16 @@
       </p>
       <h3><span class="ko-only">화면 구성</span><span class="en-only">Screen layout</span></h3>
       <p>
-        <span class="ko-only">화면은 크게 <span class="hl">왼쪽의 시스템 목록</span>과 <span class="hl">오른쪽의 게임 목록/정보</span>로 나뉩니다. 시스템을 고르면 그 시스템의 게임들이 오른쪽에 뜨고, 게임을 고르면 정보·미디어·영상·매뉴얼을 볼 수 있습니다. 상단 우측에는 <strong>테마</strong>·<strong>언어(한/영, 재시작 없이 즉시 전환)</strong>·<strong>설정</strong>·<strong>후원 ♥</strong> 버튼이 있습니다.</span>
-        <span class="en-only">The screen is split into the <span class="hl">system list (left)</span> and the <span class="hl">game list / details (right)</span>. Pick a system to list its games; pick a game to see its info, media, video and manual. The top-right holds <strong>theme</strong>, <strong>language (KO/EN, switches instantly without a restart)</strong>, <strong>settings</strong>, and <strong>Donate ♥</strong>.</span>
+        <span class="ko-only">화면은 <span class="hl">왼쪽의 시스템 목록</span>, <span class="hl">가운데의 게임 목록</span>, <span class="hl">오른쪽의 게임 정보 패널</span>로 나뉩니다. 시스템을 고르면 그 시스템의 게임들이 가운데에 뜨고, 게임을 고르면 오른쪽에 정보·미디어·영상·매뉴얼이 펼쳐집니다(그동안 시스템 목록은 좁게 접힙니다). 상단 바 우측에는 <strong>Tools</strong>(도구 — APK 보관함)·<strong>⚙ 설정</strong>(언어·테마·AI·ScreenScraper)·<strong>♥ 후원</strong> 버튼이 있고, 앱 이름 옆에 현재 <strong>버전</strong>과 BETA / PLUS+ 배지가 표시됩니다.</span>
+        <span class="en-only">The screen is split into the <span class="hl">system list (left)</span>, the <span class="hl">game list (center)</span> and the <span class="hl">game info panel (right)</span>. Pick a system to list its games; pick a game and its info, media, video and manual open on the right (the system list folds narrow meanwhile). The top bar holds <strong>Tools</strong> (APK library), <strong>⚙ Settings</strong> (language, theme, AI, ScreenScraper) and <strong>♥ Donate</strong>, with the current <strong>version</strong> and BETA / PLUS+ badges next to the app name.</span>
+      </p>
+      <p>
+        <span class="ko-only">시스템 목록 위의 도구줄에는 <strong>+ 시스템</strong>, <strong>⬆ 내보내기</strong>, <strong>⬆ HB런처</strong>(초록 버튼) 와 아이콘 버튼 — ↻ 선택 재스캔, 프론트엔드 설정(코어/실행기), 🎮 컨트롤러 키설정, 🌐 전역 리전 우선순위, 🗑 선택 삭제 — 가 있습니다. 게임 목록 위에는 <strong>+ 폴더</strong>·<strong>+ 파일</strong>·<strong>복사</strong>·<strong>이동</strong>·<strong>삭제</strong>·검색이 있고, 디스크를 여러 장 고르면 <strong>M3U 병합</strong> 버튼이 나타납니다.</span>
+        <span class="en-only">The toolbar above the system list has <strong>+ System</strong>, <strong>⬆ Export</strong>, <strong>⬆ HB Launcher</strong> (green) and icon buttons — ↻ rescan selected, front-end settings (cores/launch), 🎮 controller mapping, 🌐 global region priority, 🗑 delete selected. Above the game list are <strong>+ Folder</strong>, <strong>+ Files</strong>, <strong>Copy</strong>, <strong>Move</strong>, <strong>Delete</strong> and search; select several discs and a <strong>Merge M3U</strong> button appears.</span>
       </p>
       <div class="tip">
-        <span class="ko-only"><b>기본 흐름</b> — ① 시스템 추가 → ② ROM 자동 매칭·미디어 다운로드 → ③ 필요하면 메타/미디어 편집 → ④ 기기로 내보내기. 이미 다른 프론트엔드로 세팅해 둔 라이브러리가 있다면 ①을 <a href="#import">가져오기</a>로 대체할 수 있습니다.</span>
-        <span class="en-only"><b>Typical flow</b> — ① add a system → ② auto-match ROMs &amp; download media → ③ tweak metadata/media if needed → ④ export to your device. If you already have a library set up in another front-end, you can replace ① with <a href="#import">Import</a>.</span>
+        <span class="ko-only"><b>기본 흐름</b> — ① 시스템 추가 → ② ROM 자동 매칭·미디어 다운로드 → ③ 필요하면 메타/미디어 편집 → ④ 기기로 내보내기(ES-DE 등 프론트엔드) 또는 <a href="#hbl">HB런처로 보내기</a>. 이미 다른 프론트엔드로 세팅해 둔 라이브러리가 있다면 ①을 <a href="#import">가져오기</a>로 대체할 수 있습니다.</span>
+        <span class="en-only"><b>Typical flow</b> — ① add a system → ② auto-match ROMs &amp; download media → ③ tweak metadata/media if needed → ④ export to your device (ES-DE and other front-ends) or <a href="#hbl">send to HB Launcher</a>. If you already have a library set up in another front-end, you can replace ① with <a href="#import">Import</a>.</span>
       </div>
       <div class="note">
         <span class="ko-only"><b>공개 버전(v1.0)을 쓰고 계신다면</b> — 일부 시스템(닌텐도 스위치 등)이 빠져 있고, 다음 개선은 메이저 업데이트(1.1 · 1.2 …) 때 한꺼번에 반영됩니다. <b>후원자 베타</b>는 마이너 업데이트를 계속 받고 시스템 제외도 없습니다 — <a href="haebang.html#download">다운로드</a>에서 두 갈래를 비교해 보세요.</span>
@@ -304,12 +312,13 @@
 
       <h3 id="add-system"><span class="ko-only">시스템 추가</span><span class="en-only">Add a system</span></h3>
       <p>
-        <span class="ko-only">왼쪽 목록의 <strong>시스템 추가</strong>를 눌러 시작합니다. 추가할 <strong>콘솔 종류</strong>(예: 메가드라이브, 슈퍼패미컴, PSX…)를 고르고, 그 콘솔의 <strong>ROM 폴더</strong>를 지정하면 됩니다.</span>
-        <span class="en-only">Click <strong>Add System</strong> on the left panel. Choose the <strong>console type</strong> (e.g. Mega Drive, Super Famicom, PSX…) and point it at that console's <strong>ROM folder</strong>.</span>
+        <span class="ko-only">왼쪽 목록의 <strong>+ 시스템</strong>을 누르면 먼저 <strong>추가 방식</strong>을 묻습니다 — <strong>로컬 (롬 파일)</strong>은 내 PC의 롬 폴더를 스캔해 자동 매칭하고, <strong>외부 세팅 정보 (가져오기)</strong>는 ES-DE·Pegasus 라이브러리나 안드로이드·SFTP 기기의 목록을 그대로 들여옵니다(<a href="#import">10장</a>). 로컬을 고르면 <strong>콘솔 종류</strong>(예: 메가드라이브, 슈퍼패미컴, PSX…)와 그 콘솔의 <strong>ROM 폴더</strong>를 지정합니다.</span>
+        <span class="en-only">Press <strong>+ System</strong> on the left panel and choose how to add — <strong>Local (ROM files)</strong> scans a ROM folder on this PC and auto-matches it, while <strong>External library (Import)</strong> pulls in an existing ES-DE / Pegasus library or a list from an Android / SFTP device (<a href="#import">chapter 10</a>). For Local, pick the <strong>console type</strong> (e.g. Mega Drive, Super Famicom, PSX…) and that console's <strong>ROM folder</strong>.</span>
       </p>
       <ol>
         <li><span class="ko-only"><strong>콘솔 종류 선택</strong> — 지원 시스템 목록에서 선택합니다. 시스템별로 인식하는 ROM 확장자가 정해져 있습니다.</span><span class="en-only"><strong>Pick the console</strong> from the supported list. Each system knows which ROM extensions to recognize.</span></li>
         <li><span class="ko-only"><strong>ROM 폴더 지정</strong> — 폴더를 고르면 하위의 ROM을 스캔합니다. (폴더 없이 <strong>빈 시스템</strong>으로 먼저 추가한 뒤 나중에 ROM을 넣어도 됩니다.)</span><span class="en-only"><strong>Choose the ROM folder</strong> — its ROMs are scanned. (You can also add an <strong>empty system</strong> first and add ROMs later.)</span></li>
+        <li><span class="ko-only"><strong>표시 이름 · 리전 접미사</strong> — 목록에 보일 이름을 정하고, 원하면 <strong>파일명 리전 태그를 제목 접미사로 표시</strong>를 켭니다 — <span class="path">(Korea)</span>는 <em>(정발판)</em>, <span class="path">(Japan)</span>은 <em>(일본판)</em>처럼 제목 뒤에 붙습니다. 기본은 꺼짐입니다.</span><span class="en-only"><strong>Display name · region suffix</strong> — set the name shown in the list and, if you like, turn on <strong>append filename region tag to title</strong> — <span class="path">(Korea)</span> and <span class="path">(Japan)</span> tags become a suffix on the title. Off by default.</span></li>
         <li><span class="ko-only"><strong>자동 매칭 + 미디어 다운로드</strong> — 파일명을 분석해 게임을 찾아 제목·장르·이미지·영상 등을 자동으로 채웁니다. 진행률은 0~20% 매칭, 20~95% 미디어 다운로드로 표시됩니다.</span><span class="en-only"><strong>Auto-match + media download</strong> — filenames are analyzed to identify each game and fill in title, genre, images, video, etc. Progress shows 0–20% matching, 20–95% media download.</span></li>
       </ol>
       <p>
@@ -317,23 +326,33 @@
         <span class="en-only">After adding, you can edit the system's <strong>display name</strong> and <strong>meta folder name</strong> on its row. The folder name is used as the system's folder when exporting (leave blank to use the standard name).</span>
       </p>
       <div class="note">
-        <span class="ko-only"><b>매칭 정확도</b> — 고유 알고리즘으로 <strong>한글 파일명을 포함해</strong> 수십 초 안에 수백 개 ROM을 매칭합니다. 매칭이 애매한 게임은 <strong>매칭 방식</strong> 열 색상으로 구분되며, 아래 <a href="#meta">메타 편집기</a>에서 직접 바로잡을 수 있습니다.</span>
-        <span class="en-only"><b>Accuracy</b> — a proprietary algorithm matches hundreds of ROMs in seconds, <strong>including Korean-named files</strong>. Uncertain matches are color-coded in the <strong>Matching</strong> column and can be fixed in the <a href="#meta">Meta Editor</a> below.</span>
+        <span class="ko-only"><b>매칭 정확도</b> — 고유 알고리즘으로 <strong>한글 파일명을 포함해</strong> 수십 초 안에 수백 개 ROM을 매칭합니다. 매칭이 애매한 게임은 <strong>매칭 방식</strong> 열 색상으로 구분되며, 아래 <a href="#meta">메타 편집기</a>에서 직접 바로잡을 수 있습니다. <a href="#ai">설정의 AI 사용</a>을 켜 두면 파일명만으로 확정이 안 되는 게임은 후보를 추려 LLM에게 최종 판정을 맡깁니다.</span>
+        <span class="en-only"><b>Accuracy</b> — a proprietary algorithm matches hundreds of ROMs in seconds, <strong>including Korean-named files</strong>. Uncertain matches are color-coded in the <strong>Matching</strong> column and can be fixed in the <a href="#meta">Meta Editor</a> below. With <a href="#ai">AI enabled in Settings</a>, games the filename alone can't settle are handed to the LLM with a shortlist of candidates.</span>
       </div>
 
-      <h3 id="add-roms"><span class="ko-only">게임 추가 · 복사 · 이동</span><span class="en-only">Adding, copying & moving games</span></h3>
-      <p><span class="ko-only">이미 만든 시스템에 게임을 더하거나 옮길 때 쓰는 기능입니다.</span><span class="en-only">Once a system exists, these add or move games within it.</span></p>
+      <h3 id="add-roms"><span class="ko-only">게임 추가 · 복사 · 이동 · 우클릭 메뉴</span><span class="en-only">Adding, copying, moving & the right-click menu</span></h3>
+      <p><span class="ko-only">이미 만든 시스템에 게임을 더하거나 옮길 때 쓰는 기능입니다. 게임 목록 위의 버튼과, 게임을 <strong>우클릭</strong>했을 때 뜨는 메뉴 두 곳에서 쓸 수 있습니다.</span><span class="en-only">Once a system exists, these add or move games within it — from the buttons above the game list, or from the <strong>right-click</strong> menu on a game.</span></p>
       <table class="ftable">
         <tr><th style="width:34%"><span class="ko-only">기능</span><span class="en-only">Feature</span></th><th><span class="ko-only">설명</span><span class="en-only">What it does</span></th></tr>
-        <tr><td><span class="ko-only">+ 롬폴더 추가</span><span class="en-only">+ Add ROM Folder</span></td><td><span class="ko-only">폴더를 골라 그 안의 ROM을 스캔해 현재 시스템에 추가합니다. 이미 있는 파일은 건너뜁니다.</span><span class="en-only">Pick a folder; its ROMs are scanned and added to the current system. Existing files are skipped.</span></td></tr>
-        <tr><td><span class="ko-only">+ 롬파일 추가</span><span class="en-only">+ Add ROM Files</span></td><td><span class="ko-only">개별 ROM 파일을 골라(또는 드래그드롭) 추가합니다.</span><span class="en-only">Select individual ROM files (or drag-and-drop) to add.</span></td></tr>
-        <tr><td><span class="ko-only">선택 게임 복사 / 이동</span><span class="en-only">Copy / Move selected</span></td><td><span class="ko-only">체크한 게임을 <strong>같은 종류의 다른 시스템</strong>으로 복사하거나 이동합니다. 같은 콘솔이라 미디어·캐시가 그대로 호환됩니다.</span><span class="en-only">Copy or move checked games to <strong>another system of the same type</strong>. Media and cache stay compatible since the console is identical.</span></td></tr>
+        <tr><td><span class="ko-only">+ 폴더</span><span class="en-only">+ Folder</span></td><td><span class="ko-only">폴더를 골라 그 안의 ROM을 스캔해 현재 시스템에 추가합니다. 이미 있는 파일은 건너뜁니다.</span><span class="en-only">Pick a folder; its ROMs are scanned and added to the current system. Existing files are skipped.</span></td></tr>
+        <tr><td><span class="ko-only">+ 파일</span><span class="en-only">+ Files</span></td><td><span class="ko-only">개별 ROM 파일을 골라(또는 드래그드롭) 추가합니다.</span><span class="en-only">Select individual ROM files (or drag-and-drop) to add.</span></td></tr>
+        <tr><td><span class="ko-only">복사 / 이동</span><span class="en-only">Copy / Move</span></td><td><span class="ko-only">체크한 게임을 <strong>같은 종류의 다른 시스템</strong>으로 복사하거나 이동합니다. 같은 콘솔이라 미디어·캐시가 그대로 호환됩니다. 여러 개를 체크한 채 우클릭하면 그 전부에 걸립니다.</span><span class="en-only">Copy or move checked games to <strong>another system of the same type</strong>. Media and cache stay compatible since the console is identical. Right-clicking with several checked applies to all of them.</span></td></tr>
         <tr><td><span class="ko-only">새 시스템으로 복사 / 이동</span><span class="en-only">Copy / Move to new</span></td><td><span class="ko-only">같은 종류의 <strong>새 빈 시스템</strong>을 만들어 선택 게임을 옮깁니다. (장르·지역별로 목록을 나눌 때 유용)</span><span class="en-only">Creates a <strong>new empty system</strong> of the same type and moves the selected games there. (Handy for splitting lists by genre/region.)</span></td></tr>
+        <tr><td><span class="ko-only">삭제</span><span class="en-only">Delete</span></td><td><span class="ko-only">체크한 게임의 <strong>정보만</strong> 목록에서 지웁니다. ROM 파일은 건드리지 않습니다.</span><span class="en-only">Removes the checked games' <strong>metadata only</strong>. ROM files are never touched.</span></td></tr>
       </table>
       <p>
-        <span class="ko-only">게임 목록에서는 <strong>모두 선택 / 해제</strong>, 체크박스 다중 선택, <strong>선택 게임 정보 삭제</strong>(ROM 파일은 지우지 않고 메타만 삭제), <strong>탐색기에서 열기</strong>도 지원합니다.</span>
-        <span class="en-only">The game list also supports <strong>check/uncheck all</strong>, multi-select checkboxes, <strong>Delete selected games' info</strong> (removes metadata only, never the ROM file), and <strong>Reveal in File Explorer</strong>.</span>
+        <span class="ko-only"><strong>우클릭 메뉴</strong>에는 메뉴 위쪽에 지금 고른 게임 이름·파일명이 보이고, <strong>메타 편집</strong> · <strong>패치 적용…</strong>(아래) · <strong>탐색기에서 보기</strong> · <strong>다른 시스템으로 복사/이동</strong> · <strong>삭제</strong>가 모여 있습니다. 게임 목록에서는 체크박스 다중 선택과 검색도 됩니다.</span>
+        <span class="en-only">The <strong>right-click menu</strong> names the selected game and file at the top and gathers <strong>Edit metadata</strong>, <strong>Patch ROM…</strong> (below), <strong>Show in Explorer</strong>, <strong>Copy / Move to another system</strong> and <strong>Delete</strong>. The game list also supports multi-select checkboxes and search.</span>
       </p>
+
+      <h3 id="patch"><span class="ko-only">ROM 패치 적용 · M3U 병합</span><span class="en-only">Patch ROM · Merge M3U</span></h3>
+      <p><span class="ko-only">게임을 우클릭해 <strong>패치 적용…</strong>을 누르면 그 ROM의 <strong>CRC32 · MD5 해시</strong>가 보이고, 항목마다 패치 파일을 지정해 바로 입힐 수 있습니다. 내 롬이 No-Intro 같은 대조표의 어느 판본인지 확인하고, <a href="https://evegoodretro.com/patches/">대한글화시대</a>에서 받은 <strong>한글화 패치</strong>를 툴 안에서 바로 적용하는 자리입니다.</span><span class="en-only">Right-click a game and choose <strong>Patch ROM…</strong> to see its <strong>CRC32 · MD5 hashes</strong> and apply a patch file per entry. Use it to check which No-Intro dump you have and to apply <strong>Korean translation patches</strong> from the <a href="https://evegoodretro.com/patches/">KR Patches</a> page without leaving the tool.</span></p>
+      <ul>
+        <li><span class="ko-only"><strong>지원 형식</strong> — IPS · IPS32 · BPS · UPS · PPF · APS · Xdelta, 드림캐스트 GD-ROM은 <strong>DCP</strong>(디스크 전체에 적용)까지.</span><span class="en-only"><strong>Formats</strong> — IPS, IPS32, BPS, UPS, PPF, APS and Xdelta, plus <strong>DCP</strong> for Dreamcast GD-ROMs (applies to the whole disc).</span></li>
+        <li><span class="ko-only"><strong>압축 파일</strong>은 그릇일 뿐이라 통째로 패치하지 않고 <strong>압축 안의 롬</strong>에 겁니다 — 한글화 패치는 대개 압축을 푼 롬 기준이기 때문입니다. 안쪽 항목의 해시도 함께 보여 줍니다. 7z는 기본 설정으로 다시 묶이고, <strong>CHD</strong>는 풀고 → 적용하고 → 다시 묶습니다(몇 분 소요).</span><span class="en-only"><strong>Archives</strong> are only containers, so the patch goes on the <strong>ROM inside</strong> — translation patches are normally built against the unzipped ROM. Hashes of the inner entries are shown too. 7z files are repacked with default settings; a <strong>CHD</strong> is extracted → patched → repacked (takes a few minutes).</span></li>
+        <li><span class="ko-only"><strong>폴더형 게임</strong>(PS1의 cue/bin 등)은 폴더째 새로 만들어 그 안의 파일을 바꿉니다.</span><span class="en-only"><strong>Folder games</strong> (e.g. PS1 cue/bin) are recreated as a new folder with the files replaced.</span></li>
+      </ul>
+      <p><span class="ko-only"><strong>M3U 병합</strong> — 여러 장짜리 CD 게임은 디스크 2장 이상을 체크하면 목록 위에 <strong>M3U 병합</strong> 버튼이 나타납니다. 누르면 <span class="path">.m3u</span> 하나로 묶여 목록에 한 줄로 합쳐지고, 에뮬레이터에서 디스크 교체도 알아서 됩니다. 원래 디스크 파일은 그대로 둡니다.</span><span class="en-only"><strong>Merge M3U</strong> — for multi-disc CD games, check two or more discs and a <strong>Merge M3U</strong> button appears above the list. It bundles them into one <span class="path">.m3u</span>, shown as a single entry, and emulators handle disc swapping on their own. The original disc files are kept.</span></p>
 
       <h3 id="rescan"><span class="ko-only">재스캔</span><span class="en-only">Re-scan</span></h3>
       <p><span class="ko-only">ROM 폴더가 바뀌었거나 매칭을 다시 돌리고 싶을 때 사용합니다. 세 가지 옵션이 있습니다.</span><span class="en-only">Use when the ROM folder changed or you want to re-run matching. Three options:</span></p>
@@ -350,12 +369,12 @@
     <section class="gsec" id="library">
       <p class="kicker">03 — VIEWING</p>
       <h2><span class="ko-only">게임 정보 & 미디어 보기</span><span class="en-only">Game Info & Media</span></h2>
-      <p><span class="ko-only">게임을 선택하면 오른쪽에 <strong>정보 · 미디어 · 영상 · 매뉴얼</strong> 탭이 나타납니다.</span><span class="en-only">Selecting a game reveals <strong>Info · Media · Video · Manual</strong> tabs on the right.</span></p>
+      <p><span class="ko-only">게임을 선택하면 오른쪽 정보 패널이 펼쳐집니다. 제목 옆에는 <strong>✎ 메타 편집</strong> · <strong>🎨 믹스 이미지 편집</strong> · <strong>📂 탐색기에서 보기</strong> · <strong>🎮 게임별 패드 설정</strong>(지원 시스템만) 버튼이 있고, 그 아래에 <strong>미디어 탭</strong> — 그 게임에 있는 종류만 — 과 이미지 무대, 장르·출시일·개발사·플레이어·파일명, 설명이 차례로 놓입니다.</span><span class="en-only">Selecting a game opens the info panel on the right. Next to the title are <strong>✎ Edit</strong>, <strong>🎨 Mix image editor</strong>, <strong>📂 Show in Explorer</strong> and <strong>🎮 per-game pad settings</strong> (supported systems only); below come the <strong>media tabs</strong> — only the kinds this game has — the image stage, genre / release / developer / players / filename, and the description.</span></p>
       <ul>
-        <li><span class="ko-only"><strong>게임정보</strong> — 제목(영/한), 설명, 장르, 출시일, 개발사, 플레이어 수.</span><span class="en-only"><strong>Info</strong> — title (EN/KR), description, genre, release date, developer, player count.</span></li>
-        <li><span class="ko-only"><strong>미디어</strong> — 아래 종류의 이미지를 넘겨 보고, 드래그로 이동·확대할 수 있습니다.</span><span class="en-only"><strong>Media</strong> — flip through the image types below; drag to pan / zoom.</span></li>
-        <li><span class="ko-only"><strong>게임영상</strong> — 트레일러/게임플레이 영상을 재생합니다.</span><span class="en-only"><strong>Video</strong> — plays the trailer / gameplay clip.</span></li>
-        <li><span class="ko-only"><strong>메뉴얼</strong> — 게임 설명서(PDF)를 페이지 뷰어로 보고, <strong>현재 페이지를 AI로 번역</strong>할 수 있습니다(설정에서 AI 입력 필요).</span><span class="en-only"><strong>Manual</strong> — view the game manual (PDF) page by page and <strong>AI-translate the current page</strong> (requires AI configured in Settings).</span></li>
+        <li><span class="ko-only"><strong>이미지</strong> — 탭을 눌러 종류를 바꾸고, ⛶ 로 크게 볼 수 있습니다.</span><span class="en-only"><strong>Images</strong> — switch kinds with the tabs; ⛶ enlarges.</span></li>
+        <li><span class="ko-only"><strong>리전 칩</strong> — 미디어 아래에 그 미디어가 있는 리전(us · jp · eu · kr …)이 칩으로 뜹니다. 누르면 <strong>그 종류만</strong> 그 리전으로 바뀝니다(캐시에 없으면 그 자리에서 내려받음). 예를 들어 박스아트는 일본판, 스크린샷은 북미판으로 둘 수 있고, 다시 누르면 기본 우선순위로 돌아갑니다. 이 선택은 믹스 이미지와 내보내기에도 반영됩니다.</span><span class="en-only"><strong>Region chips</strong> — below the media, the regions available for it (us · jp · eu · kr …) appear as chips. Click one to switch <strong>that kind only</strong> (downloaded on the spot if not cached) — e.g. Japanese box art with US screenshots. Click again to return to the default order. The choice carries into the mix image and exports.</span></li>
+        <li><span class="ko-only"><strong>영상</strong> — 트레일러/게임플레이 영상을 재생합니다.</span><span class="en-only"><strong>Video</strong> — plays the trailer / gameplay clip.</span></li>
+        <li><span class="ko-only"><strong>매뉴얼</strong> — 탭을 열면 <strong>표지 미리보기</strong>가 먼저 뜨고, 가운데 <strong>매뉴얼 내려받기</strong>를 눌렀을 때만 PDF를 받습니다. 받은 설명서는 페이지 뷰어(이전/다음·줌·전체화면)로 보고, <strong>가</strong> 버튼으로 <strong>현재 페이지를 AI 번역</strong>해 원본 위에 덮어 볼 수 있습니다(<a href="#ai">AI 설정</a> 필요). 결과가 마음에 안 들면 ↻ 로 다시 번역합니다.</span><span class="en-only"><strong>Manual</strong> — the tab shows the <strong>cover thumbnail</strong> first and fetches the PDF only when you press <strong>Download manual</strong>. Read it in the page viewer (prev/next, zoom, fullscreen) and press <strong>가</strong> to <strong>AI-translate the current page</strong> as an overlay (needs <a href="#ai">AI settings</a>); ↻ re-translates if the result reads poorly.</span></li>
       </ul>
       <p class="ko-only"><strong>미디어 종류</strong></p><p class="en-only"><strong>Media types</strong></p>
       <div class="chips">
@@ -366,11 +385,12 @@
         <span class="chip"><span class="ko-only">앞표지(Cover)</span><span class="en-only">Cover</span></span>
         <span class="chip"><span class="ko-only">케이스(Box Texture)</span><span class="en-only">Box texture</span></span>
         <span class="chip"><span class="ko-only">3D 박스</span><span class="en-only">3D box</span></span>
+        <span class="chip"><span class="ko-only">사이드바(케이스 측면)</span><span class="en-only">Sidebar (spine)</span></span>
         <span class="chip"><span class="ko-only">카트리지/CD(Support)</span><span class="en-only">Support (cart/CD)</span></span>
         <span class="chip"><span class="ko-only">영상</span><span class="en-only">Video</span></span>
         <span class="chip"><span class="ko-only">매뉴얼(PDF)</span><span class="en-only">Manual (PDF)</span></span>
       </div>
-      <div class="note"><span class="ko-only"><b>믹스 이미지</b>는 스크린샷·박스아트·로고·카트리지를 하나로 합성한 대표 이미지로, 프론트엔드에서 가장 보기 좋은 형태입니다. <a href="#mix">믹스 이미지 편집</a>에서 배치를 바꿀 수 있습니다.</span><span class="en-only">The <b>Mix image</b> composites screenshot, box art, logo and cartridge into one showcase image — the best-looking option in a front-end. Rearrange it in the <a href="#mix">Mix Image Editor</a>.</span></div>
+      <div class="note"><span class="ko-only"><b>믹스 이미지</b>는 스크린샷·박스아트·로고·카트리지를 하나로 합성한 대표 이미지로, 프론트엔드에서 가장 보기 좋은 형태입니다. <a href="#mix">믹스 이미지 편집</a>에서 배치를 바꿀 수 있습니다. <b>사이드바</b>는 케이스 측면(책등) 이미지로, 3D 박스의 옆면과 <a href="#hbl">HB런처</a> 3D 케이스의 책등 텍스처에 쓰입니다.</span><span class="en-only">The <b>Mix image</b> composites screenshot, box art, logo and cartridge into one showcase image — the best-looking option in a front-end. Rearrange it in the <a href="#mix">Mix Image Editor</a>. The <b>Sidebar</b> is the case spine image, used as the side face of 3D boxes and as the spine texture of <a href="#hbl">HB Launcher</a> cases.</span></div>
     </section>
 
     <!-- 4. META EDITOR -->
@@ -392,13 +412,13 @@
       <p><span class="ko-only">직접 고칠 수 있는 항목: <strong>제목(영문)</strong>, <strong>제목(한글)</strong>, <strong>게임 설명</strong>, <strong>장르</strong>, <strong>출시일</strong>, <strong>개발사</strong>, <strong>플레이어 수</strong>.</span><span class="en-only">Editable fields: <strong>Title (EN)</strong>, <strong>Title (KR)</strong>, <strong>Description</strong>, <strong>Genre</strong>, <strong>Release date</strong>, <strong>Developer</strong>, <strong>Players</strong>.</span></p>
 
       <h3 id="meta-media"><span class="ko-only">미디어 편집</span><span class="en-only">Media editing</span></h3>
-      <p><span class="ko-only">각 미디어 슬롯(타이틀·스크린샷·휠·커버·케이스·3D박스·서포트·영상·매뉴얼)마다 다음을 할 수 있습니다.</span><span class="en-only">For each media slot (title, screenshot, wheel, cover, box texture, 3D box, support, video, manual) you can:</span></p>
+      <p><span class="ko-only">오른쪽 미리보기 아래 <strong>미디어 교체</strong>에 슬롯(스크린샷·타이틀·앞표지·케이스·3D박스·사이드바·휠·서포트·영상·매뉴얼)이 있고, 각 슬롯의 <strong>편집</strong>을 누르면 미디어 편집 창이 열립니다. × 는 그 미디어를 지웁니다.</span><span class="en-only">Under the preview on the right, <strong>Replace media</strong> lists the slots (screenshot, title, cover, box texture, 3D box, sidebar, wheel, support, video, manual); <strong>Edit</strong> on a slot opens the media editor, and × removes that media.</span></p>
       <ul>
-        <li><span class="ko-only"><strong>불러오기</strong> — 내 PC 이미지 파일로 교체.</span><span class="en-only"><strong>Load</strong> — replace with an image file from your PC.</span></li>
-        <li><span class="ko-only"><strong>웹 이미지 검색 / URL</strong> — 인터넷에서 이미지를 찾아 가져오기. 구글 이미지 열기도 지원.</span><span class="en-only"><strong>Web image search / URL</strong> — fetch an image from the web; open Google Images too.</span></li>
-        <li><span class="ko-only"><strong>편집</strong> — 자르기, 배경 투명화, 정면화(서포트/케이스), 로고 투명 처리.</span><span class="en-only"><strong>Edit</strong> — crop, make background transparent, flatten (support/case), transparent-logo processing.</span></li>
-        <li><span class="ko-only"><strong>3D 박스 생성</strong> — 앞표지 이미지로 3D 박스 아트를 만듭니다.</span><span class="en-only"><strong>Generate 3D box</strong> — build 3D box art from the cover image.</span></li>
-        <li><span class="ko-only"><strong>영상 가져오기 · 자르기</strong> — YouTube 검색/URL로 영상을 받아 원하는 구간만 트림.</span><span class="en-only"><strong>Fetch / trim video</strong> — grab a clip via YouTube search/URL and trim to the segment you want.</span></li>
+        <li><span class="ko-only"><strong>불러오기</strong> — 내 PC 이미지 파일, URL, 또는 웹 이미지 검색으로 새 그림을 가져옵니다.</span><span class="en-only"><strong>Load</strong> — bring in a new picture from a file on your PC, a URL, or a web image search.</span></li>
+        <li><span class="ko-only"><strong>손질</strong> — <strong>자르기</strong>, <strong>투명화</strong>(단색 배경 전체), <strong>영역 투명화</strong>(클릭하면 이어진 색만, 끌면 사각형 안을 통째로 — 색이 섞인 로고에 유용), <strong>정면화</strong>(자동 물체 인식 또는 모서리 4점을 직접 찍기), <strong>크기조절</strong>, <strong>↶ 되돌리기</strong>.</span><span class="en-only"><strong>Touch-ups</strong> — <strong>Crop</strong>, <strong>Transparency</strong> (whole solid background), <strong>Erase region</strong> (click for the connected colour, drag to clear a whole rectangle — handy for multicoloured logos), <strong>Flatten</strong> (automatic, or place four corners yourself), <strong>Resize</strong>, <strong>↶ Undo</strong>.</span></li>
+        <li><span class="ko-only"><strong>조각 얹기</strong> — 케이스 슬롯에서는 <strong>+ 사이드바</strong>로 책등 조각을 바탕 위에 얹고, 끌어 옮기고 모서리로 크기를 맞춘 뒤 <strong>합치기</strong>로 한 장에 굽습니다.</span><span class="en-only"><strong>Pieces</strong> — on the box-texture slot, <strong>+ Sidebar</strong> lays the spine on top of the base; drag it into place, resize by the corners, then <strong>Merge</strong> bakes it into one image.</span></li>
+        <li><span class="ko-only"><strong>3D 박스 생성</strong> — 3D박스 슬롯에서 <strong>3D박스</strong>를 누르면 앞표지(와 사이드바)로 3D 박스를 만듭니다. 기종별로 실제 케이스 수천 장을 재어 맞춘 비율·기울기라 스크래퍼가 주는 박스와 거의 구분되지 않고, CD 기종은 힌지·투명 테두리가 있는 <strong>쥬얼 케이스</strong>로, 슈퍼패미컴·N64처럼 눕혀 놓는 상자는 가로형으로 그립니다. 사이드바가 있으면 그것이 옆면이 되고, <strong>두께</strong> 슬라이더로 조절하는 즉시 미리보기에 반영됩니다.</span><span class="en-only"><strong>Generate 3D box</strong> — on the 3D-box slot, <strong>3D box</strong> builds one from the cover (and sidebar). Proportions and tilt were measured from thousands of real boxes per system, so it is nearly indistinguishable from scraped art; CD systems get a <strong>jewel case</strong> with hinge and clear rim, and wide boxes (Super Famicom, N64) are drawn landscape. A sidebar becomes the side face, and the <strong>thickness</strong> slider updates the preview as you drag.</span></li>
+        <li><span class="ko-only"><strong>영상 가져오기 · 자르기</strong> — 영상 슬롯의 편집은 YouTube 검색/URL로 영상을 받아 원하는 구간만 트림합니다. 매뉴얼은 PDF 파일을 골라 넣습니다.</span><span class="en-only"><strong>Fetch / trim video</strong> — the video slot grabs a clip via YouTube search/URL and trims it to the segment you want. The manual slot takes a PDF file.</span></li>
       </ul>
       <div class="note"><span class="ko-only"><b>원본에 반영 & 리전</b> — 새로 만든/교체한 미디어는 <strong>리전</strong>을 지정해 저장합니다. 파일은 <span class="path">{게임ID}_{종류}_{리전}</span> 규칙으로 정규화됩니다. <strong>원본 반영</strong> 옵션을 켜면 현재 목록뿐 아니라 원본 미디어 소스에도 업로드됩니다(작성자 전용).</span><span class="en-only"><b>Region & source</b> — new/replaced media is saved with a chosen <strong>region</strong>. Files are canonicalized as <span class="path">{gameID}_{type}_{region}</span>. Enabling <strong>Update source</strong> uploads to the original media source, not just your local list (author-only).</span></div>
       <p><span class="ko-only"><strong>미매칭 전환</strong> — 잘못 매칭된 게임을 "매칭 안 됨" 상태로 되돌립니다. <strong>적용</strong>을 누르면 편집 내용이 저장되고 목록·믹스 이미지가 갱신됩니다.</span><span class="en-only"><strong>Convert to unmatched</strong> — resets a wrongly matched game to "unmatched." Press <strong>Apply</strong> to save edits and refresh the list & mix image.</span></p>
@@ -436,19 +456,28 @@
       <h2><span class="ko-only">전역 설정</span><span class="en-only">Global Settings</span></h2>
 
       <h3 id="region"><span class="ko-only">리전 우선순위</span><span class="en-only">Region priority</span></h3>
-      <p><span class="ko-only">한 게임에 여러 지역판 미디어(일본/북미/유럽/한국 등)가 있을 때, <strong>어느 지역을 우선</strong>으로 받고 표시할지 순서를 정합니다. 시스템별로 다른 순서를 저장할 수도 있습니다.</span><span class="en-only">When a game has media for multiple regions (JP/US/EU/KR…), set the <strong>preferred order</strong> for downloading and display. You can save a different order per system.</span></p>
-      <p><span class="ko-only">순위는 <strong>미디어 종류마다 따로</strong> 지정할 수 있습니다. 예를 들어 <em>박스아트는 일본판</em>을 쓰면서 <em>스크린샷은 북미판</em>을 쓰는 식입니다. 매뉴얼도 같은 순위를 따라 내려받습니다.</span><span class="en-only">Priorities can be set <strong>per media type</strong> — e.g. Japanese box art with US screenshots. Manuals follow the same ordering.</span></p>
+      <p><span class="ko-only">한 게임에 여러 지역판 미디어(일본/북미/유럽/한국 등)가 있을 때, <strong>어느 지역을 우선</strong>으로 받고 표시할지 순서를 정합니다. 시스템 목록 위의 <strong>🌐</strong> 버튼이 <strong>전역 기본</strong>이고, 시스템 행의 리전 버튼으로 <strong>그 시스템만의 순서</strong>를 따로 저장할 수 있습니다(전역 기본 사용으로 되돌리기 가능). 매뉴얼도 같은 순위를 따라 내려받습니다.</span><span class="en-only">When a game has media for multiple regions (JP/US/EU/KR…), set the <strong>preferred order</strong> for downloading and display. The <strong>🌐</strong> button above the system list is the <strong>global default</strong>; the region button on a system row saves an <strong>order for that system only</strong> (revertable to the global default). Manuals follow the same ordering.</span></p>
+      <p><span class="ko-only">게임 하나에서 <strong>미디어 종류별로</strong> 리전을 달리 쓰고 싶으면(예: <em>박스아트는 일본판</em>, <em>스크린샷은 북미판</em>) 정보 패널의 <a href="#library">리전 칩</a>으로 그 종류만 바꿉니다. 이 선택은 우선순위보다 앞서고, 믹스 이미지와 내보내기에도 그대로 반영됩니다.</span><span class="en-only">To mix regions <strong>per media type</strong> on a single game (e.g. <em>Japanese box art</em> with <em>US screenshots</em>), use the <a href="#library">region chips</a> in the info panel to switch just that kind. That choice overrides the priority order and carries into the mix image and exports.</span></p>
 
       <h3 id="ai"><span class="ko-only">AI 설정</span><span class="en-only">AI settings</span></h3>
-      <p><span class="ko-only">매뉴얼 번역, AI로 메타 채우기 등에 쓰이는 LLM을 설정합니다.</span><span class="en-only">Configure the LLM used for manual translation, AI meta-fill, etc.</span></p>
+      <p><span class="ko-only">상단 <strong>⚙ 설정</strong>의 <strong>AI (번역 · 롬 매칭)</strong> 항목입니다. 매뉴얼 번역, 메타 편집기의 <strong>AI로 채우기</strong>, 그리고 <strong>롬 자동 매칭</strong>(파일명으로 확정이 안 될 때의 최종 판정)에 쓰이는 LLM을 설정합니다. API 키는 이 PC에만 저장됩니다.</span><span class="en-only">The <strong>AI (translation &amp; ROM matching)</strong> block in <strong>⚙ Settings</strong>. It configures the LLM used for manual translation, <strong>Fill with AI</strong> in the Meta Editor, and <strong>ROM auto-matching</strong> (the final call when the filename alone can't decide). Keys are stored on this PC only.</span></p>
       <ul>
-        <li><span class="ko-only"><strong>제공자 / 모델 / API 키</strong> — ChatGPT 또는 Gemini 등을 선택하고 키를 입력합니다. <strong>검증</strong> 버튼으로 키가 유효한지 확인할 수 있습니다.</span><span class="en-only"><strong>Provider / model / API key</strong> — pick ChatGPT or Gemini, enter your key, and use <strong>Validate</strong> to confirm it works.</span></li>
-        <li><span class="ko-only"><strong>이미지 번역 옵션</strong> — 매뉴얼 페이지의 이미지 위 텍스트를 번역해 덮어씌우는 기능에 사용됩니다.</span><span class="en-only"><strong>Image-translation option</strong> — used to translate and overlay text on manual page images.</span></li>
+        <li><span class="ko-only"><strong>AI 사용</strong> 체크 — 끄면 번역·AI 채우기·AI 매칭이 모두 비활성화됩니다.</span><span class="en-only"><strong>Enable AI</strong> — off disables translation, AI fill and AI matching alike.</span></li>
+        <li><span class="ko-only"><strong>제공자 / 모델 / API 키</strong> — Gemini 또는 ChatGPT를 고르고 모델과 키를 입력합니다. <strong>AI 키 검증</strong>은 고른 모델로 한 단어를 실제 번역해 키가 되는지 확인합니다.</span><span class="en-only"><strong>Provider / model / API key</strong> — pick Gemini or ChatGPT, choose a model, enter your key. <strong>Test AI key</strong> translates one word with that model to confirm it works.</span></li>
       </ul>
 
       <h3 id="scraper"><span class="ko-only">ScreenScraper 계정</span><span class="en-only">ScreenScraper account</span></h3>
-      <p><span class="ko-only">로컬 DB에 없는 게임을 온라인에서 실시간 조회하려면 개인 <strong>ScreenScraper 계정</strong>(아이디/비밀번호)을 설정에 입력합니다. 개인 계정을 쓰면 개인 할당량으로 더 안정적으로 조회됩니다.</span><span class="en-only">To look up games not in the local DB online in real time, enter your personal <strong>ScreenScraper account</strong> (user/password) in Settings. Using your own account gives you a personal quota for more reliable lookups.</span></p>
-      <div class="note"><span class="ko-only"><b>언어 · 테마</b> — 설정에서 한/영과 라이트/다크 테마를 <strong>재시작 없이</strong> 즉시 바꿀 수 있습니다.</span><span class="en-only"><b>Language · theme</b> — switch KO/EN and light/dark theme <strong>instantly, no restart</strong>, from Settings.</span></div>
+      <p><span class="ko-only">마스터 DB에 없는 게임을 메타 편집기의 <strong>외부 조회</strong>로 직접 찾으려면 개인 <strong>ScreenScraper 계정</strong>(아이디/비밀번호, 무료 가입)을 설정에 입력합니다. 본인 계정의 개인 쿼터를 쓰므로 더 안정적으로 조회됩니다. <strong>계정 확인</strong> 버튼은 실제로 로그인해 남은 요청 수까지 보여 줍니다.</span><span class="en-only">To look up games missing from the master DB via the Meta Editor's <strong>external lookup</strong>, enter your personal <strong>ScreenScraper account</strong> (user/password, free signup) in Settings. It uses your own quota, so lookups are more reliable. <strong>Check account</strong> signs in and reports the remaining quota.</span></p>
+      <div class="note"><span class="ko-only"><b>언어 · 테마</b> — 설정 창 맨 위 <strong>화면</strong> 항목에서 한국어/English와 밝게/어둡게를 고르면 <strong>누르는 즉시</strong> 적용됩니다(저장 버튼과 무관, 재시작 없음).</span><span class="en-only"><b>Language · theme</b> — the <strong>Display</strong> block at the top of Settings switches Korean/English and light/dark <strong>the moment you click</strong> (independent of Save, no restart).</span></div>
+
+      <h3 id="frontend"><span class="ko-only">프론트엔드 설정 (코어 / 실행기)</span><span class="en-only">Front-end settings (cores / launch)</span></h3>
+      <p><span class="ko-only">시스템 목록 위의 격자 아이콘 버튼으로 엽니다. 내보낼 때 <strong>어떤 에뮬레이터·코어로 실행되게 적을지</strong>를 프론트엔드별·OS별로 정해 두는 곳입니다. 입력칸에서 사용 가능한 코어·에뮬레이터가 자동완성되고, OS마다 따로 저장됩니다.</span><span class="en-only">Opened with the grid icon above the system list. This is where you decide, per front-end and per OS, <strong>which emulator or core the export should name</strong>. Available cores and emulators autocomplete in the fields, and values are stored per OS.</span></p>
+      <table class="ftable">
+        <tr><th style="width:26%"><span class="ko-only">탭</span><span class="en-only">Tab</span></th><th><span class="ko-only">내용</span><span class="en-only">What it sets</span></th></tr>
+        <tr><td>ES-DE</td><td><span class="ko-only"><strong>빌드 OS</strong>(Android / Windows / Linux)를 고르고, 시스템별 <strong>대체 에뮬레이터</strong>를 정하면 <span class="path">gamelist.xml</span>에 <span class="path">&lt;altemulator&gt;</span>로 기록됩니다(비우면 ES-DE 기본). Wii/GC를 Dolphin·MMJR 계열 스탠드얼론으로 고르면 앱·경로가 자동 도출되고, 게임별 GameSettings가 Android 내보내기 때 그 앱 폴더로 함께 나갑니다.</span><span class="en-only">Pick the <strong>build OS</strong> (Android / Windows / Linux) and a per-system <strong>alternative emulator</strong>, written to <span class="path">gamelist.xml</span> as <span class="path">&lt;altemulator&gt;</span> (empty = ES-DE default). Choosing Dolphin / MMJR standalone for Wii/GC derives the app and path, and per-game GameSettings are pushed to that app folder on Android export.</span></td></tr>
+        <tr><td>RetroArch</td><td><span class="ko-only">OS(안드로이드 빌드 · Windows · Linux)별 <strong>시스템 → 코어 파일</strong>. 플레이리스트(<span class="path">.lpl</span>)의 core_path / core_name 이 됩니다(비우면 DETECT). OS를 고르면 미설정 시스템에 기본 코어가 채워집니다.</span><span class="en-only">Per OS (Android builds, Windows, Linux) the <strong>system → core file</strong> map, written as core_path / core_name in the playlist (<span class="path">.lpl</span>); empty = DETECT. Selecting an OS fills default cores for unset systems.</span></td></tr>
+        <tr><td>Pegasus</td><td><span class="ko-only">플랫폼(OS)별 <strong>RetroArch 실행 템플릿</strong>(<span class="path">{core}</span> · <span class="path">{file.path}</span>)과 시스템별 코어 파일 또는 <strong>외부 에뮬레이터 전체 명령</strong>.</span><span class="en-only">Per platform (OS), the <strong>RetroArch launch template</strong> (<span class="path">{core}</span> · <span class="path">{file.path}</span>) plus a per-system core file or a <strong>full external emulator command</strong>.</span></td></tr>
+      </table>
     </section>
 
     <!-- 8. EXPORT -->
@@ -498,7 +527,7 @@
 
       <h3 id="export-run"><span class="ko-only">4) 게임 목록 처리 · 전송</span><span class="en-only">4) Game list handling &amp; transfer</span></h3>
       <ul>
-        <li><span class="ko-only"><strong>게임 목록(gamelist) 처리</strong> — <strong>병합 (권장)</strong>은 기기에 이미 있는 목록을 지우지 않고 선택한 게임만 갱신·추가합니다. 즐겨찾기·플레이 횟수처럼 기기에서 관리되는 값도 보존됩니다. <strong>전체 교체</strong>는 목록을 통째로 새로 씁니다.</span><span class="en-only"><strong>Game list handling</strong> — <strong>Merge (recommended)</strong> keeps the device's existing list and only updates/adds the selected games, preserving device-managed values like favorites and play counts. <strong>Replace</strong> rewrites the whole list.</span></li>
+        <li><span class="ko-only"><strong>게임 목록(gamelist) 처리</strong> — <strong>병합 (권장)</strong>은 기기에 이미 있는 목록을 지우지 않고 선택한 게임만 갱신·추가합니다. 즐겨찾기·플레이 횟수처럼 기기에서 관리되는 값도 보존됩니다. <strong>전체 교체</strong>는 목록을 통째로 새로 쓰고, 내보내기 전에 <strong>목록에 없는 파일 정리</strong> 창을 띄웁니다 — 기기에는 있지만 앱 목록에 없는 롬·미디어를 시스템·크기와 함께 보여 주고, 남길 것은 <strong>남김</strong>을 체크한 뒤 "N개 삭제하고 내보내기"로 진행합니다. 미디어 종류를 체크 해제했다고 해서 그 파일이 지워지지는 않습니다(정리 기준은 파일이 아니라 <em>게임</em>입니다).</span><span class="en-only"><strong>Game list handling</strong> — <strong>Merge (recommended)</strong> keeps the device's existing list and only updates/adds the selected games, preserving device-managed values like favorites and play counts. <strong>Replace</strong> rewrites the whole list and first shows a <strong>clean-up</strong> dialog listing ROMs and media on the device that are not in the app list (with system and size); tick <strong>Keep</strong> for anything to spare, then "Delete N &amp; export". Unchecking a media type does not delete those files — clean-up is decided per <em>game</em>, not per file.</span></li>
         <li><span class="ko-only"><strong>ROM 파일도 복사</strong> — 메타뿐 아니라 ROM 자체를 함께 보냅니다. 이름·크기가 같은 파일은 건너뛰므로, 두 번째 내보내기부터는 훨씬 빠릅니다.</span><span class="en-only"><strong>Copy ROM files too</strong> — sends the ROMs as well as the metadata. Files with the same name and size are skipped, so repeat exports are much faster.</span></li>
         <li><span class="ko-only"><strong>컨트롤러 키 설정 포함</strong> — <a href="#controller">6장</a>에서 만든 시스템·게임별 입력 설정을 함께 내보냅니다. RetroArch가 없는 기기에서는 무시됩니다. 리맵 경로는 자동으로 잡히고, 필요하면 직접 지정할 수 있습니다.</span><span class="en-only"><strong>Include controller mappings</strong> — exports the per-system/per-game input configs from <a href="#controller">chapter 6</a>. Ignored on devices without RetroArch. The remap path is detected automatically, or you can set it yourself.</span></li>
         <li><span class="ko-only"><strong>PS Vita</strong> — <span class="path">.vpk</span> 를 풀어 기기의 Vita3K 앱 폴더로 바로 설치합니다. 이미 설치된 타이틀은 건너뛰고, 기기에 Vita3K가 없으면 수 GB를 헛되게 보내지 않고 미리 알려 줍니다.</span><span class="en-only"><strong>PS Vita</strong> — <span class="path">.vpk</span> files are unpacked straight into the device's Vita3K app folder. Already-installed titles are skipped, and if Vita3K is missing you're told up front instead of wasting a multi-GB transfer.</span></li>
@@ -508,11 +537,29 @@
       <div class="warn"><span class="ko-only"><b>안드로이드 연결이 안 될 때</b> — 케이블 연결 상태에서 <strong>USB 디버깅을 껐다가 다시 켜</strong> 보세요. 기기에 뜨는 <strong>USB 디버깅 허용</strong> 창도 확인해야 합니다.</span><span class="en-only"><b>If Android won't connect</b> — with the cable plugged in, <strong>toggle USB Debugging off and on</strong>. Also accept the <strong>Allow USB debugging</strong> prompt on the device.</span></div>
     </section>
 
-    <!-- 9. IMPORT -->
+    <!-- 9. HB LAUNCHER -->
+    <section class="gsec" id="hbl">
+      <p class="kicker">09 — HB LAUNCHER</p>
+      <h2><span class="ko-only">HB런처로 보내기</span><span class="en-only">Send to HB Launcher</span></h2>
+      <p><span class="ko-only"><a href="launcher.html">HB런처</a>는 게임 케이스를 3D로 진열하는 자매 프로젝트 런처입니다. 해방툴에서 세팅한 라이브러리(롬 · 미디어 · 한국어 정보)를 시스템 목록 위의 초록 <strong>⬆ HB런처</strong> 버튼 한 번으로 기기의 런처 폴더에 밀어 넣습니다 — 런처 쪽에서 다시 매칭할 필요가 없습니다.</span><span class="en-only"><a href="launcher.html">HB Launcher</a> is the sister project that shelves your games as 3D cases. The green <strong>⬆ HB Launcher</strong> button above the system list pushes a library set up in the Rom Tool (ROMs, media, Korean metadata) straight into the launcher folder on the device — nothing to re-match on the launcher side.</span></p>
+      <ul>
+        <li><span class="ko-only"><strong>연결 방식</strong> — <strong>유선 연결 (ADB)</strong>은 내보내기의 안드로이드 연결과 같습니다(USB 디버깅 허용 후 <strong>기기 연결</strong>). <strong>무선 연결 (APP)</strong>은 기기에서 HB런처 앱이 켜 주는 서버로 붙습니다 — 계정·포트는 고정이라 앱 화면에 표시된 <strong>IP만</strong> 입력합니다.</span><span class="en-only"><strong>Connection</strong> — <strong>USB (ADB)</strong> is the same link the Android export uses (allow USB debugging, then <strong>Connect device</strong>). <strong>Wireless (APP)</strong> connects to the server the HB Launcher app runs on the device — account and port are fixed, so you only enter the <strong>IP shown in the app</strong>.</span></li>
+        <li><span class="ko-only"><strong>롬 경로 (기기)</strong> — 연결하면 자동으로 채워집니다(ES-DE가 있으면 그 롬 폴더). 라이브러리는 그 저장소의 <span class="path">HBLauncher</span> 폴더에 만들어지고(SD 카드 롬이면 SD 카드에), 시스템별 <strong>내보내기 폴더 · 롬 경로</strong>는 ES-DE 내보내기와 같은 값을 씁니다.</span><span class="en-only"><strong>ROMs path (device)</strong> — auto-filled on connect (the ES-DE ROM folder if present). The library is created in an <span class="path">HBLauncher</span> folder on that storage (on the SD card if the ROMs are there), and per-system <strong>export folders / ROM paths</strong> are shared with the ES-DE export.</span></li>
+        <li><span class="ko-only"><strong>제목 · 설명 언어</strong> — 런처에 보일 제목과 설명을 각각 한글/영문으로.</span><span class="en-only"><strong>Title &amp; description language</strong> — Korean or English for what the launcher shows.</span></li>
+        <li><span class="ko-only"><strong>게임 목록 처리</strong> — <strong>병합</strong>은 기기 목록을 유지하면서 같은 게임은 갱신하고 없던 게임은 더합니다. <strong>동기화</strong>는 <em>체크한 시스템만</em> 이 앱의 목록으로 통째로 교체하고, 그 시스템의 런처 미디어 중 목록에 없는 파일을 정리합니다. 체크하지 않은 시스템은 두 경우 모두 그대로 두며, 롬 파일은 어느 경우에도 지우지 않습니다.</span><span class="en-only"><strong>Game list handling</strong> — <strong>Merge</strong> keeps the device list, updating games it already has and adding new ones. <strong>Sync</strong> replaces <em>only the checked systems</em> with this app's list and removes launcher media files of those systems that are no longer listed. Unchecked systems are left alone either way, and ROM files are never deleted.</span></li>
+        <li><span class="ko-only"><strong>영상 내보내기</strong> — 기본 꺼짐. 켜면 플레이 영상을 런처용(20초 .ogv)으로 변환해 보내는데 게임당 2~3초씩 걸립니다(한 번 변환한 것은 다음에 건너뜀). 끄면 런처의 TV에는 스크린샷이 뜹니다. <em>동기화</em>와 함께 끄면 기기에 있던 영상도 정리 대상이 되니 주의하세요.</span><span class="en-only"><strong>Export videos</strong> — off by default. On, gameplay videos are converted for the launcher (20 s .ogv) at 2–3 s per game (already-converted ones are skipped next time). Off, the launcher's TV shows the screenshot instead — and combined with <em>Sync</em>, videos already on the device are cleaned up too.</span></li>
+        <li><span class="ko-only"><strong>내보낼 시스템</strong> — 오른쪽 목록에서 체크합니다. 런처가 케이스를 만들 수 있는 기종만 고를 수 있습니다.</span><span class="en-only"><strong>Systems to export</strong> — tick them in the right-hand list; only systems the launcher can build cases for are selectable.</span></li>
+      </ul>
+      <p><span class="ko-only">미디어는 3D 케이스를 세우는 데 필요한 것들로 정해져 있어 고르지 않습니다 — 케이스 펼침(boxtexture) · 매체 사진(support) · 앞표지 · 책등(사이드바) · 설명서 표지 · 스크린샷. 기기용으로 줄여서 보내고, 한 번 만든 것은 다음 내보내기에서 건너뜁니다. 롬은 이름·크기가 같으면 건너뛰므로 두 번째부터는 빠릅니다.</span><span class="en-only">Media is a fixed set needed to build the 3D case — box texture, support photo, cover, spine (sidebar), manual cover and screenshot — downscaled for the device; already-built files are skipped next time, as are ROMs with the same name and size, so repeat exports are quick.</span></p>
+      <div class="tip"><span class="ko-only"><b>기기 화면에서 진행이 보입니다</b> — HB런처 베타 0.4 이상을 켜 둔 채 내보내면 런처 화면 아래에 "해방툴 — 연결됨 → 병합 중… (파일 수) → 완료"가 뜨고, 끝나면 라이브러리를 다시 읽어 새 시스템이 진열대에 섭니다.</span><span class="en-only"><b>Progress shows on the device</b> — with HB Launcher beta 0.4+ open, the launcher displays "HAEBANG — connected → merging… (file count) → done" at the bottom and reloads the library when finished, so the new systems appear on the shelf.</span></div>
+      <div class="note"><span class="ko-only"><b>버전</b> — HB런처 내보내기는 <strong>후원자 베타 v1.0.5</strong>부터 들어갑니다(진행 중). 공개 버전에는 다음 메이저 업데이트 때 반영됩니다. 런처 쪽은 <a href="launcher.html">HB런처 페이지</a>에서 클로즈 베타 소식을 확인하세요.</span><span class="en-only"><b>Version</b> — HB Launcher export arrives in <strong>sponsor beta v1.0.5</strong> (in progress) and reaches the public build with the next major update. See the <a href="launcher.html">HB Launcher page</a> for closed-beta news on the launcher side.</span></div>
+    </section>
+
+    <!-- 10. IMPORT -->
     <section class="gsec" id="import">
-      <p class="kicker">09 — IMPORT</p>
+      <p class="kicker">10 — IMPORT</p>
       <h2><span class="ko-only">가져오기</span><span class="en-only">Import</span></h2>
-      <p><span class="ko-only">내보내기의 반대 방향입니다. <strong>이미 다른 프론트엔드로 세팅해 둔 라이브러리</strong>를 이 프로그램으로 읽어들여 시스템과 게임을 한 번에 등록합니다. ROM 폴더를 처음부터 다시 스캔할 필요가 없습니다.</span><span class="en-only">The reverse of Export. Read <strong>a library you already set up in another front-end</strong> and register its systems and games in one pass — no need to re-scan your ROM folders from scratch.</span></p>
+      <p><span class="ko-only">내보내기의 반대 방향입니다. <strong>이미 다른 프론트엔드로 세팅해 둔 라이브러리</strong>를 이 프로그램으로 읽어들여 시스템과 게임을 한 번에 등록합니다. ROM 폴더를 처음부터 다시 스캔할 필요가 없습니다. 시스템 목록의 <strong>+ 시스템 → 외부 세팅 정보 (가져오기)</strong>로 엽니다.</span><span class="en-only">The reverse of Export. Read <strong>a library you already set up in another front-end</strong> and register its systems and games in one pass — no need to re-scan your ROM folders from scratch. Open it via <strong>+ System → External library (Import)</strong> in the system list.</span></p>
       <p><span class="ko-only">지원하는 원본은 <strong>ES-DE</strong>(<span class="path">gamelist.xml</span>)와 <strong>Pegasus</strong>(<span class="path">metadata.pegasus.txt</span>)이며, 읽어올 위치는 <strong>내 컴퓨터 · 안드로이드 · 커스텀 리눅스(SFTP)</strong> 세 곳입니다.</span><span class="en-only">Supported sources are <strong>ES-DE</strong> (<span class="path">gamelist.xml</span>) and <strong>Pegasus</strong> (<span class="path">metadata.pegasus.txt</span>), read from <strong>this PC, Android, or custom Linux (SFTP)</strong>.</span></p>
 
       <h3 id="import-local"><span class="ko-only">내 컴퓨터에서 가져오기</span><span class="en-only">From this PC</span></h3>
@@ -540,7 +587,7 @@
 
     <!-- 10. DEVICE BROWSER -->
     <section class="gsec" id="browser">
-      <p class="kicker">10 — DEVICE BROWSER</p>
+      <p class="kicker">11 — DEVICE BROWSER</p>
       <h2><span class="ko-only">기기 탐색기 · 파일 편집</span><span class="en-only">Device Browser &amp; File Editing</span></h2>
       <p><span class="ko-only">안드로이드(ADB) 또는 SFTP로 연결한 뒤 <strong>📂 탐색</strong>을 누르면 기기 내부를 직접 둘러볼 수 있습니다. 내보내기 화면에서 <strong>롬 경로를 눈으로 확인하고 지정</strong>할 때 가장 요긴합니다.</span><span class="en-only">Connect over Android (ADB) or SFTP, then hit <strong>📂 Browse</strong> to explore the device. It's most useful for <strong>seeing and picking the ROM path</strong> during export.</span></p>
       <ul>
@@ -552,12 +599,26 @@
       <div class="warn"><span class="ko-only"><b>기기 파일을 직접 고치는 기능입니다</b> — 삭제·덮어쓰기는 되돌릴 수 없습니다. 중요한 설정 파일은 고치기 전에 복사해 두시길 권합니다.</span><span class="en-only"><b>This edits device files directly</b> — deletes and overwrites can't be undone. Copy important config files before changing them.</span></div>
     </section>
 
-    <!-- 11. ETC -->
+    <!-- 12. TOOLS -->
+    <section class="gsec" id="tools">
+      <p class="kicker">12 — TOOLS</p>
+      <h2><span class="ko-only">도구 — APK 보관함</span><span class="en-only">Tools — APK Library</span></h2>
+      <p><span class="ko-only">상단 바의 <strong>Tools</strong>는 롬 정리 밖에서도 쓸모 있는 기능을 모아 두는 자리입니다(베타 v1.0.4에서 생김). 첫 도구는 <strong>안드로이드 APK 보관함</strong> — 기기에 깔아 줄 에뮬레이터·프론트엔드 APK를 한곳에 모아 두고 바로 설치합니다.</span><span class="en-only"><strong>Tools</strong> in the top bar collects features useful beyond ROM curation (introduced in beta v1.0.4). The first is the <strong>Android APK Library</strong> — keep the emulator and front-end APKs you install on devices in one place and install them directly.</span></p>
+      <ul>
+        <li><span class="ko-only"><strong>APK 가져오기</strong> — 받아 둔 APK를 끌어다 넣거나 골라 넣으면 해방툴 폴더로 복사되므로 원본은 지워도 됩니다. 파일 안에서 <strong>이름 · 패키지 · 버전</strong>을 읽어 정리하고, 에뮬레이터라면 어느 기종용인지도 알아봅니다.</span><span class="en-only"><strong>Import APK</strong> — drop in or pick the APKs you have collected; they are copied into the tool folder, so the originals can go. The <strong>name, package and version</strong> are read from the file, and for emulators the systems they serve are worked out.</span></li>
+        <li><span class="ko-only"><strong>같은 앱의 여러 버전</strong>을 나란히 보관합니다. 새 버전이 말썽이면 예전 버전을 골라 되돌려 깔 수 있습니다.</span><span class="en-only"><strong>Several versions of one app</strong> are kept side by side, so you can roll back if a new build misbehaves.</span></li>
+        <li><span class="ko-only"><strong>기기에 설치</strong> — <strong>연결</strong>을 눌러 USB(ADB) 기기를 붙인 뒤(기기가 여럿이면 고름) 목록에서 바로 설치합니다. 창을 열자마자 기기를 붙잡지 않는 것은 adb가 기기를 깨우거나 USB 디버깅 허용 창을 띄우는 일이 있어서입니다.</span><span class="en-only"><strong>Install to device</strong> — press <strong>Connect</strong> to attach the USB (ADB) device (choose one if several) and install straight from the list. The window doesn't grab the device on open because adb can wake the device or pop the USB-debugging prompt.</span></li>
+        <li><span class="ko-only"><strong>보관 폴더 열기</strong> — 복사된 APK가 있는 폴더를 탐색기로 엽니다.</span><span class="en-only"><strong>Open folder</strong> — reveals the folder holding the copied APKs in Explorer.</span></li>
+      </ul>
+      <div class="note"><span class="ko-only">도구는 <strong>후원자 베타</strong>에 먼저 들어갑니다. 공개 v1.0(베타 v1.0.3까지의 내용)에는 아직 Tools 버튼이 없고, 다음 메이저 업데이트 때 함께 반영됩니다.</span><span class="en-only">Tools land in the <strong>sponsor beta</strong> first. Public v1.0 (which carries beta up to v1.0.3) has no Tools button yet; it arrives with the next major update.</span></div>
+    </section>
+
+    <!-- 13. ETC -->
     <section class="gsec" id="etc">
-      <p class="kicker">11 — MORE</p>
+      <p class="kicker">13 — MORE</p>
       <h2><span class="ko-only">후원 · 업데이트</span><span class="en-only">Support · Updates</span></h2>
-      <p><span class="ko-only">이 프로그램은 개발자 1인이 기획·개발·DB 구축·서버 운영·테스트까지 모두 맡고 있습니다. 도움이 되었다면 <strong>후원 ♥</strong> 버튼으로 작은 응원을 보내 주세요. 후원하시면 제약이 없는 <strong>1.0 클로즈드 베타</strong>에 먼저 참여하실 수 있습니다.</span><span class="en-only">This tool is built by a single developer handling planning, development, database, server ops and testing. If it helped you, consider a small token of support via the <strong>Donate ♥</strong> button — sponsors get early access to the unrestricted <strong>1.0 closed beta</strong>.</span></p>
-      <p><span class="ko-only"><strong>새 버전 확인</strong> — 현재 버전은 설정 화면에서 볼 수 있습니다. 앱 내 자동 업데이트 알림은 준비 중이라, 새 버전 소식은 <a href="news.html">새로운 소식</a> 페이지에서 확인해 주세요.</span><span class="en-only"><strong>Checking for updates</strong> — your current version is shown in Settings. In-app update notifications are still in the works, so please watch the <a href="news.html">News</a> page for new releases.</span></p>
+      <p><span class="ko-only">이 프로그램은 개발자 1인이 기획·개발·DB 구축·서버 운영·테스트까지 모두 맡고 있습니다. 도움이 되었다면 <strong>후원 ♥</strong> 버튼으로 작은 응원을 보내 주세요. 후원하시면 <strong>스폰서 코드</strong>가 발급되고, 그 코드로 <strong>후원자 베타</strong>를 받으실 수 있습니다 — 마이너 업데이트(v1.0.4 제공 중 → v1.0.5 …)를 계속 받고, 시스템 제외가 없으며, 새 기능이 가장 먼저 도착하는 곳입니다. 후원은 미디어 서버와 마스터 DB를 유지하는 데 쓰입니다.</span><span class="en-only">This tool is built by a single developer handling planning, development, database, server ops and testing. If it helped you, consider a small token of support via the <strong>Donate ♥</strong> button. Sponsoring issues a <strong>sponsor code</strong> that unlocks the <strong>sponsor beta</strong> — continuous minor updates (v1.0.4 available now → v1.0.5 …), no systems left out, and where new features land first. Donations keep the media server and master database running.</span></p>
+      <p><span class="ko-only"><strong>새 버전 확인</strong> — 현재 버전은 상단 바의 앱 이름 옆에 표시됩니다(BETA · PLUS+ 배지도 함께). 앱 내 자동 업데이트 알림은 준비 중이라, 새 버전 소식은 <a href="news.html">새로운 소식</a> 페이지와 <a href="haebang.html#download">다운로드</a>에서 확인해 주세요.</span><span class="en-only"><strong>Checking for updates</strong> — your current version is shown next to the app name in the top bar (with BETA / PLUS+ badges). In-app update notifications are still in the works, so please watch the <a href="news.html">News</a> page and the <a href="haebang.html#download">download page</a> for new releases.</span></p>
       <div class="note"><span class="ko-only">더 궁금한 점이나 잘 안 되는 부분은 <a href="haebang.html#download">다운로드 페이지</a>의 안내와 <a href="story.html">읽을거리</a>를 참고하세요. 레트로 에뮬레이터 세팅의 큰 그림을 이해하는 데 도움이 됩니다.</span><span class="en-only">For more, see the guidance on the <a href="haebang.html#download">download page</a> and the <a href="story.html">reading article</a> — they help you grasp the big picture of retro emulator setup.</span></div>
     </section>
 
