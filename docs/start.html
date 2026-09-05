@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- 이 저장소는 GitHub Pages 와 Cloudflare Pages 두 곳에 배포된다.
+     깃허브 쪽에는 Functions(/api/*)가 없어 아카이브·패치가 동작하지 않으므로,
+     그쪽으로 들어온 방문자는 같은 경로 그대로 정식 도메인으로 보낸다.
+     <head> 위쪽에 두어 화면이 그려지기 전에 옮겨지게 한다. -->
+<link rel="canonical" href="https://evegoodretro.com/start.html" />
+<script>
+(function () {
+  if (location.hostname.indexOf('github.io') < 0) return;   // 정식 도메인에서는 아무 일 없음
+  var p = location.pathname.replace(/^\/ROM-Settings-HAE-BANG-Tool/, '') || '/';
+  location.replace('https://evegoodretro.com' + p + location.search + location.hash);
+})();
+</script>
+<title>시작해보기 · HAE-BANG Rom Setting Tools</title>
+<meta name="description" content="안드로이드 게임기·폰, 리눅스 게임기를 처음 세팅하는 분을 위한 따라하기 — RetroArch·코어·스탠드얼론 앱 설치, 롬 준비, 해방툴로 매칭·미디어·내보내기까지 순서대로." />
+<link rel="icon" href="assets/favicon_v2.ico" />
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" />
+<style>
+  :root{
+    --bg:#07080d; --bg2:#0a0c14; --surface:#11131d; --surface2:#171a27;
+    --border:#222639; --border2:#2c3147;
+    --text:#e9ebf4; --muted:#9aa1b6; --faint:#6b7186;
+    --cyan:#22d3ee; --violet:#8b5cf6; --indigo:#6366f1; --gold:#fbbf24; --emerald:#34d399; --rose:#fb7185;
+    --grad:linear-gradient(120deg,#22d3ee 0%,#6366f1 50%,#8b5cf6 100%);
+    --maxw:1240px; --pixel:"Press Start 2P", system-ui, monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; background:var(--bg); color:var(--text);
+    font-family:"Pretendard Variable",Pretendard,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased; line-height:1.8; overflow-x:hidden}
+  body::before{content:""; position:fixed; inset:0; z-index:-2; pointer-events:none;
+    background:radial-gradient(820px 480px at 82% -10%, rgba(139,92,246,.18), transparent 60%),
+      radial-gradient(680px 460px at 8% 2%, rgba(34,211,238,.12), transparent 55%)}
+  body::after{content:""; position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.5;
+    background:repeating-linear-gradient(to bottom, rgba(255,255,255,.016) 0 1px, transparent 1px 3px)}
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 22px}
+  .grad-text{background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .muted{color:var(--muted)}
+  html:not(.en) .en-only{display:none !important}
+  html.en .ko-only{display:none !important}
+
+  header{position:sticky; top:0; z-index:50; backdrop-filter:blur(14px);
+    background:rgba(8,9,15,.66); border-bottom:1px solid transparent; transition:.25s}
+  header.scrolled{border-bottom-color:var(--border); background:rgba(8,9,15,.86)}
+  .nav{display:flex; align-items:center; gap:16px; height:66px}
+  .brand{display:flex; align-items:center; gap:11px; font-weight:800}
+  .brand img{width:34px; height:34px; border-radius:9px; box-shadow:0 0 0 1px var(--border2)}
+  .brand .bt{font-size:15.5px}
+  .brand .bs{font-size:10.5px; color:var(--muted); font-weight:600}
+  .nav-links{display:flex; gap:6px; margin-left:18px}
+  .nav-links a{padding:8px 12px; border-radius:9px; font-size:14px; color:var(--muted); font-weight:600; transition:.18s}
+  .nav-links a:hover,.nav-links a.active{color:var(--text); background:var(--surface)}
+  .nav-right{margin-left:auto; display:flex; align-items:center; gap:10px}
+  .langbtn{font-size:12.5px; font-weight:800; letter-spacing:.04em; padding:9px 13px; border-radius:10px;
+    border:1px solid var(--border2); background:var(--surface); color:var(--text); cursor:pointer; transition:.18s}
+  .langbtn:hover{border-color:var(--cyan); transform:translateY(-1px)}
+  .btn{display:inline-flex; align-items:center; gap:8px; font-weight:700; border-radius:11px; cursor:pointer;
+    padding:10px 16px; font-size:14px; border:1px solid transparent; transition:.2s}
+  .btn-primary{background:var(--grad); color:#05070d}
+  .btn-primary:hover{transform:translateY(-2px)}
+
+  /* hero */
+  .ghero{border-bottom:1px solid var(--border); text-align:center; padding:54px 22px 40px; position:relative; overflow:hidden}
+  .ghero::before{content:""; position:absolute; inset:0; z-index:0; opacity:.5;
+    background:linear-gradient(transparent 0 23px, rgba(99,102,241,.06) 23px 24px),
+      linear-gradient(90deg, transparent 0 23px, rgba(99,102,241,.06) 23px 24px);
+    background-size:24px 24px; mask:radial-gradient(120% 100% at 50% 0,#000,transparent 72%)}
+  .ghero-in{position:relative; z-index:1; max-width:820px; margin:0 auto}
+  .badge{display:inline-flex; align-items:center; gap:9px; font-family:var(--pixel); font-size:10px; letter-spacing:.04em;
+    color:var(--cyan); border:1px solid var(--border2); background:var(--surface); padding:9px 14px; border-radius:999px}
+  .badge .blink{width:8px; height:8px; background:var(--emerald); border-radius:1px; box-shadow:0 0 8px var(--emerald); animation:blink 1.2s steps(1) infinite}
+  @keyframes blink{50%{opacity:.25}}
+  .ghero h1{font-size:clamp(26px,4.2vw,42px); line-height:1.2; letter-spacing:-.02em; font-weight:800; margin:20px 0 12px}
+  .ghero p{color:var(--muted); font-size:clamp(15px,1.7vw,17px); margin:0 auto; max-width:620px}
+
+  /* layout: TOC + content */
+  .doc{display:grid; grid-template-columns:250px minmax(0,1fr); gap:40px; align-items:start; padding:38px 0 60px}
+  .toc{position:sticky; top:86px; align-self:start; max-height:calc(100vh - 110px); overflow:auto;
+    border:1px solid var(--border); border-radius:14px; background:linear-gradient(180deg,var(--surface),rgba(13,15,23,.4)); padding:16px 14px}
+  .toc h5{margin:2px 0 10px; font-family:var(--pixel); font-size:9.5px; letter-spacing:.06em; color:var(--faint); padding-left:6px}
+  .toc a{display:block; padding:7px 10px; border-radius:8px; font-size:13.5px; color:var(--muted); font-weight:600; transition:.15s; line-height:1.4}
+  .toc a:hover{color:var(--text); background:var(--surface2)}
+  .toc a.active{color:#06070d; background:var(--grad)}
+  .toc .sub{padding-left:20px; font-size:12.5px; font-weight:500}
+
+  .content{max-width:840px; min-width:0}
+  .gsec{padding-top:14px; margin-bottom:16px; scroll-margin-top:84px}
+  .gsec h2{font-size:clamp(21px,2.6vw,27px); font-weight:800; letter-spacing:-.01em; margin:34px 0 14px; position:relative; padding-left:16px}
+  .gsec:first-child h2{margin-top:6px}
+  .gsec h2::before{content:""; position:absolute; left:0; top:.16em; bottom:.16em; width:5px; border-radius:3px; background:var(--grad)}
+  .gsec h3{font-size:17.5px; font-weight:800; margin:28px 0 10px; color:var(--gold)}
+  .gsec h3 .en-only, .gsec h3 .ko-only{color:var(--gold)}
+  .gsec p{margin:0 0 15px; color:#d6dae6; font-size:15.5px}
+  .gsec ul, .gsec ol{margin:0 0 16px; padding-left:4px; color:#d0d5e2; font-size:15px}
+  .gsec li{margin:6px 0; padding-left:24px; position:relative; list-style:none}
+  .gsec ul li::before{content:"▹"; position:absolute; left:4px; color:var(--cyan)}
+  .gsec ol{counter-reset:st}
+  .gsec ol li{counter-increment:st}
+  .gsec ol li::before{content:counter(st); position:absolute; left:0; top:1px; width:19px; height:19px; border-radius:6px;
+    background:var(--grad); color:#06070d; font-size:11px; font-weight:800; display:grid; place-items:center}
+  .gsec strong{color:#fff}
+  .hl{color:var(--cyan); font-weight:700}
+  .path{font-family:ui-monospace,Consolas,monospace; font-size:.92em; background:var(--bg2); border:1px solid var(--border2);
+    border-radius:6px; padding:1px 7px; color:#cfd4e4; white-space:nowrap}
+
+  .kicker{font-family:var(--pixel); font-size:9.5px; letter-spacing:.06em; color:var(--cyan); margin:0 0 6px}
+
+  /* callouts */
+  .note,.tip,.warn{margin:18px 0; padding:14px 18px; border:1px solid var(--border2); border-radius:12px; font-size:14.5px; color:#d6dae6;
+    background:radial-gradient(120% 130% at 0 0, rgba(99,102,241,.10), transparent 60%), var(--surface)}
+  .tip{background:radial-gradient(120% 130% at 0 0, rgba(52,211,153,.12), transparent 60%), var(--surface)}
+  .warn{background:radial-gradient(120% 130% at 0 0, rgba(251,113,133,.13), transparent 60%), var(--surface)}
+  .note b{color:var(--violet)} .tip b{color:var(--emerald)} .warn b{color:var(--rose)}
+
+  /* feature table */
+  .ftable{width:100%; border-collapse:collapse; margin:16px 0; font-size:14px; overflow:hidden; border-radius:12px; border:1px solid var(--border2)}
+  .ftable th,.ftable td{text-align:left; padding:10px 13px; border-bottom:1px solid var(--border); vertical-align:top}
+  .ftable th{background:var(--surface2); color:var(--muted); font-weight:700; font-size:12.5px; letter-spacing:.02em}
+  .ftable td:first-child{color:#fff; font-weight:700; white-space:nowrap}
+  .ftable tr:last-child td{border-bottom:0}
+  .ftable td .muted{font-size:13px}
+
+  /* tag chips */
+  .chips{display:flex; flex-wrap:wrap; gap:7px; margin:12px 0 18px}
+  .chip{font-size:12px; font-weight:700; color:#cfe9ff; border:1px solid var(--border2); background:var(--surface2); padding:4px 10px; border-radius:999px}
+
+  .divider{height:1px; margin:40px 0; background:linear-gradient(90deg,transparent,var(--border2),transparent)}
+
+  footer{border-top:1px solid var(--border); padding:36px 0 46px; margin-top:30px; color:var(--faint); font-size:13px}
+  .foot{display:flex; justify-content:space-between; gap:18px; flex-wrap:wrap; align-items:center}
+
+  .totop{position:fixed; right:22px; bottom:22px; z-index:40; width:44px; height:44px; border-radius:12px; border:1px solid var(--border2);
+    background:var(--surface); color:var(--text); font-size:18px; cursor:pointer; opacity:0; pointer-events:none; transition:.25s}
+  .totop.show{opacity:1; pointer-events:auto}
+  .totop:hover{border-color:var(--cyan); transform:translateY(-2px)}
+
+  @media (max-width:900px){
+    .doc{grid-template-columns:1fr; gap:0}
+    .toc{position:static; max-height:none; margin-bottom:20px; overflow:visible}
+    .toc .sub{display:inline-block; padding-left:10px}
+  }
+  /* 모바일 메뉴 — 좁은 화면에서 상단 메뉴가 숨겨지므로 햄버거로 같은 항목을 낸다 */
+  .menu-btn{display:none; align-items:center; justify-content:center; padding:0;
+    width:38px; height:38px; border-radius:10px; border:1px solid var(--border2);
+    background:var(--surface); color:var(--text); font-size:17px; line-height:1;
+    cursor:pointer; font-family:inherit; transition:.18s}
+  .menu-btn:hover{border-color:var(--cyan)}
+  .mnav{display:none; position:absolute; top:100%; left:0; right:0;
+    background:rgba(8,9,15,.98); backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--border); max-height:0; overflow:hidden;
+    transition:max-height .28s ease}
+  .mnav.on{max-height:78vh; overflow:auto}
+  .mnav .in{padding:8px 22px 16px; display:flex; flex-direction:column; gap:2px}
+  .mnav a{display:block; padding:12px; border-radius:10px; font-size:15px;
+    font-weight:600; color:var(--muted)}
+  .mnav a:hover,.mnav a.on,.mnav a.active{color:var(--text); background:var(--surface)}
+  /* 상단 메뉴가 8개가 되어 접히는 지점을 1040px 로 올린다(모든 페이지 공통).
+     기존 미디어쿼리에는 다른 규칙이 섞여 있어 값을 바꾸지 않고 여기서 덧쓴다. */
+  @media (max-width:1160px) and (min-width:941px){
+    /* 태블릿 — 메뉴를 좁혀 상단에 그대로 둔다. 가로 태블릿은 전부 들어간다.
+       (실측: 이 값이면 항목이 가장 많은 홈이 838px 부터 들어간다) */
+    .nav-links{gap:1px; margin-left:8px}
+    .nav-links a{padding:8px 6px; font-size:12.5px}
+  }
+  /* 860px 이하 — 메뉴를 접고 햄버거로 바꾼다.
+     ⚠️ 숨김·버튼·메뉴판을 반드시 한 곳에서 함께 켠다. 예전엔 버튼만 1040px 에서
+     켜고 메뉴판은 더 좁은 폭에서 켜서, 그 사이 구간(태블릿)에서는 버튼이 보이는데
+     눌러도 아무것도 안 열렸다. */
+  @media (max-width:940px){
+    .nav-links{display:none}
+    .menu-btn{display:inline-flex}
+    .mnav{display:block}
+  }
+  /* 해방툴 섹션 서브메뉴 — 헤더 아래 고정(해방툴 페이지와 동일 패턴) */
+  .subbar{position:sticky; top:66px; z-index:49; backdrop-filter:blur(10px);
+    background:rgba(10,12,20,.62); border-bottom:1px solid var(--border)}
+  .subbar .wrap{display:flex; align-items:center; gap:4px; height:46px; overflow-x:auto}
+  .subbar a{padding:6px 12px; border-radius:8px; font-size:13.5px; font-weight:600;
+    color:var(--faint); transition:.18s; white-space:nowrap}
+  .subbar a:hover,.subbar a.on{color:var(--text); background:var(--surface)}
+  .subbar .sb-right{margin-left:auto}
+  /* 화면 캡처 */
+  .fig{margin:14px 0 20px; border:1px solid var(--border2); border-radius:12px; overflow:hidden; background:var(--bg2)}
+  .fig img{display:block; width:100%; height:auto}
+  .fig figcaption{font-size:12.5px; color:var(--muted); padding:8px 13px; border-top:1px solid var(--border)}
+  .steps-sum{counter-reset:none}
+  .btnrow{display:flex; gap:10px; flex-wrap:wrap; margin:18px 0 4px}
+  .btn-ghost{border:1px solid var(--border2); color:var(--text); background:var(--surface)}
+  .btn-ghost:hover{border-color:var(--cyan); transform:translateY(-2px)}
+</style>
+</head>
+<body>
+
+<header id="hdr">
+  <div class="wrap nav">
+    <a class="brand" href="index.html">
+      <img src="assets/icon_v2.png" alt="HAE-BANG" />
+      <span><span class="bt">HAE-BANG RETRO</span><div class="bs"><span class="ko-only">해방툴 시작해보기</span><span class="en-only">Rom Tool · Get Started</span></div></span>
+    </a>
+    <nav class="nav-links">
+      <a href="news.html"><span class="ko-only">새로운 소식</span><span class="en-only">News</span></a>
+      <a href="index.html"><span class="ko-only">홈</span><span class="en-only">Home</span></a>
+      <a href="haebang.html"><span class="ko-only">해방툴</span><span class="en-only">Rom Tool</span></a>
+      <a href="https://evegoodretro.com/games/"><span class="ko-only">게임 아카이브</span><span class="en-only">Game Archive</span></a>
+      <a href="launcher.html"><span class="ko-only">HB런처</span><span class="en-only">HB Launcher</span></a>
+      <a href="https://evegoodretro.com/patches/"><span class="ko-only">한글화 패치</span><span class="en-only">KR Patches</span></a>
+      <a href="story.html"><span class="ko-only">읽을거리</span><span class="en-only">Read</span></a>
+    </nav>
+    <div class="nav-right">
+      <button class="langbtn" id="langBtn">EN</button>
+      <a class="btn btn-primary" href="haebang.html#download"><span class="ko-only">다운로드</span><span class="en-only">Download</span></a>
+    </div>
+  
+      <button class="menu-btn" id="menuBtn" aria-label="메뉴" aria-expanded="false">☰</button>
+    </div>
+  <div class="mnav" id="mnav"><div class="in"></div></div>
+</header>
+
+<!-- 해방툴 섹션 서브메뉴 — 해방툴 페이지와 동일하게 유지 -->
+<div class="subbar">
+  <div class="wrap">
+    <a href="haebang.html#how"><span class="ko-only">작동 방식</span><span class="en-only">How it works</span></a>
+    <a href="haebang.html#targets"><span class="ko-only">지원 대상</span><span class="en-only">Supported</span></a>
+    <a href="start.html" class="on"><span class="ko-only">시작해보기</span><span class="en-only">Get started</span></a>
+    <a href="guide.html"><span class="ko-only">문서</span><span class="en-only">Docs</span></a>
+    <div class="sb-right"></div>
+  </div>
+</div>
+
+<section class="ghero">
+  <div class="ghero-in">
+    <span class="badge"><span class="blink"></span>GET&nbsp;STARTED</span>
+    <h1>
+      <span class="ko-only"><span class="grad-text">시작해보기</span> — 따라 하면 게임기가 완성됩니다</span>
+      <span class="en-only"><span class="grad-text">Get Started</span> — follow along and your handheld is ready</span>
+    </h1>
+    <p>
+      <span class="ko-only">안드로이드 게임기·폰·태블릿, 저사양 리눅스 게임기를 처음 세팅하는 분을 위한 따라하기입니다. 기기에 <strong>앱 몇 개</strong>를 깔고, <strong>롬 폴더</strong>를 준비하고, PC에서 <strong>해방툴</strong>로 한 번 읽혀 보내면 — 한글 제목·박스아트·영상·설명서까지 붙은 게임기가 됩니다. 에뮬레이터가 처음이어도 됩니다.</span>
+      <span class="en-only">A follow-along for first-time setups on Android handhelds, phones and tablets, and low-power Linux handhelds. Install <strong>a few apps</strong> on the device, get your <strong>ROM folder</strong> ready, read it once with <strong>HAE-BANG</strong> on your PC and send it over — and you have a handheld with Korean titles, box art, video and manuals attached. No emulator experience needed.</span>
+    </p>
+  </div>
+</section>
+
+<div class="wrap doc">
+  <aside class="toc" id="toc">
+    <h5>STEPS</h5>
+    <a href="#big"><span class="ko-only">0. 큰 그림</span><span class="en-only">0. The big picture</span></a>
+    <a href="#prep"><span class="ko-only">1. 준비물</span><span class="en-only">1. What you need</span></a>
+    <a href="#ra"><span class="ko-only">2. RetroArch와 코어</span><span class="en-only">2. RetroArch &amp; cores</span></a>
+    <a href="#standalone"><span class="ko-only">3. 스탠드얼론 앱</span><span class="en-only">3. Standalone apps</span></a>
+    <a href="#frontend"><span class="ko-only">4. 프론트엔드</span><span class="en-only">4. A front-end</span></a>
+    <a href="#usb"><span class="ko-only">5. USB 디버깅</span><span class="en-only">5. USB debugging</span></a>
+    <a href="#tool"><span class="ko-only">6. 해방툴 5단계</span><span class="en-only">6. HAE-BANG in five steps</span></a>
+    <a class="sub" href="#t1"><span class="ko-only">① 롬 폴더 읽히기</span><span class="en-only">① Read the ROM folder</span></a>
+    <a class="sub" href="#t2"><span class="ko-only">② 애매한 것만 손보기</span><span class="en-only">② Fix only the doubtful</span></a>
+    <a class="sub" href="#t3"><span class="ko-only">③ 에뮬레이터 지정</span><span class="en-only">③ Pick emulators</span></a>
+    <a class="sub" href="#t4"><span class="ko-only">④ 기기로 내보내기</span><span class="en-only">④ Export to the device</span></a>
+    <a class="sub" href="#t5"><span class="ko-only">⑤ 기기에서 확인</span><span class="en-only">⑤ Check on the device</span></a>
+    <a href="#linux"><span class="ko-only">7. 리눅스 게임기</span><span class="en-only">7. Linux handhelds</span></a>
+    <a href="#next"><span class="ko-only">8. 다음 단계</span><span class="en-only">8. Next steps</span></a>
+    <a href="#faq"><span class="ko-only">9. 자주 막히는 곳</span><span class="en-only">9. Where people get stuck</span></a>
+    <a href="#sum"><span class="ko-only">요약</span><span class="en-only">Summary</span></a>
+  </aside>
+
+  <main class="content">
+    <section class="gsec" id="big">
+      <p class="kicker">STEP 0 — BIG PICTURE</p>
+      <h2><span class="ko-only">큰 그림 — 게임기 세팅은 결국 세 가지입니다</span><span class="en-only">The big picture — a setup is really three things</span></h2>
+      <ol>
+        <li><span class="ko-only"><strong>에뮬레이터</strong> — 게임을 실제로 돌리는 앱 (RetroArch, PPSSPP 같은 것)</span><span class="en-only"><strong>An emulator</strong> — the app that actually runs the game (RetroArch, PPSSPP…)</span></li>
+        <li><span class="ko-only"><strong>프론트엔드(런처)</strong> — 게임을 <em>고르는</em> 화면. 기종별 목록을 보여 주고, 고르면 에뮬레이터를 대신 실행합니다 (ES-DE, Pegasus 같은 것)</span><span class="en-only"><strong>A front-end (launcher)</strong> — the screen where you <em>choose</em> a game. It lists games by system and launches the emulator for you (ES-DE, Pegasus…)</span></li>
+        <li><span class="ko-only"><strong>메타데이터 + 미디어</strong> — 게임마다 붙는 제목·설명·장르·박스아트·스크린샷·영상. 이게 있어야 2번 화면이 "예쁜 게임기"처럼 보입니다</span><span class="en-only"><strong>Metadata + media</strong> — the title, description, genre, box art, screenshots and video attached to each game. This is what makes the front-end look like a real console</span></li>
+      </ol>
+<p><span class="ko-only">1번과 2번은 앱을 설치하면 끝입니다. 문제는 3번입니다. 파일명이 <span class="path">sf2ce (U) [!].zip</span> 인 롬 수백 개에 제목과 그림을 하나하나 붙이는 건 손으로는 못 할 일이고, 기존 스크래퍼는 한글 파일명을 못 알아보거나 설정이 복잡합니다.</span><span class="en-only">Items 1 and 2 are done once the apps are installed. Item 3 is the problem: attaching a title and artwork to hundreds of ROMs named like <span class="path">sf2ce (U) [!].zip</span> is not something you do by hand, and existing scrapers stumble on Korean filenames or bury you in settings.</span></p>
+      <div class="tip">
+        <span class="ko-only"><b>해방툴은 3번을 대신해 주는 Windows 프로그램입니다.</b> 롬 폴더를 읽혀 주면 게임을 알아보고(한글 파일명 포함), 한글·영문 제목과 설명, 이미지·영상·설명서를 채운 뒤, 프론트엔드가 이해하는 형식으로 기기에 넣어 줍니다. 롬을 제공하지도, 게임을 실행하지도 않습니다 — "정리해서 넣어 주는 도구"입니다.</span>
+        <span class="en-only"><b>HAE-BANG is a Windows program that takes care of item 3.</b> Point it at a ROM folder and it identifies the games (Korean filenames included), fills in Korean and English titles, descriptions, images, video and manuals, then delivers everything to the device in the format your front-end understands. It neither supplies ROMs nor runs games — it organizes and delivers.</span>
+      </div>
+    </section>
+    <section class="gsec" id="prep">
+      <p class="kicker">STEP 1 — WHAT YOU NEED</p>
+      <h2><span class="ko-only">준비물</span><span class="en-only">What you need</span></h2>
+      <ul>
+        <li><span class="ko-only"><strong>Windows PC</strong> — 해방툴은 Windows용입니다</span><span class="en-only"><strong>A Windows PC</strong> — HAE-BANG runs on Windows</span></li>
+        <li><span class="ko-only"><strong>USB 케이블</strong> — 데이터 전송이 되는 것(충전 전용 케이블은 안 됩니다)</span><span class="en-only"><strong>A USB cable</strong> that carries data (charge-only cables won't work)</span></li>
+        <li><span class="ko-only"><strong>안드로이드 게임기 또는 폰·태블릿</strong> — 리눅스 게임기는 Wi-Fi 나 SD 카드로 하니 <a href="#linux">7장</a>을 보세요</span><span class="en-only"><strong>An Android handheld, phone or tablet</strong> — Linux handhelds go over Wi-Fi or SD card, see <a href="#linux">chapter 7</a></span></li>
+        <li><span class="ko-only"><strong>롬 파일</strong> — 본인이 소장한 게임에서 뽑은 것. 파일명은 대충이어도 되고, 기종별 폴더로 나눠 두면 편합니다. zip 은 그대로 써도 되고, CD 계열(PS1·새턴·드림캐스트)은 <span class="path">chd</span> 형식을 권합니다 — 용량이 크게 줄고 한 파일이라 관리가 쉽습니다</span><span class="en-only"><strong>ROM files</strong> dumped from games you own. Filenames can be messy, and sorting them into one folder per system helps. Zips are fine as they are; for CD systems (PS1, Saturn, Dreamcast) <span class="path">chd</span> is recommended — far smaller and a single file per game</span></li>
+      </ul>
+    </section>
+    <section class="gsec" id="ra">
+      <p class="kicker">STEP 2 — DEVICE · RETROARCH</p>
+      <h2><span class="ko-only">기기 준비 ① — RetroArch 와 코어</span><span class="en-only">Device prep ① — RetroArch and cores</span></h2>
+<p><span class="ko-only">RetroArch 는 "에뮬레이터 모음집"입니다. 하나만 깔면 안에서 기종별 <strong>코어</strong>(기종 하나를 돌리는 부품)를 골라 받을 수 있어서, 8·16비트 기종 대부분은 이걸로 끝납니다.</span><span class="en-only">RetroArch is an "emulator bundle": install it once and download a <strong>core</strong> (the part that runs one system) for each system from inside it. Most 8- and 16-bit systems are covered this way.</span></p><p><span class="ko-only"><strong>설치</strong> — Play 스토어판은 정책 때문에 앱 안에서 코어를 내려받는 기능이 빠져 있습니다. 공식 사이트(retroarch.com)에서 <strong>64비트(aarch64) APK</strong>를 받아 설치하세요. 요즘 기기는 거의 다 64비트입니다.</span><span class="en-only"><strong>Install</strong> — the Play Store build lacks the in-app core downloader (a store policy). Get the <strong>64-bit (aarch64) APK</strong> from the official site (retroarch.com). Almost every current device is 64-bit.</span></p><p><span class="ko-only"><strong>코어 받기</strong> — RetroArch 실행 → Online Updater(온라인 업데이터) → Core Downloader(코어 다운로더). 처음이라면 이 정도면 충분합니다.</span><span class="en-only"><strong>Get cores</strong> — open RetroArch → Online Updater → Core Downloader. For a first setup, this list is enough:</span></p>
+      <ul>
+        <li><span class="ko-only">패미컴(NES): Nestopia 또는 Mesen</span><span class="en-only">Famicom / NES: Nestopia or Mesen</span></li>
+        <li><span class="ko-only">슈퍼패미컴(SNES): Snes9x</span><span class="en-only">Super Famicom / SNES: Snes9x</span></li>
+        <li><span class="ko-only">메가드라이브 · 마스터시스템 · 게임기어: Genesis Plus GX</span><span class="en-only">Mega Drive · Master System · Game Gear: Genesis Plus GX</span></li>
+        <li><span class="ko-only">게임보이 · 컬러 · 어드밴스: mGBA (GB/GBC 는 Gambatte 도 좋음)</span><span class="en-only">Game Boy · Color · Advance: mGBA (Gambatte is also good for GB/GBC)</span></li>
+        <li><span class="ko-only">PC엔진: Beetle PCE Fast</span><span class="en-only">PC Engine: Beetle PCE Fast</span></li>
+        <li><span class="ko-only">네오지오 · 아케이드: FinalBurn Neo (구형 아케이드는 MAME 2003-Plus)</span><span class="en-only">Neo Geo · arcade: FinalBurn Neo (MAME 2003-Plus for older arcade boards)</span></li>
+        <li><span class="ko-only">닌텐도 64: Mupen64Plus-Next</span><span class="en-only">Nintendo 64: Mupen64Plus-Next</span></li>
+        <li><span class="ko-only">플레이스테이션 1: SwanStation (기기가 약하면 PCSX ReARMed)</span><span class="en-only">PlayStation 1: SwanStation (PCSX ReARMed on weaker devices)</span></li>
+        <li><span class="ko-only">DOS 게임: DOSBox-Pure</span><span class="en-only">DOS games: DOSBox-Pure</span></li>
+        <li><span class="ko-only">드림캐스트: Flycast</span><span class="en-only">Dreamcast: Flycast</span></li>
+      </ul>
+      <div class="warn"><span class="ko-only"><b>코어를 안 받으면</b> "게임을 골랐는데 RetroArch 만 뜨고 아무 일도 안 일어나는" 증상이 납니다. 나중에 뭔가 안 돌면 코어부터 확인하세요.</span><span class="en-only"><b>Without the core</b> you get the classic symptom: you pick a game, RetroArch opens, and nothing happens. If something won't run later, check the core first.</span></div>
+    </section>
+    <section class="gsec" id="standalone">
+      <p class="kicker">STEP 3 — DEVICE · STANDALONE APPS</p>
+      <h2><span class="ko-only">기기 준비 ② — 스탠드얼론 앱 몇 개</span><span class="en-only">Device prep ② — a few standalone apps</span></h2>
+<p><span class="ko-only">PSP 이후 세대는 RetroArch 코어보다 <strong>전용 앱(스탠드얼론)</strong>이 훨씬 잘 돕니다. 내 롬에 있는 기종만 골라 깔면 되고, 나중에 추가해도 됩니다.</span><span class="en-only">From the PSP generation onward, <strong>dedicated (standalone) apps</strong> run far better than RetroArch cores. Install only the ones for systems you actually have; you can add more later.</span></p>
+      <ul>
+        <li><span class="ko-only">PSP: <strong>PPSSPP</strong></span><span class="en-only">PSP: <strong>PPSSPP</strong></span></li>
+        <li><span class="ko-only">플레이스테이션 1 (고화질로 하고 싶다면): <strong>DuckStation</strong></span><span class="en-only">PlayStation 1 (for upscaled graphics): <strong>DuckStation</strong></span></li>
+        <li><span class="ko-only">플레이스테이션 2: <strong>NetherSX2</strong> (AetherSX2 후속)</span><span class="en-only">PlayStation 2: <strong>NetherSX2</strong> (successor to AetherSX2)</span></li>
+        <li><span class="ko-only">게임큐브 · Wii: <strong>Dolphin</strong></span><span class="en-only">GameCube · Wii: <strong>Dolphin</strong></span></li>
+        <li><span class="ko-only">닌텐도 DS: <strong>melonDS</strong></span><span class="en-only">Nintendo DS: <strong>melonDS</strong></span></li>
+        <li><span class="ko-only">PS Vita: <strong>Vita3K</strong></span><span class="en-only">PS Vita: <strong>Vita3K</strong></span></li>
+      </ul>
+    </section>
+    <section class="gsec" id="frontend">
+      <p class="kicker">STEP 4 — DEVICE · FRONT-END</p>
+      <h2><span class="ko-only">기기 준비 ③ — 프론트엔드(게임 고르는 화면)</span><span class="en-only">Device prep ③ — a front-end (the game picker)</span></h2>
+      <ul>
+        <li><span class="ko-only"><strong>ES-DE (EmulationStation Desktop Edition)</strong> — 가장 무난하고 예쁜 선택. 안드로이드판은 소액 유료입니다. 이 페이지는 ES-DE 기준으로 설명합니다.</span><span class="en-only"><strong>ES-DE (EmulationStation Desktop Edition)</strong> — the safe, good-looking choice. The Android build is a small one-time purchase. This page assumes ES-DE.</span></li>
+        <li><span class="ko-only"><strong>Pegasus</strong> — 무료. 해방툴이 Pegasus 형식도 그대로 만들어 줍니다.</span><span class="en-only"><strong>Pegasus</strong> — free. HAE-BANG writes the Pegasus format too.</span></li>
+        <li><span class="ko-only"><strong><a href="launcher.html">HB런처</a></strong> — 함께 개발 중인 3D 케이스 런처(케이스를 진열장에서 꺼내 열고 카트리지를 꽂는 연출). 곧 클로즈 베타로 공개되며, 그 뒤에는 해방툴에서 버튼 하나로 바로 전송됩니다.</span><span class="en-only"><strong><a href="launcher.html">HB Launcher</a></strong> — our own 3D-case launcher (take a case off the shelf, open it, slot the cartridge). A closed beta opens soon; after that HAE-BANG sends to it with one button.</span></li>
+      </ul>
+<p><span class="ko-only">ES-DE 를 처음 실행하면 "롬 폴더가 어디냐"고 묻습니다. 기기 내부 저장소의 <span class="path">ROMs</span> 폴더(없으면 만들면 됩니다)나 SD 카드의 롬 폴더를 지정해 두세요. 해방툴이 이 경로를 자동으로 읽어 갑니다.</span><span class="en-only">On first launch ES-DE asks where your ROM folder is. Point it at a <span class="path">ROMs</span> folder on internal storage (create one if needed) or on the SD card. HAE-BANG reads this path automatically later.</span></p>
+    </section>
+    <section class="gsec" id="usb">
+      <p class="kicker">STEP 5 — DEVICE · USB DEBUGGING</p>
+      <h2><span class="ko-only">기기 준비 ④ — USB 디버깅 켜기 (1분)</span><span class="en-only">Device prep ④ — turn on USB debugging (one minute)</span></h2>
+<p><span class="ko-only">해방툴이 USB 로 기기에 파일을 넣으려면 이게 필요합니다.</span><span class="en-only">HAE-BANG needs this to write files to the device over USB.</span></p>
+      <ol>
+        <li><span class="ko-only">설정 → 휴대전화 정보(태블릿 정보 / 기기 정보) → <strong>빌드 번호를 7번 연타</strong> → "개발자가 되었습니다"</span><span class="en-only">Settings → About phone (tablet / device) → <strong>tap Build number seven times</strong> → "You are now a developer"</span></li>
+        <li><span class="ko-only">설정 → 개발자 옵션 → <strong>USB 디버깅 켜기</strong></span><span class="en-only">Settings → Developer options → <strong>USB debugging on</strong></span></li>
+        <li><span class="ko-only">PC 에 USB 로 꽂으면 기기에 "USB 디버깅을 허용하시겠습니까?" 창이 뜹니다 → <strong>허용</strong> ("이 컴퓨터에서 항상 허용"에 체크하면 다음부터 묻지 않습니다)</span><span class="en-only">Plug into the PC and the device shows "Allow USB debugging?" → <strong>Allow</strong> (tick "Always allow from this computer" to skip it next time)</span></li>
+      </ol>
+      <div class="tip"><span class="ko-only">연결이 안 되면 케이블을 꽂은 채로 USB 디버깅을 껐다가 다시 켜 보세요. 대부분 이걸로 해결됩니다.</span><span class="en-only">If it won't connect, leave the cable in and toggle USB debugging off and on. That fixes most cases.</span></div>
+    </section>
+    <section class="gsec" id="tool">
+      <p class="kicker">STEP 6 — HAE-BANG</p>
+      <h2><span class="ko-only">해방툴 — 여기서부터가 본론입니다</span><span class="en-only">HAE-BANG — this is the main event</span></h2>
+<p><span class="ko-only"><strong>설치</strong> — <a href="haebang.html#download">다운로드</a>에서 Windows용 설치 파일을 받아 설치합니다. 공개 버전 v1.0 은 무료입니다.</span><span class="en-only"><strong>Install</strong> — grab the Windows installer from the <a href="haebang.html#download">download page</a>. The public v1.0 is free.</span></p>
+
+      <h3 id="t1"><span class="ko-only">① 롬 폴더 읽히기 (자동 매칭)</span><span class="en-only">① Read the ROM folder (auto-match)</span></h3>
+      <ol>
+        <li><span class="ko-only">왼쪽 위 <strong>[+ 시스템]</strong> → <strong>로컬(롬 파일)</strong></span><span class="en-only">Top-left <strong>[+ System]</strong> → <strong>Local (ROM files)</strong></span></li>
+        <li><span class="ko-only">기종(예: 메가드라이브)을 고르고, 그 기종의 <strong>롬 폴더</strong>를 지정 → <strong>추가</strong></span><span class="en-only">Pick the system (e.g. Mega Drive), choose its <strong>ROM folder</strong> → <strong>Add</strong></span></li>
+        <li><span class="ko-only">자동 매칭이 돌고, 이어서 이미지·영상·설명서를 내려받습니다. 수백 개도 수십 초에서 몇 분이면 끝납니다.</span><span class="en-only">Matching runs, then images, video and manuals download. Hundreds of games take seconds to a few minutes.</span></li>
+      </ol>
+<p><span class="ko-only">끝나면 목록에 <strong>한글 제목 · 영문 제목 · 장르 · 개발사 · 연도</strong>가 채워지고, 게임을 누르면 오른쪽에 박스아트·스크린샷·휠 로고·케이스·영상·설명서가 뜹니다. 파일명이 한글이어도, 오타가 있어도 대부분 알아봅니다. 기종이 여러 개면 같은 과정을 반복하면 됩니다 — 기종마다 1분 남짓입니다.</span><span class="en-only">When it finishes, the list shows <strong>Korean and English titles, genre, developer and year</strong>; select a game and box art, screenshots, wheel logo, case, video and manual appear on the right. Korean filenames and typos are recognized most of the time. Repeat for each system — about a minute each.</span></p>
+      <figure class="fig"><img src="assets/haebang-interface-v105.png" alt="자동 매칭이 끝난 해방툴 라이브러리 화면" loading="lazy" /><figcaption><span class="ko-only">롬 폴더를 읽힌 직후 — 메가드라이브 429개가 한글·영문 제목, 장르, 제작사, 연도까지 채워진 상태</span><span class="en-only">Right after reading a folder — 429 Mega Drive games with Korean/English titles, genre, developer and year filled in</span></figcaption></figure>
+
+      <h3 id="t2"><span class="ko-only">② 애매한 것만 손보기</span><span class="en-only">② Fix only the doubtful ones</span></h3>
+<p><span class="ko-only">목록 맨 오른쪽 "매칭 방식" 열에 게임마다 배지가 붙습니다 — <strong>auto</strong>(파일명으로 자동 확정), <strong>llm</strong>(AI 가 후보 중에서 판정), <strong>manual</strong>(직접 지정), 못 찾은 것은 빈 배지. 미매칭이거나 제목이 이상해 보이는 게임만 <strong>우클릭 → 메타 편집</strong>에서 후보 목록을 보고 맞는 걸 고르면 됩니다(리전도 고를 수 있습니다). 마스터 DB 에 없는 게임은 ScreenScraper 계정으로 바로 조회하거나 AI 로 채울 수도 있는데, 처음엔 몰라도 됩니다.</span><span class="en-only">The "Matching" column on the far right tags each game — <strong>auto</strong> (settled from the filename), <strong>llm</strong> (AI chose among candidates), <strong>manual</strong> (set by you), and blank for unmatched. Only for unmatched games or odd-looking titles, <strong>right-click → Edit metadata</strong> and pick the right candidate (you can choose the region too). Games missing from the master DB can be looked up with a ScreenScraper account or filled by AI — not something you need on day one.</span></p>
+
+      <h3 id="t3"><span class="ko-only">③ (선택) 기종별로 어떤 에뮬레이터로 돌릴지 지정</span><span class="en-only">③ (Optional) choose which emulator runs each system</span></h3>
+<p><span class="ko-only">기본은 RetroArch 코어입니다. PSP 를 PPSSPP 로, PS1 을 DuckStation 으로 돌리고 싶으면 시스템 목록 위의 <strong>프론트엔드 설정(격자 아이콘)</strong> → ES-DE 탭 → 빌드 OS 를 Android 로 → 기종별 대체 에뮬레이터를 고르면, 그 설정이 목록에 함께 실려 나갑니다. <a href="#standalone">3장</a>에서 깔아 둔 앱과 맞춰 주면 됩니다.</span><span class="en-only">The default is RetroArch cores. To run PSP on PPSSPP or PS1 on DuckStation, open <strong>Front-end settings (grid icon)</strong> above the system list → ES-DE tab → build OS: Android → pick an alternative emulator per system; that choice travels with the list. Match it to the apps you installed in <a href="#standalone">chapter 3</a>.</span></p>
+
+      <h3 id="t4"><span class="ko-only">④ 기기로 내보내기 (USB 한 번)</span><span class="en-only">④ Export to the device (one USB pass)</span></h3>
+      <ol>
+        <li><span class="ko-only"><strong>[⬆ 내보내기]</strong> → 대상: <strong>안드로이드(ADB)</strong> → <strong>[기기 연결]</strong> → "연결됨: 기기명"이 뜨는지 확인</span><span class="en-only"><strong>[⬆ Export]</strong> → destination: <strong>Android (ADB)</strong> → <strong>[Connect device]</strong> → confirm "Connected: device name"</span></li>
+        <li><span class="ko-only">프론트엔드: <strong>ES-DE</strong> (Pegasus 사용자는 Pegasus)</span><span class="en-only">Front-end: <strong>ES-DE</strong> (or Pegasus if that's what you use)</span></li>
+        <li><span class="ko-only">롬 경로(기기)는 ES-DE 설정을 읽어 <strong>자동으로 채워집니다</strong>. 확인만 하세요.</span><span class="en-only">The device ROM path is <strong>filled in automatically</strong> from ES-DE's settings — just check it.</span></li>
+        <li><span class="ko-only">게임 목록 처리는 <strong>병합</strong>(기본) — 기기에 이미 있던 목록·즐겨찾기는 건드리지 않습니다.</span><span class="en-only">Game list handling: <strong>Merge</strong> (default) — existing lists and favourites on the device are left alone.</span></li>
+        <li><span class="ko-only"><strong>ROM 파일도 복사</strong> 체크 — 롬을 아직 기기에 안 넣었다면 이걸로 같이 보냅니다. 이미 있는 파일은 건너뛰어서 두 번째부터는 빠릅니다.</span><span class="en-only">Tick <strong>Copy ROM files too</strong> if the ROMs aren't on the device yet. Files already there are skipped, so repeat exports are fast.</span></li>
+        <li><span class="ko-only">보낼 기종을 체크하고 <strong>내보내기</strong></span><span class="en-only">Tick the systems to send and press <strong>Export</strong></span></li>
+      </ol>
+<p><span class="ko-only">큰 롬은 진행률이 용량 단위로 보이고, 도중에 취소도 됩니다. 실패한 파일이 있으면 몇 개가 왜 안 갔는지 알려 주고, 다시 내보내면 그것만 재전송합니다.</span><span class="en-only">Large ROMs show byte-level progress and can be cancelled. If any file fails, you're told how many and why, and re-exporting resends only those.</span></p>
+      <figure class="fig"><img src="assets/export_setting_view.png" alt="해방툴 내보내기 창" loading="lazy" /><figcaption><span class="ko-only">내보내기 창 — 대상·프론트엔드·롬 경로·목록 처리·보낼 기종을 한 화면에서</span><span class="en-only">The export window — destination, front-end, ROM path, list handling and systems in one place</span></figcaption></figure>
+
+      <h3 id="t5"><span class="ko-only">⑤ 기기에서 확인</span><span class="en-only">⑤ Check on the device</span></h3>
+<p><span class="ko-only">ES-DE 를 실행(또는 목록 새로고침)하면 끝입니다. 기종별로 박스아트가 깔린 목록, 한글 제목과 설명, 스크린샷·영상이 붙은 게임기가 되어 있습니다. 여기까지가 "앱 몇 개 + 롬 + 해방툴"로 되는 일입니다.</span><span class="en-only">Launch ES-DE (or refresh its list) and you're done: lists lined with box art per system, Korean titles and descriptions, screenshots and video attached. That is what "a few apps + ROMs + HAE-BANG" gets you.</span></p>
+    </section>
+    <section class="gsec" id="linux">
+      <p class="kicker">STEP 7 — LINUX HANDHELDS</p>
+      <h2><span class="ko-only">리눅스 게임기(ArkOS · OnionOS · muOS · KNULLI · ROCKNIX · Batocera)는?</span><span class="en-only">Linux handhelds (ArkOS · OnionOS · muOS · KNULLI · ROCKNIX · Batocera)?</span></h2>
+<p><span class="ko-only">과정은 같고 내보내기 대상만 다릅니다.</span><span class="en-only">Same process — only the export destination changes.</span></p>
+      <ul>
+        <li><span class="ko-only"><strong>Wi-Fi 로 보내기</strong> — 내보내기 → 대상: <strong>커스텀 리눅스(SFTP)</strong> → 기기 OS 를 고르면 계정·비밀번호·롬 경로 기본값이 자동으로 들어갑니다. IP 만 넣고 연결.</span><span class="en-only"><strong>Over Wi-Fi</strong> — Export → destination: <strong>Custom Linux (SFTP)</strong> → pick the device OS and the account, password and ROM path defaults fill in. Enter the IP and connect.</span></li>
+        <li><span class="ko-only"><strong>SD 카드로 직접</strong> — 내보내기 → 대상: <strong>내 컴퓨터</strong> → SD 카드 드라이브를 지정. 리더기에 꽂아 쓰는 방식입니다.</span><span class="en-only"><strong>Straight to the SD card</strong> — Export → destination: <strong>My Computer</strong> → choose the card's drive in a reader.</span></li>
+      </ul>
+<p><span class="ko-only">OS 마다 폴더 이름·목록 파일 규칙이 다른데(<span class="path">gamelist.xml</span>, <span class="path">miyoogamelist.xml</span>, 이미지 폴더 위치 등) 해방툴이 고른 OS 에 맞춰 알아서 맞춥니다.</span><span class="en-only">Each OS has its own folder names and list files (<span class="path">gamelist.xml</span>, <span class="path">miyoogamelist.xml</span>, image folder locations…); HAE-BANG adapts to whichever OS you chose.</span></p>
+    </section>
+    <section class="gsec" id="next">
+      <p class="kicker">STEP 8 — NEXT</p>
+      <h2><span class="ko-only">익숙해지면 써 볼 것들</span><span class="en-only">Once you're comfortable</span></h2>
+      <ul>
+        <li><span class="ko-only"><strong>컨트롤러 키설정</strong> — 기종별·게임별 패드 배치를 만들어 내보내기 때 함께 보냅니다(RetroArch 리맵, DOS 패드 설정, Dolphin 프로필). → <a href="guide.html#controller">문서 6장</a></span><span class="en-only"><strong>Controller mapping</strong> — per-system and per-game pad layouts exported alongside the games (RetroArch remaps, DOS pad maps, Dolphin profiles). → <a href="guide.html#controller">Guide ch. 6</a></span></li>
+        <li><span class="ko-only"><strong>한글화 패치 적용</strong> — 게임 우클릭 → 패치 적용. IPS · BPS · UPS · PPF · APS · Xdelta 를 툴 안에서 바로 입힙니다. → <a href="guide.html#patch">문서 2장</a></span><span class="en-only"><strong>Translation patches</strong> — right-click a game → Patch ROM. IPS, BPS, UPS, PPF, APS and Xdelta applied in place. → <a href="guide.html#patch">Guide ch. 2</a></span></li>
+        <li><span class="ko-only"><strong>설명서 AI 번역</strong> — 게임 설명서(PDF)를 보면서 현재 페이지를 한글로 번역해 덮어 볼 수 있습니다. → <a href="guide.html#library">문서 3장</a></span><span class="en-only"><strong>AI manual translation</strong> — read the manual (PDF) with the current page translated as an overlay. → <a href="guide.html#library">Guide ch. 3</a></span></li>
+        <li><span class="ko-only"><strong>3D 박스 · 믹스 이미지</strong> — 앞표지만 있는 게임도 실제 케이스 비율의 3D 박스를 만들고, 박스+스크린샷+로고를 한 장으로 합칩니다. → <a href="guide.html#meta-media">문서 4장</a></span><span class="en-only"><strong>3D boxes · mix images</strong> — build true-proportion 3D boxes from a cover and compose box, screenshot and logo into one showcase image. → <a href="guide.html#meta-media">Guide ch. 4</a></span></li>
+        <li><span class="ko-only"><strong>기존 라이브러리 가져오기</strong> — 이미 ES-DE 나 Pegasus 로 세팅해 둔 게 있으면 그대로 읽어 들입니다. → <a href="guide.html#import">문서 10장</a></span><span class="en-only"><strong>Import an existing library</strong> — already set up in ES-DE or Pegasus? Read it in as-is. → <a href="guide.html#import">Guide ch. 10</a></span></li>
+        <li><span class="ko-only"><strong>게임저장(세이브) 공유</strong> — 곧 나올 v1.0.5 에 들어갑니다. PC·기기의 에뮬레이터 세이브를 알아보고 한곳에 모았다가 다른 기기로 옮깁니다. → <a href="guide.html#saves">문서 12장</a></span><span class="en-only"><strong>Game save sharing</strong> — coming in v1.0.5: identify emulator saves on PC and devices, gather them and move them to another device. → <a href="guide.html#saves">Guide ch. 12</a></span></li>
+      </ul>
+    </section>
+    <section class="gsec" id="faq">
+      <p class="kicker">STEP 9 — TROUBLESHOOTING</p>
+      <h2><span class="ko-only">자주 막히는 곳</span><span class="en-only">Where people get stuck</span></h2>
+      <ul>
+        <li><span class="ko-only"><strong>기기 연결이 안 돼요</strong> — 케이블 꽂은 채 USB 디버깅 끄고 켜기 → 기기에 뜨는 허용 창 확인 → 충전 전용 케이블이 아닌지 확인.</span><span class="en-only"><strong>The device won't connect</strong> — toggle USB debugging with the cable in → accept the prompt on the device → make sure it isn't a charge-only cable.</span></li>
+        <li><span class="ko-only"><strong>ES-DE 에 게임이 안 보여요</strong> — ES-DE 가 보는 롬 폴더와 해방툴의 "롬 경로(기기)"가 같은지 확인하세요. 대부분 이 경로 차이입니다.</span><span class="en-only"><strong>Games don't show in ES-DE</strong> — check that ES-DE's ROM folder and HAE-BANG's "ROM path (device)" are the same. That mismatch is the usual cause.</span></li>
+        <li><span class="ko-only"><strong>게임을 골랐는데 RetroArch 만 뜨고 안 돌아요</strong> — 그 기종 코어가 안 깔린 겁니다(<a href="#ra">2장</a>). 스토어판 RetroArch 라면 코어를 못 받는 게 원인일 수 있습니다.</span><span class="en-only"><strong>RetroArch opens but the game doesn't run</strong> — the core for that system isn't installed (<a href="#ra">chapter 2</a>). On the Play Store build, the missing core downloader is often the reason.</span></li>
+        <li><span class="ko-only"><strong>매칭이 이상하게 됐어요</strong> — 우클릭 → 메타 편집에서 후보를 바꾸면 됩니다. 폴더에 여러 기종 롬이 섞여 있으면 기종별로 나눠 넣는 게 정확도가 좋습니다.</span><span class="en-only"><strong>A match is wrong</strong> — right-click → Edit metadata and pick another candidate. If several systems share one folder, splitting them per system improves accuracy.</span></li>
+        <li><span class="ko-only"><strong>공개 버전과 베타 차이</strong> — 공개 v1.0 은 누구나 무료로 받을 수 있고, 새 기능은 후원자 베타에 먼저 들어갑니다(현재 v1.0.4, v1.0.5 준비 중). 공개판은 일부 기종(닌텐도 스위치 등)이 빠져 있습니다.</span><span class="en-only"><strong>Public vs. beta</strong> — public v1.0 is free for everyone; new features land in the sponsor beta first (v1.0.4 now, v1.0.5 in preparation). The public build leaves out a few systems (Nintendo Switch and others).</span></li>
+      </ul>
+    </section>
+    <section class="gsec" id="sum">
+      <p class="kicker">SUMMARY</p>
+      <h2><span class="ko-only">다섯 줄 요약</span><span class="en-only">In five lines</span></h2>
+      <ol>
+        <li><span class="ko-only">기기: RetroArch(+코어) · 프론트엔드 · 필요한 스탠드얼론 앱 설치</span><span class="en-only">Device: install RetroArch (+cores), a front-end, and the standalone apps you need</span></li>
+        <li><span class="ko-only">USB 디버깅 켜기</span><span class="en-only">Turn on USB debugging</span></li>
+        <li><span class="ko-only">PC: 해방툴에 롬 폴더 읽히기 → 애매한 것만 손보기</span><span class="en-only">PC: read the ROM folder into HAE-BANG → fix only the doubtful matches</span></li>
+        <li><span class="ko-only">[⬆ 내보내기] → 안드로이드(ADB) → ES-DE → 내보내기</span><span class="en-only">[⬆ Export] → Android (ADB) → ES-DE → Export</span></li>
+        <li><span class="ko-only">기기에서 ES-DE 켜면 끝</span><span class="en-only">Open ES-DE on the device — done</span></li>
+      </ol>
+<p><span class="ko-only">한 번만 해 보면, 다음부터는 롬 폴더에 게임을 더 넣고 내보내기만 누르는 일이 됩니다. 기능 하나하나의 자세한 설명은 <a href="guide.html">문서(사용 가이드)</a>에 있습니다.</span><span class="en-only">Do it once and from then on it's just adding games to the folder and pressing Export. Every feature is explained in detail in the <a href="guide.html">docs (user guide)</a>.</span></p>
+      <div class="btnrow">
+        <a class="btn btn-primary" href="haebang.html#download"><span class="ko-only">해방툴 다운로드</span><span class="en-only">Download HAE-BANG</span></a>
+        <a class="btn btn-ghost" href="guide.html"><span class="ko-only">문서 →</span><span class="en-only">Docs →</span></a>
+      </div>
+      <div class="note"><span class="ko-only">해방툴은 롬 파일을 제공하지 않습니다. 본인이 소장한 게임에서 뽑은 롬으로 사용해 주세요.</span><span class="en-only">HAE-BANG does not provide ROM files. Use ROMs dumped from games you own.</span></div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="wrap foot">
+    <span>© <span id="yr"></span> HAE-BANG Rom Setting Tools</span>
+    <span><a href="index.html"><span class="ko-only">← 홈으로</span><span class="en-only">← Back to home</span></a></span>
+  </div>
+</footer>
+
+<button class="totop" id="totop" aria-label="Top">↑</button>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  var hdr = document.getElementById('hdr');
+  addEventListener('scroll', function(){ hdr.classList.toggle('scrolled', scrollY > 8); }, {passive:true});
+
+  // 언어 토글 (index/story 와 동일한 localStorage 키 'hb_lang')
+  var langBtn = document.getElementById('langBtn');
+  function applyLang(l){
+    document.documentElement.classList.toggle('en', l === 'en');
+    document.documentElement.lang = l;
+    langBtn.textContent = (l === 'ko') ? 'EN' : '한';
+    try { localStorage.setItem('hb_lang', l); } catch(e){}
+  }
+  langBtn.addEventListener('click', function(){
+    applyLang(document.documentElement.classList.contains('en') ? 'ko' : 'en');
+  });
+  try { var saved = localStorage.getItem('hb_lang'); if (saved === 'en') applyLang('en'); } catch(e){}
+
+  // TOC scrollspy + smooth scroll
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  var map = {};
+  links.forEach(function(a){
+    var id = a.getAttribute('href').slice(1);
+    var el = document.getElementById(id);
+    if (el) map[id] = { link: a, el: el };
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+      history.replaceState(null,'','#'+id);
+    });
+  });
+  var ids = Object.keys(map);
+  function spy(){
+    var cur = null;
+    ids.forEach(function(id){ if (map[id].el.getBoundingClientRect().top <= 120) cur = id; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    if (cur && map[cur]) map[cur].link.classList.add('active');
+  }
+  addEventListener('scroll', spy, {passive:true}); spy();
+
+  // to top
+  var tt = document.getElementById('totop');
+  addEventListener('scroll', function(){ tt.classList.toggle('show', scrollY > 500); }, {passive:true});
+  tt.addEventListener('click', function(){ scrollTo({top:0, behavior:'smooth'}); });
+</script>
+<script>
+/* 모바일 메뉴 — 상단 메뉴가 숨겨지는 폭에서 같은 항목을 펼쳐 보여준다.
+   항목을 따로 적지 않고 .nav-links 를 복제해 두 곳이 어긋날 일이 없게 한다. */
+(function () {
+  var btn = document.getElementById('menuBtn'), mn = document.getElementById('mnav');
+  if (!btn || !mn) return;
+  var box = mn.querySelector('.in');
+  document.querySelectorAll('.nav-links a').forEach(function (a) { box.appendChild(a.cloneNode(true)); });
+  document.querySelectorAll('.subbar .wrap > a').forEach(function (a) { box.appendChild(a.cloneNode(true)); });
+  function setOpen(on) {
+    mn.classList.toggle('on', on);
+    btn.textContent = on ? '✕' : '☰';
+    btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+  }
+  btn.addEventListener('click', function () { setOpen(!mn.classList.contains('on')); });
+  box.addEventListener('click', function (e) { if (e.target.closest('a')) setOpen(false); });
+  window.addEventListener('resize', function () { if (window.innerWidth > 1040) setOpen(false); });
+})();
+</script>
+<script src="assets/donate.js"></script>
+<script src="assets/qrlink.js"></script>
+</body>
+</html>
