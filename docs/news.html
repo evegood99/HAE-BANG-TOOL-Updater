@@ -311,6 +311,35 @@
 
       <div class="tl">
 
+        <!-- 2026-09-04 : 해방툴 v1.0.5 예고 -->
+        <article class="tl-item hl reveal">
+          <div class="tl-dot"><i></i></div>
+          <div class="tl-date">2026.09.04</div>
+          <h3 class="tl-title" data-ko="해방툴 v1.0.5 — 다음 주 업데이트 예고: 게임저장(세이브) 공유" data-en="Rom Tool v1.0.5 — coming next week: game save sharing">해방툴 v1.0.5 &mdash; 다음 주 업데이트 예고: 게임저장(세이브) 공유</h3>
+          <div class="tags">
+            <span class="tag new" data-ko="예고" data-en="Preview">예고</span>
+            <span class="tag imp" data-ko="개선" data-en="Improved">개선</span>
+            <span class="tag fix" data-ko="수정" data-en="Fixed">수정</span>
+          </div>
+          <div class="tl-body">
+            <ul>
+              <li data-ko="게임저장(세이브) 공유가 들어옵니다 — 이번 판의 가장 큰 변화입니다. Tools 에 새 시트가 생기고, PC(ES-DE·Pegasus·에뮬레이터 폴더)와 USB 로 붙은 안드로이드 기기에 깔린 에뮬레이터의 세이브를 스캔해 한곳에 모읍니다. 세이브가 어느 게임 것인지는 기기의 게임 목록 → 마스터 DB 롬 색인 → 기종 안에서의 흐린 매칭 순으로 알아보고, 같은 파일은 한 벌만 남깁니다."
+                  data-en="Game save sharing arrives — the biggest change in this build. A new Tools sheet scans the saves of emulators installed on your PC (ES-DE, Pegasus, emulator folders) and on USB-connected Android devices, and gathers them in one place. Each save is identified via the device's game list → the master ROM index → fuzzy matching within its system, and identical files are kept once."><b>게임저장(세이브) 공유가 들어옵니다</b> — 이번 판의 가장 큰 변화입니다. Tools 에 새 시트가 생기고, PC(ES-DE·Pegasus·에뮬레이터 폴더)와 USB 로 붙은 안드로이드 기기에 깔린 에뮬레이터의 세이브를 스캔해 한곳에 모읍니다. 세이브가 어느 게임 것인지는 <b>기기의 게임 목록 → 마스터 DB 롬 색인 → 기종 안에서의 흐린 매칭</b> 순으로 알아보고, 같은 파일은 한 벌만 남깁니다.</li>
+              <li data-ko="모아 둔 세이브를 다른 기기로 보냅니다. RetroArch 는 물론 스탠드얼론 에뮬레이터도 다루며, 안드로이드에는 그 기기의 저장 에뮬레이터에 맞는 자리로 자동으로 들어갑니다. 같은 이름이 이미 있으면 덮기 전에 보관함에 먼저 담아 둡니다. 다루는 것은 게임 안에서 저장한 롬저장(배터리·메모리카드)이고, 코어 버전에 묶이는 상태저장(.state)은 제외합니다."
+                  data-en="Saves you collected can be sent to another device — RetroArch and standalone emulators alike, landing in the right folder for that device's emulator on Android. An existing save with the same name is archived before being overwritten. Only in-game saves (battery, memory cards) are handled; core-bound save states (.state) are excluded."><b>모아 둔 세이브를 다른 기기로 보냅니다.</b> RetroArch 는 물론 스탠드얼론 에뮬레이터도 다루며, 안드로이드에는 그 기기의 저장 에뮬레이터에 맞는 자리로 자동으로 들어갑니다. 같은 이름이 이미 있으면 덮기 전에 보관함에 먼저 담아 둡니다. 다루는 것은 게임 안에서 저장한 <b>롬저장</b>(배터리·메모리카드)이고, 코어 버전에 묶이는 상태저장(.state)은 제외합니다.</li>
+              <li data-ko="병합 내보내기가 빨라집니다. 기기에 이미 같은 이름·크기로 있는 파일은 다시 보내지 않고 건너뜁니다 — 유선(ADB) 미디어 전송에도 적용되어, 두 번째 내보내기부터는 바뀐 것만 갑니다."
+                  data-en="Merge exports get faster. Files already on the device with the same name and size are skipped instead of resent — now including media over USB (ADB), so repeat exports only move what changed."><b>병합 내보내기가 빨라집니다.</b> 기기에 이미 같은 이름·크기로 있는 파일은 다시 보내지 않고 건너뜁니다 — 유선(ADB) 미디어 전송에도 적용되어, 두 번째 내보내기부터는 바뀐 것만 갑니다.</li>
+              <li data-ko="내보내기 때 게임 제목·설명의 언어(영문/한글) 처리 오류를 고쳤습니다. 설명 언어가 제목 언어를 따라가 버려, 제목은 한글·설명은 영문처럼 따로 고른 조합이 지켜지지 않던 문제입니다."
+                  data-en="Fixed the title/description language (EN/KR) handling on export. The description language used to follow the title language, so a mixed choice such as Korean titles with English descriptions was not honoured."><b>내보내기 때 게임 제목·설명의 언어(영문/한글) 처리 오류를 고쳤습니다.</b> 설명 언어가 제목 언어를 따라가 버려, 제목은 한글·설명은 영문처럼 따로 고른 조합이 지켜지지 않던 문제입니다.</li>
+              <li data-ko="함께 들어가는 것 — HB런처 원클릭 내보내기(유선/무선, 기기 화면 진행 표시), ADB 연결 유지와 이미 떠 있는 adb 서버 재사용. 후원자 베타에 먼저 올라가며, 스폰서 코드로 받으실 수 있습니다."
+                  data-en="Also included — one-click HB Launcher export (wired/wireless, progress on the device screen), persistent ADB connection and reuse of an already-running adb server. Sponsor beta first, available with your sponsor code."><b>함께 들어가는 것</b> — HB런처 원클릭 내보내기(유선/무선, 기기 화면 진행 표시), ADB 연결 유지와 이미 떠 있는 adb 서버 재사용. <b>후원자 베타에 먼저</b> 올라가며, 스폰서 코드로 받으실 수 있습니다.</li>
+            </ul>
+            <div class="tl-cta">
+              <a class="btn btn-primary" href="haebang.html#download" data-ko="베타 다운로드로 이동 →" data-en="Go to beta download →">베타 다운로드로 이동 →</a>
+            </div>
+          </div>
+        </article>
+
         <!-- 2026-09-03 : HB런처 베타 0.4 -->
         <article class="tl-item hl reveal">
           <div class="tl-dot"><i></i></div>
