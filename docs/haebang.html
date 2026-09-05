@@ -221,6 +221,17 @@
   .hero-figure figcaption::before{content:""; width:7px; height:7px; flex:0 0 auto; border-radius:50%;
     background:var(--emerald); box-shadow:0 0 12px var(--emerald)}
 
+  .hero-figure figcaption{font-weight:800; font-size:14.5px; color:var(--text); letter-spacing:-.005em}
+  /* 아이튠즈 컨셉 — 세 단계 */
+  .itunes-steps{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px}
+  .itunes-steps li{display:grid; grid-template-columns:34px 1fr; gap:14px; align-items:start; padding:16px 18px;
+    border:1px solid var(--border); border-radius:14px; background:var(--surface)}
+  .itunes-steps .n{width:34px; height:34px; border-radius:10px; display:grid; place-items:center; font-weight:800; font-size:14px;
+    background:var(--grad); color:#06070d}
+  .itunes-steps b{display:block; font-size:15.5px; font-weight:800; margin-bottom:3px; color:var(--text)}
+  .itunes-steps p{margin:0; font-size:13.5px; color:var(--muted); line-height:1.6}
+  .after-line{margin:16px 0 0; font-size:14.5px; color:var(--text); line-height:1.7}
+  .after-line b{color:var(--cyan)}
   .problem-grid{display:grid; grid-template-columns:.86fr 1.14fr; gap:72px; align-items:center}
   .answer-line{margin:27px 0 0; padding:20px 21px; border-left:2px solid var(--cyan);
     background:linear-gradient(90deg,rgba(34,211,238,.08),transparent); color:var(--muted); font-size:14.5px}
@@ -553,42 +564,31 @@
 
       <figure class="hero-figure reveal in">
         <img src="assets/haebang-beginner-overview.png" alt="흩어진 게임 파일을 해방툴이 정리하여 여러 휴대용 게임기로 보내는 과정" loading="eager" />
-        <figcaption data-ko="흩어진 파일에서, 기기에서 바로 고를 수 있는 라이브러리까지" data-en="From scattered files to a library ready to browse on your device">흩어진 파일에서, 기기에서 바로 고를 수 있는 라이브러리까지</figcaption>
+        <figcaption data-ko="해방툴은 레트로 게임기용 아이튠즈" data-en="HAE-BANG is iTunes for retro handhelds">해방툴은 레트로 게임기용 아이튠즈</figcaption>
       </figure>
     </div>
   </section>
 
-  <!-- WHY: 입문자의 문제와 해방툴의 역할을 한 화면에서 설명한다. -->
+  <!-- WHY: 컨셉 한 줄 — 레트로 게임기용 아이튠즈. 정리는 PC 가 하고, 기기는 즐기기만. -->
   <section id="why" class="section-tint">
     <div class="wrap problem-grid">
       <div class="sec-head left reveal">
-        <div class="eyebrow" data-ko="해방툴이 필요한 순간" data-en="Why HAE-BANG">해방툴이 필요한 순간</div>
-        <h2 data-ko="새 게임기를 샀는데,<br>어디서부터 시작해야 할까요?" data-en="New handheld in hand.<br>Where do you begin?">새 게임기를 샀는데,<br>어디서부터 시작해야 할까요?</h2>
-        <p data-ko="암호처럼 보이는 ROM 파일명, 비어 있는 표지와 설명, 기기마다 다른 폴더 규칙. 하나씩 손보다 보면 게임을 켜기도 전에 지치기 쉽습니다. 해방툴은 이 반복 작업을 한곳에서 정리하는 Windows용 라이브러리 준비 도구입니다." data-en="Cryptic ROM names, missing artwork and different folder rules on every device can drain the fun before a game even starts. HAE-BANG is a Windows library-preparation tool that brings those repetitive jobs into one place.">암호처럼 보이는 ROM 파일명, 비어 있는 표지와 설명, 기기마다 다른 폴더 규칙. 하나씩 손보다 보면 게임을 켜기도 전에 지치기 쉽습니다. 해방툴은 이 반복 작업을 한곳에서 정리하는 Windows용 라이브러리 준비 도구입니다.</p>
+        <div class="eyebrow" data-ko="컨셉 한 줄" data-en="The idea in one line">컨셉 한 줄</div>
+        <h2 data-ko="해방툴은<br>레트로 게임기용 아이튠즈입니다" data-en="HAE-BANG is<br>iTunes for retro handhelds">해방툴은<br>레트로 게임기용 아이튠즈입니다</h2>
+        <p data-ko="옛날 아이팟에 노래 넣던 거 기억나시나요? 음악 파일을 PC의 아이튠즈에 넣으면 제목·앨범·표지가 알아서 붙고, 케이블만 꽂으면 아이팟에 그대로 들어갔죠. 정리는 PC가 하고, 기기는 즐기기만 하는 구조였습니다. 해방툴이 레트로 게임기에서 하는 일이 꼭 그것입니다 — 안드로이드 게임기든, 쓰던 폰이든, ArkOS·OnionOS·muOS 같은 리눅스 게임기든 세팅 방법은 같습니다." data-en="Remember loading songs onto an iPod? Drop music files into iTunes on your PC, and titles, albums and cover art attached themselves; plug in the cable and it all landed on the iPod. The PC did the organizing, the device just played. That is exactly what HAE-BANG does for retro handhelds — an Android handheld, an old phone, or a Linux handheld running ArkOS, OnionOS or muOS: the setup is the same.">옛날 아이팟에 노래 넣던 거 기억나시나요? 음악 파일을 PC의 아이튠즈에 넣으면 제목·앨범·표지가 알아서 붙고, 케이블만 꽂으면 아이팟에 그대로 들어갔죠. 정리는 PC가 하고, 기기는 즐기기만 하는 구조였습니다. 해방툴이 레트로 게임기에서 하는 일이 꼭 그것입니다 — 안드로이드 게임기든, 쓰던 폰이든, ArkOS·OnionOS·muOS 같은 리눅스 게임기든 세팅 방법은 같습니다.</p>
         <div class="answer-line">
           <b data-ko="한 문장으로 말하면" data-en="In one sentence">한 문장으로 말하면</b>
-          <span data-ko="해방툴은 ROM과 게임기 사이에서 일하는 " data-en="HAE-BANG is the ">해방툴은 ROM과 게임기 사이에서 일하는 </span><em data-ko="도서관 사서이자 이삿짐 도우미" data-en="librarian and moving assistant">도서관 사서이자 이삿짐 도우미</em><span data-ko="입니다." data-en=" between your ROMs and handheld.">입니다.</span>
+          <span data-ko="정리는 PC의 해방툴이 하고, " data-en="The PC and HAE-BANG do the organizing, ">정리는 PC의 해방툴이 하고, </span><em data-ko="기기는 즐기기만 합니다" data-en="the device just plays">기기는 즐기기만 합니다</em><span data-ko="." data-en=".">.</span>
         </div>
       </div>
 
       <div class="reveal">
-        <div class="transform-list">
-          <div class="transform-row">
-            <div class="transform-side"><small>BEFORE</small><b data-ko="뒤섞인 파일명과 알 수 없는 게임" data-en="Messy names and unknown games">뒤섞인 파일명과 알 수 없는 게임</b></div>
-            <div class="transform-arrow" aria-hidden="true">→</div>
-            <div class="transform-side after"><small>HAE-BANG</small><b data-ko="정확한 제목·설명으로 자동 식별" data-en="Identified with accurate titles and details">정확한 제목·설명으로 자동 식별</b></div>
-          </div>
-          <div class="transform-row">
-            <div class="transform-side"><small>BEFORE</small><b data-ko="빈 표지와 밋밋한 게임 목록" data-en="Blank artwork and plain lists">빈 표지와 밋밋한 게임 목록</b></div>
-            <div class="transform-arrow" aria-hidden="true">→</div>
-            <div class="transform-side after"><small>HAE-BANG</small><b data-ko="박스아트·영상·매뉴얼까지 채운 라이브러리" data-en="A library with artwork, video and manuals">박스아트·영상·매뉴얼까지 채운 라이브러리</b></div>
-          </div>
-          <div class="transform-row">
-            <div class="transform-side"><small>BEFORE</small><b data-ko="기기마다 다시 맞춰야 하는 폴더" data-en="Folders rebuilt for every device">기기마다 다시 맞춰야 하는 폴더</b></div>
-            <div class="transform-arrow" aria-hidden="true">→</div>
-            <div class="transform-side after"><small>HAE-BANG</small><b data-ko="대상에 맞춘 목록·경로로 바로 내보내기" data-en="Lists and paths prepared for each target">대상에 맞춘 목록·경로로 바로 내보내기</b></div>
-          </div>
-        </div>
+        <ol class="itunes-steps">
+          <li><span class="n">1</span><div><b data-ko="기기에는 앱만 깝니다" data-en="Only apps go on the device">기기에는 앱만 깝니다</b><p data-ko="RetroArch(+기종별 코어), 게임 고르는 화면인 ES-DE, 필요하면 PPSSPP·DuckStation 같은 전용 앱 두어 개." data-en="RetroArch (+ a core per system), ES-DE as the game picker, and a couple of dedicated apps like PPSSPP or DuckStation if you need them.">RetroArch(+기종별 코어), 게임 고르는 화면인 ES-DE, 필요하면 PPSSPP·DuckStation 같은 전용 앱 두어 개.</p></div></li>
+          <li><span class="n">2</span><div><b data-ko="PC의 해방툴에 롬 폴더를 넣습니다" data-en="Drop your ROM folder into HAE-BANG on the PC">PC의 해방툴에 롬 폴더를 넣습니다</b><p data-ko="파일명이 엉망이어도, 한글 파일명이어도 게임을 알아보고 한글·영문 제목, 설명, 박스아트, 스크린샷, 영상, 설명서까지 자동으로 붙입니다. 수백 개도 몇 분이면 끝나고, 애매한 것만 우클릭으로 고치면 됩니다." data-en="Messy or Korean filenames are recognized, and Korean/English titles, descriptions, box art, screenshots, video and manuals attach automatically. Hundreds of games take minutes; fix only the doubtful ones with a right-click.">파일명이 엉망이어도, 한글 파일명이어도 게임을 알아보고 한글·영문 제목, 설명, 박스아트, 스크린샷, 영상, 설명서까지 자동으로 붙입니다. 수백 개도 몇 분이면 끝나고, 애매한 것만 우클릭으로 고치면 됩니다.</p></div></li>
+          <li><span class="n">3</span><div><b data-ko="USB를 꽂고 [내보내기] 한 번" data-en="Plug in USB and press Export once">USB를 꽂고 [내보내기] 한 번</b><p data-ko="안드로이드는 USB로, 리눅스 게임기는 Wi-Fi나 SD카드로 — 기기가 이해하는 폴더 구조에 맞춰 목록·이미지·롬을 넣어 줍니다." data-en="Android over USB, Linux handhelds over Wi-Fi or SD card — lists, images and ROMs land in the folder layout the device understands.">안드로이드는 USB로, 리눅스 게임기는 Wi-Fi나 SD카드로 — 기기가 이해하는 폴더 구조에 맞춰 목록·이미지·롬을 넣어 줍니다.</p></div></li>
+        </ol>
+        <p class="after-line" data-ko="기기를 켜면 텍스트 목록 대신 <b>표지가 쭉 깔린 진짜 게임기 화면</b>이 기다립니다. 다음부터는 롬 폴더에 게임을 더 넣고 내보내기만 누르면 됩니다." data-en="Turn on the device and instead of a text list, <b>a real console screen lined with cover art</b> is waiting. From then on, just add games to the folder and press Export.">기기를 켜면 텍스트 목록 대신 <b>표지가 쭉 깔린 진짜 게임기 화면</b>이 기다립니다. 다음부터는 롬 폴더에 게임을 더 넣고 내보내기만 누르면 됩니다.</p>
         <p class="scope-note" data-ko="※ 해방툴은 에뮬레이터가 아니며 ROM을 제공하지 않습니다." data-en="※ HAE-BANG is not an emulator and does not provide ROMs.">※ 해방툴은 에뮬레이터가 아니며 ROM을 제공하지 않습니다.</p>
       </div>
     </div>
